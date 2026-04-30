@@ -1,0 +1,50 @@
+import * as React from "react";
+
+import { cn } from "./utils";
+
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+type ButtonSize = "sm" | "md" | "lg" | "icon";
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+}
+
+const variantClassName: Record<ButtonVariant, string> = {
+  primary:
+    "bg-[var(--accent)] text-[var(--accent-foreground)] shadow-[0_12px_30px_rgba(218,41,28,0.22)] hover:bg-[var(--accent-strong)]",
+  secondary:
+    "border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+  ghost:
+    "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]",
+  danger: "bg-red-600 text-white hover:bg-red-700"
+};
+
+const sizeClassName: Record<ButtonSize, string> = {
+  sm: "h-9 px-3 text-sm",
+  md: "h-11 px-5 text-sm",
+  lg: "h-12 px-6 text-base",
+  icon: "h-10 w-10 p-0"
+};
+
+export function Button({
+  className,
+  variant = "primary",
+  size = "md",
+  type = "button",
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={cn(
+        "inline-flex items-center justify-center gap-2 rounded-md font-semibold transition duration-200 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none",
+        variantClassName[variant],
+        sizeClassName[size],
+        className
+      )}
+      type={type}
+      {...props}
+    />
+  );
+}

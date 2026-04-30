@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+:root {
+  --background: #f4f5f3;
+  --foreground: #171717;
+  --surface: #ffffff;
+  --surface-strong: #eef1ee;
+  --muted: #e7ebe6;
+  --muted-foreground: #60665f;
+  --border: #d8ded7;
+  --accent: #da291c;
+  --accent-strong: #b91f15;
+  --accent-foreground: #ffffff;
+  --steel: #26313f;
+  --signal: #0f766e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(15, 118, 110, 0.08), transparent 280px),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), sans-serif;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-rise {
+    animation: rise 420ms ease-out both;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
