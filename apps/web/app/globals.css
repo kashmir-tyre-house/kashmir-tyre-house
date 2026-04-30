@@ -3,16 +3,85 @@
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
 
 :root {
-  --background: #ffffff;
-  --foreground: #151515;
   --surface: #ffffff;
-  --surface-strong: #f5f5f5;
-  --muted: #f1f1f1;
-  --muted-foreground: #666666;
-  --border: #dddddd;
-  --accent: #da291c;
-  --accent-strong: #b91f15;
-  --accent-foreground: #ffffff;
+  --surface-dim: #e8d7c9;
+  --surface-bright: #fff8f5;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #fff1e7;
+  --surface-container: #fdebdd;
+  --surface-container-high: #f7e5d7;
+  --surface-container-highest: #f1dfd1;
+  --on-surface: #231a12;
+  --on-surface-variant: #544434;
+  --inverse-surface: #392e25;
+  --inverse-on-surface: #ffeee0;
+  --outline: #877362;
+  --outline-variant: #dac2ad;
+  --surface-tint: #8a5100;
+  --primary: #8a5100;
+  --on-primary: #ffffff;
+  --primary-container: #f69300;
+  --on-primary-container: #5e3500;
+  --inverse-primary: #ffb86f;
+  --secondary: #5f5e5e;
+  --on-secondary: #ffffff;
+  --secondary-container: #e2dfde;
+  --on-secondary-container: #636262;
+  --tertiary: #006590;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #07b5ff;
+  --on-tertiary-container: #004362;
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+  --primary-fixed: #ffdcbe;
+  --primary-fixed-dim: #ffb86f;
+  --on-primary-fixed: #2c1600;
+  --on-primary-fixed-variant: #693c00;
+  --secondary-fixed: #e5e2e1;
+  --secondary-fixed-dim: #c8c6c5;
+  --on-secondary-fixed: #1c1b1b;
+  --on-secondary-fixed-variant: #474746;
+  --tertiary-fixed: #c8e6ff;
+  --tertiary-fixed-dim: #88ceff;
+  --on-tertiary-fixed: #001e2f;
+  --on-tertiary-fixed-variant: #004c6e;
+  --background: #fff8f5;
+  --on-background: #231a12;
+  --surface-variant: #f1dfd1;
+  --deep-neutral: #1a1a1a;
+  --industrial-grey: #f2f2f2;
+
+  --foreground: var(--on-background);
+  --surface-strong: var(--surface-container-highest);
+  --muted: var(--surface-container);
+  --muted-foreground: var(--on-surface-variant);
+  --border: var(--outline-variant);
+  --accent: var(--primary-container);
+  --accent-strong: #c87500;
+  --accent-foreground: var(--deep-neutral);
+  --steel: var(--inverse-surface);
+  --signal: var(--tertiary);
+
+  --radius-sm: 0.25rem;
+  --radius-default: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  --space-xs: 4px;
+  --space-base: 8px;
+  --space-sm: 12px;
+  --space-md: 24px;
+  --space-lg: 48px;
+  --space-xl: 80px;
+  --space-gutter: 24px;
+  --space-margin: 32px;
+
+  --shadow-ambient: 0 18px 45px rgba(35, 26, 18, 0.08);
+  --shadow-action: 0 14px 30px rgba(246, 147, 0, 0.24);
 }
 
 * {
@@ -25,7 +94,9 @@ html {
 
 body {
   margin: 0;
-  background: var(--background);
+  background:
+    linear-gradient(180deg, rgba(246, 147, 0, 0.08), transparent 340px),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
 }
@@ -34,7 +105,19 @@ body {
   font-family: var(--font-display), sans-serif;
 }
 
+.font-sans {
+  font-family: var(--font-sans), sans-serif;
+}
+
 ::selection {
   background: var(--accent);
   color: var(--accent-foreground);
+}
+
+.text-label-caps {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
 }

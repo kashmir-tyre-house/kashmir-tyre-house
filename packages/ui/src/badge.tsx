@@ -9,10 +9,13 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const toneClassName: Record<BadgeTone, string> = {
-  neutral: "border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]",
-  accent: "border-red-200 bg-red-50 text-red-700",
+  neutral:
+    "border-[var(--border)] bg-[var(--surface-container)] text-[var(--on-surface-variant)]",
+  accent:
+    "border-[var(--primary-fixed-dim)] bg-[var(--primary-fixed)] text-[var(--on-primary-fixed)]",
   success: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  warning: "border-amber-200 bg-amber-50 text-amber-800"
+  warning:
+    "border-[var(--primary-fixed-dim)] bg-[var(--surface-container-low)] text-[var(--on-primary-container)]"
 };
 
 export function Badge({ className, tone = "neutral", ...props }: BadgeProps) {

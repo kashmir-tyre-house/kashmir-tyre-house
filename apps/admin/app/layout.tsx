@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import { Montserrat, Playfair } from "next/font/google";
 
 import { Providers } from "./providers";
 import "./globals.css";
 
-const display = Space_Grotesk({
+const display = Playfair({
   subsets: ["latin"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
   variable: "--font-display",
   display: "swap"
 });
 
-const sans = Manrope({
+const sans = Montserrat({
   subsets: ["latin"],
+  weight: "variable",
+  style: ["normal", "italic"],
   variable: "--font-sans",
   display: "swap"
 });

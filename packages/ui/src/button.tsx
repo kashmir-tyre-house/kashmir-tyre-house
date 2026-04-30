@@ -13,12 +13,12 @@ export interface ButtonProps
 
 const variantClassName: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--accent)] text-[var(--accent-foreground)] shadow-[0_12px_30px_rgba(218,41,28,0.22)] hover:bg-[var(--accent-strong)]",
+    "bg-[var(--accent)] text-[var(--accent-foreground)] shadow-[var(--shadow-action)] hover:bg-[var(--accent-strong)]",
   secondary:
-    "border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+    "border border-[var(--foreground)] bg-transparent text-[var(--foreground)] hover:border-[var(--accent)] hover:bg-[var(--surface-container-low)]",
   ghost:
     "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]",
-  danger: "bg-red-600 text-white hover:bg-red-700"
+  danger: "bg-[var(--error)] text-[var(--on-error)] hover:bg-[var(--on-error-container)]"
 };
 
 const sizeClassName: Record<ButtonSize, string> = {
