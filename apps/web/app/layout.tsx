@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Playfair } from "next/font/google";
+import { Playfair, Roboto } from "next/font/google";
 
 import { Providers } from "./providers";
 import "./globals.css";
@@ -13,7 +13,7 @@ const display = Playfair({
   display: "swap"
 });
 
-const sans = Montserrat({
+const sans = Roboto({
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
