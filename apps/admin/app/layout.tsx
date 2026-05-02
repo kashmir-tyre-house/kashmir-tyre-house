@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
-import { Montserrat, Playfair } from "next/font/google";
+import { Figtree, Inter } from "next/font/google";
 
 import { Providers } from "./providers";
 import "./globals.css";
 
-const display = Playfair({
+const display = Figtree({
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
-  axes: ["opsz"],
   variable: "--font-display",
   display: "swap"
 });
 
-const sans = Montserrat({
+const sans = Inter({
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
