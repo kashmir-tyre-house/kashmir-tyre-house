@@ -6,6 +6,7 @@ const navItems = ["Home", "Tyres", "Services", "About", "Contact"];
 
 export function SiteHeader() {
   const [isHidden, setIsHidden] = useState(false);
+  const [isDarkGlass, setIsDarkGlass] = useState(false);
   const previousScrollY = useRef(0);
   const ticking = useRef(false);
 
@@ -15,10 +16,15 @@ export function SiteHeader() {
     function updateHeader() {
       const currentScrollY = window.scrollY;
       const scrollDifference = currentScrollY - previousScrollY.current;
+      const hero = document.getElementById("home");
+      const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : 0;
+
+      setIsDarkGlass(heroBottom > 0 && currentScrollY + 160 >= heroBottom);
 
       // Always show navbar near top
       if (currentScrollY < 40) {
         setIsHidden(false);
+        setIsDarkGlass(false);
         previousScrollY.current = currentScrollY;
         ticking.current = false;
         return;
@@ -42,9 +48,14 @@ export function SiteHeader() {
       }
     }
 
+    updateHeader();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, []);
 
   return (
@@ -63,10 +74,11 @@ export function SiteHeader() {
         aria-label="Primary navigation"
         className={[
           "mx-auto flex h-12.5 max-w-350 items-center justify-between",
-          "rounded-full border border-white/8",
-          "shadow-[0_8px_32px_rgba(0,0,0,0.45)] px-2",
-          "bg-[#4537273d]/55 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-lg",
-          "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "rounded-full border px-2 backdrop-blur-md",
+          "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          isDarkGlass
+            ? "border-[#ffeee0]/12 bg-[#564b41b6]/82 shadow-[0_12px_42px_rgba(0,0,0,0.52)]"
+            : "border-white/8 bg-[#4537273d]/55 shadow-[0_8px_32px_rgba(0,0,0,0.45)]",
           isHidden ? "scale-[0.98]" : "scale-100",
         ].join(" ")}
       >
@@ -94,9 +106,30 @@ export function SiteHeader() {
         <div className="flex items-center gap-1">
           <a
             href="#contact"
-            className="inline-flex h-9 items-center rounded-full bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-6 text-[13px] font-bold text-[#231a12] no-underline shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter,transform,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_34px_rgba(218, 198, 168, 0.32),inset_0_1px_0_rgba(255,255,255,0.36)]"
+            className={[
+              "relative inline-flex h-9 items-center overflow-hidden rounded-full px-6 text-[13px] font-bold text-[#231a12] no-underline",
+              "transition-[filter,box-shadow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              "hover:brightness-110",
+              isDarkGlass
+                ? "border border-[#ead9c9]/70 shadow-[0_10px_28px_rgba(138,81,0,0.16)] hover:shadow-[0_14px_34px_rgba(138,81,0,0.2)]"
+                : "border border-transparent shadow-[0_10px_28px_rgba(246,147,0,0.24)] hover:shadow-[0_14px_34px_rgba(218,198,168,0.32),inset_0_1px_0_rgba(255,255,255,0.36)]",
+            ].join(" ")}
           >
-            Get Enquiry
+            <span
+              aria-hidden="true"
+              className={[
+                "absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                isDarkGlass ? "opacity-0" : "opacity-100",
+              ].join(" ")}
+            />
+            <span
+              aria-hidden="true"
+              className={[
+                "absolute inset-0 bg-[radial-gradient(circle_at_14%_12%,rgba(246,147,0,0.22),transparent_62%),radial-gradient(circle_at_86%_88%,rgba(138,81,0,0.09),transparent_62%),linear-gradient(145deg,#ffffff_0%,#fff8f5_52%,#f3e4d6_100%)] transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                isDarkGlass ? "opacity-100" : "opacity-0",
+              ].join(" ")}
+            />
+            <span className="relative">Get Enquiry</span>
           </a>
         </div>
       </nav>

@@ -160,7 +160,7 @@ export function ServicesSection() {
           className={`${raleway.className} mt-3 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="services-heading"
         >
-          See Our all Services
+          Our Services
         </h2>
       </div>
 
