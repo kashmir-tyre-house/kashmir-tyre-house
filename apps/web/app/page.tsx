@@ -1,6 +1,7 @@
 import { Button } from "@kth/ui";
 
 import { HeroBackgroundRotator } from "../components/hero-background-rotator";
+import { ServicesSection } from "../components/services-section";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 
@@ -106,7 +107,7 @@ export default function Home() {
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Button
-                className="inline-flex items-center gap-2 rounded-[10px] bg-[#c8922a] px-5 text-[14px] font-bold text-black hover:bg-[#e0a830]"
+                className="inline-flex items-center gap-2 rounded-[10px] bg-[#c8922a] px-5 text-[14px] font-bold text-black hover:bg-[#e0a830] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter,transform,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_34px_rgba(218, 198, 168, 0.32),inset_0_1px_0_rgba(255,255,255,0.36)]"
                 size="lg"
               >
                 Explore Inventory
@@ -195,6 +196,8 @@ export default function Home() {
           </span>
         </div>
       </section>
+
+      <ServicesSection />
 
       <SiteFooter />
     </main>

@@ -51,29 +51,28 @@ export function SiteHeader() {
     <header
       onFocus={() => setIsHidden(false)}
       className={[
-        "fixed left-0 right-0 top-4 z-50 px-5",
+        "fixed left-0 right-0 top-4 z-50 px-5 ",
         "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
         "motion-reduce:transition-none",
         isHidden
-          ? "pointer-events-none -translate-y-[130%] opacity-0 blur-sm"
+          ? "pointer-events-none translate-y-[-130%] opacity-0 blur-sm"
           : "translate-y-0 opacity-100 blur-0",
       ].join(" ")}
     >
       <nav
         aria-label="Primary navigation"
         className={[
-          "mx-auto flex h-[50px] max-w-[1400px] items-center justify-between",
-          "rounded-full border border-white/[0.08]",
-          "bg-[#2d2d2c]/55 px-2",
-          "shadow-[0_8px_32px_rgba(0,0,0,0.45)]",
-          "backdrop-blur-2xl",
+          "mx-auto flex h-12.5 max-w-350 items-center justify-between",
+          "rounded-full border border-white/8",
+          "shadow-[0_8px_32px_rgba(0,0,0,0.45)] px-2",
+          "bg-[#4537273d]/55 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-lg",
           "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
           isHidden ? "scale-[0.98]" : "scale-100",
         ].join(" ")}
       >
         <a
           href="#home"
-          className="-ml-1.5 flex h-[44px] w-[44px] flex-shrink-0 items-center justify-center rounded-full bg-[#1e1e1c] text-[15px] font-black tracking-wide text-white no-underline"
+          className="-ml-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1c] text-[15px] font-black tracking-wide text-white no-underline"
           aria-label="Kashmir Tyre House Home"
         >
           K
@@ -95,7 +94,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-1">
           <a
             href="#contact"
-            className="inline-flex h-[36px] items-center rounded-full bg-[#fff8f5] px-6 text-[13px] font-bold text-black no-underline transition-colors duration-300 hover:bg-[#fff8f5]/80"
+            className="inline-flex h-9 items-center rounded-full bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-6 text-[13px] font-bold text-[#231a12] no-underline shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter,transform,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_34px_rgba(218, 198, 168, 0.32),inset_0_1px_0_rgba(255,255,255,0.36)]"
           >
             Get Enquiry
           </a>
