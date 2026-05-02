@@ -12,7 +12,7 @@ type HeroBackgroundRotatorProps = {
 export function HeroBackgroundRotator({
   alt,
   images,
-  intervalMs = 7_500
+  intervalMs = 10_000
 }: HeroBackgroundRotatorProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 

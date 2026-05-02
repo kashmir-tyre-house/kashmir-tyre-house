@@ -1,6 +1,7 @@
 import { Button } from "@kth/ui";
 
 import { HeroBackgroundRotator } from "../components/hero-background-rotator";
+import { SiteFooter } from "../components/site-footer";
 
 const navItems = ["Home", "Tyres", "Services", "About", "Contact"];
 
@@ -40,8 +41,8 @@ const specItems = [
 ];
 
 const stats = [
-  { num: "2k+", label: "SKUs in stock" },
-  { num: "35yr", label: "Experience" },
+  { num: "250+", label: "SKUs in stock" },
+  { num: "25yr", label: "Experience" },
   { num: "500+", label: "Clients served" },
 ];
 
@@ -67,6 +68,7 @@ export default function Home() {
           <a
             href="#home"
             className="flex h-[44px] w-[44px] flex-shrink-0 items-center justify-center rounded-full bg-[#1e1e1c] text-[15px] font-black tracking-wide text-white no-underline"
+            style={{marginLeft: '-6px'}}
           >
             K
           </a>
@@ -77,7 +79,7 @@ export default function Home() {
               <li key={item}>
                 <a
                   href={`#${item.toLowerCase()}`}
-                  className="rounded-full px-5 py-2 text-[14px] font-medium text-white/55 no-underline transition-colors hover:text-white"
+                  className="rounded-full px-5 py-2 text-[14px] text-white/55 no-underline transition-colors hover:text-white"
                 >
                   {item}
                 </a>
@@ -89,7 +91,7 @@ export default function Home() {
           <div className="flex items-center gap-1">
             <a
               href="#contact"
-              className="inline-flex h-[36px] items-center rounded-full bg-white px-6 text-[13px] font-bold text-black no-underline transition-colors hover:bg-white/90"
+              className="inline-flex h-[36px] items-center rounded-full bg-[#fff8f5] px-6 text-[13px] font-bold text-black no-underline transition-colors hover:bg-[#fff8f5]/80"
             >
               Get Enquiry
             </a>
@@ -107,9 +109,9 @@ export default function Home() {
           images={heroImages}
         />
 
-        <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,rgba(4,4,4,0.92)_0%,rgba(8,8,8,0.78)_40%,rgba(12,12,12,0.4)_70%,rgba(12,12,12,0.12)_100%)]" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_70%_at_80%_50%,rgba(180,120,30,0.1)_0%,transparent_65%)]" />
+        <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,rgba(4,4,4,0.78)_0%,rgba(8,8,8,0.62)_40%,rgba(12,12,12,0.3)_70%,rgba(12,12,12,0.08)_100%)]" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.22)_0%,rgba(0,0,0,0)_42%,rgba(0,0,0,0.42)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_70%_at_80%_50%,rgba(180,120,30,0.08)_0%,transparent_65%)]" />
 
         <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_360px]">
 
@@ -153,7 +155,7 @@ export default function Home() {
                 </svg>
               </Button>
               <Button
-                className="inline-flex items-center gap-2 rounded-[10px] border border-white/12 bg-transparent px-5 text-[13px] font-medium text-white/60 hover:border-[#c8922a]/40 hover:bg-[#c8922a]/05 hover:text-black"
+                className="inline-flex items-center gap-2 rounded-[10px] border border-white/12 bg-transparent px-5 text-[13px] font-medium text-white/60 hover:border-[#c8922a]/40 hover:bg-[#000000]/05 hover:text-black"
                 size="lg"
                 variant="secondary"
               >
@@ -233,6 +235,8 @@ export default function Home() {
           </span>
         </div>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

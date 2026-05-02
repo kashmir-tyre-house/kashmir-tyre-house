@@ -90,6 +90,73 @@ Always prefer:
 - Mobile-first design
 - Accessible UI
 
+## Local Reference Files
+
+The repository contains additional project guidance in `agents/`, `rules/`, and `skills/`.
+These files are not standalone Codex skills or real background agents by themselves.
+Use them as task-specific reference documents.
+
+Before starting a task, read the relevant files below in addition to this `AGENTS.md`.
+Do not bulk-read every file if the task is narrow; load only the files that match the work.
+
+### Always Relevant
+
+For most implementation work, use:
+
+- `rules/project-context.md`
+- `rules/tech-stack.md`
+- `rules/code-quality-rules.md`
+
+### Frontend Customer Portal Work
+
+For homepage, catalogue, product cards, enquiry UI, wishlist, filters, or responsive customer-facing UI, read:
+
+- `rules/frontend-rules.md`
+- `rules/ui-ux-rules.md`
+- `agents/frontend-engineer.md`
+- `agents/ui-ux-designer.md`
+- `skills/create-premium-page.md`
+- `skills/create-responsive-component.md`
+
+If the task includes filtering/search/product discovery, also read:
+
+- `skills/build-product-filtering.md`
+
+If the task includes animation or motion polish, also read:
+
+- `skills/add-animations.md`
+
+### Admin Portal Work
+
+For admin login, dashboard, product management, media management, tables, or admin forms, read:
+
+- `agents/admin-portal-engineer.md`
+- `skills/build-admin-crud.md`
+- `rules/frontend-rules.md`
+- `rules/ui-ux-rules.md`
+
+### Backend, Database, Email, and Storage Work
+
+For API routes, Drizzle schema, migrations, Neon, Cloudflare R2, Resend, validation, or server-side logic, read:
+
+- `rules/backend-rules.md`
+- `agents/backend-db-engineer.md`
+
+### Performance Work
+
+For image optimization, Core Web Vitals, bundle size, caching, pagination, or rendering performance, read:
+
+- `rules/performance-rules.md`
+- `agents/performance-optimizer.md`
+- `skills/optimize-performance.md`
+
+### Review Before Finishing
+
+Before completing any non-trivial feature, review against:
+
+- `skills/review-before-commit.md`
+- `agents/qa-reviewer.md`
+
 ## Do Not
 
 - Do not over-engineer.
