@@ -148,7 +148,7 @@ export function SiteHeader() {
                 isDarkGlass ? "opacity-100" : "opacity-0",
               ].join(" ")}
             />
-            <span className="relative">Get Enquiry</span>
+            <span className="relative">Send Enquiry</span>
           </a>
         </div>
       </nav>

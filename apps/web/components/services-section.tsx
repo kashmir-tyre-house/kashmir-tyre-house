@@ -157,14 +157,14 @@ export function ServicesSection() {
     >
       <div className="mx-auto mb-12 max-w-3xl text-center">
         <h2
-          className={`${raleway.className} mt-3 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+          className={`${raleway.className} text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="services-heading"
         >
           Our Services
         </h2>
       </div>
 
-      <div className={`${raleway.className} mx-auto grid max-w-330 gap-4 md:grid-cols-2 xl:grid-cols-3`}>
+      <div className={`${karla.className} mx-auto grid max-w-330 gap-4 md:grid-cols-2 xl:grid-cols-3`}>
         {services.map((service) => (
             <article
               className="group relative flex min-h-60 items-start overflow-hidden rounded-[18px] border border-[#ead9c9]/70 bg-[linear-gradient(145deg,#ffffff_0%,#fff8f5_52%,#f3e4d6_100%)] px-7 py-7 shadow-[0_12px_40px_rgba(35,26,18,0.07)] transition-shadow duration-500 ease-in-out hover:shadow-[0_20px_56px_rgba(138,81,0,0.14)]"
