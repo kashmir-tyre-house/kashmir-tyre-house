@@ -1,5 +1,6 @@
 import { Button } from "@kth/ui";
 
+import { AboutSection } from "../components/about-section";
 import { HeroBackgroundRotator } from "../components/hero-background-rotator";
 import { ServicesSection } from "../components/services-section";
 import { SiteFooter } from "../components/site-footer";
@@ -43,7 +44,7 @@ const specItems = [
 const stats = [
   { num: "250+", label: "SKUs in stock" },
   { num: "25yr", label: "Experience" },
-  { num: "500+", label: "Clients served" },
+  { num: "500+", label: "Customers served" },
 ];
 
 const heroImages = [
@@ -56,7 +57,7 @@ const heroImages = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white">
+    <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white bg-[#f9eee4] ">
 
       <SiteHeader />
 
@@ -198,6 +199,8 @@ export default function Home() {
       </section>
 
       <ServicesSection />
+
+      <AboutSection />
 
       <SiteFooter />
     </main>

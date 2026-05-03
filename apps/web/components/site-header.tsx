@@ -103,7 +103,26 @@ export function SiteHeader() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-4">
+          <a
+            href="#saved"
+            className="inline-flex h-9 items-center gap-2 rounded-full px-2 text-[14px] text-white/55 no-underline transition-colors duration-300 hover:text-white"
+          >
+            <svg
+              aria-hidden="true"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z" />
+            </svg>
+            Saved
+          </a>
+
           <a
             href="#contact"
             className={[

@@ -1,0 +1,45 @@
+.about-marquee__track {
+  animation-duration: 46s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform;
+}
+
+.about-marquee__track--left {
+  animation-name: about-marquee-left;
+}
+
+.about-marquee__track--right {
+  animation-name: about-marquee-right;
+}
+
+.about-marquee:hover .about-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes about-marquee-left {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
+@keyframes about-marquee-right {
+  from {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-marquee__track {
+    animation: none;
+    transform: translateX(0);
+  }
+}
