@@ -1,17 +1,49 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const navItems = ["Home", "Tyres", "Services", "About", "Contact"];
 
 export function SiteHeader() {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+  const [activeTarget, setActiveTarget] = useState(
+    pathname === "/bookmarks" ? "bookmarks" : "home"
+  );
+  const currentActiveTarget = isHomePage
+    ? activeTarget
+    : pathname === "/bookmarks"
+      ? "bookmarks"
+      : "home";
   const [isHidden, setIsHidden] = useState(false);
-  const [isDarkGlass, setIsDarkGlass] = useState(false);
+  const [isDarkGlass, setIsDarkGlass] = useState(!isHomePage);
   const previousScrollY = useRef(0);
   const ticking = useRef(false);
 
   useEffect(() => {
+    if (!isHomePage) {
+      return;
+    }
+
     previousScrollY.current = window.scrollY;
+    const sectionIds = ["home", "tyres", "services", "about", "contact"];
+
+    function updateActiveTarget() {
+      const marker = window.scrollY + 180;
+      let currentTarget = "home";
+
+      for (const sectionId of sectionIds) {
+        const section = document.getElementById(sectionId);
+
+        if (section && marker >= section.offsetTop) {
+          currentTarget = sectionId;
+        }
+      }
+
+      setActiveTarget(currentTarget);
+    }
 
     function updateHeader() {
       const currentScrollY = window.scrollY;
@@ -19,12 +51,15 @@ export function SiteHeader() {
       const hero = document.getElementById("home");
       const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : 0;
 
-      setIsDarkGlass(heroBottom > 0 && currentScrollY + 160 >= heroBottom);
+      setIsDarkGlass(
+        !isHomePage || (heroBottom > 0 && currentScrollY + 160 >= heroBottom)
+      );
 
       // Always show navbar near top
       if (currentScrollY < 40) {
         setIsHidden(false);
-        setIsDarkGlass(false);
+        setIsDarkGlass(!isHomePage);
+        setActiveTarget("home");
         previousScrollY.current = currentScrollY;
         ticking.current = false;
         return;
@@ -38,6 +73,7 @@ export function SiteHeader() {
         previousScrollY.current = currentScrollY;
       }
 
+      updateActiveTarget();
       ticking.current = false;
     }
 
@@ -49,14 +85,17 @@ export function SiteHeader() {
     }
 
     updateHeader();
+    updateActiveTarget();
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
+    window.addEventListener("hashchange", updateActiveTarget);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
+      window.removeEventListener("hashchange", updateActiveTarget);
     };
-  }, []);
+  }, [isHomePage, pathname]);
 
   return (
     <header
@@ -82,31 +121,41 @@ export function SiteHeader() {
           isHidden ? "scale-[0.98]" : "scale-100",
         ].join(" ")}
       >
-        <a
-          href="#home"
+        <Link
+          href="/"
           className="-ml-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1c] text-[15px] font-black tracking-wide text-white no-underline"
           aria-label="Kashmir Tyre House Home"
         >
           K
-        </a>
+        </Link>
 
         <ul className="absolute left-1/2 top-1/2 m-0 hidden -translate-x-1/2 -translate-y-1/2 list-none items-center gap-0 p-0 lg:flex">
           {navItems.map((item) => (
             <li key={item}>
-              <a
-                href={`#${item.toLowerCase()}`}
-                className="rounded-full px-5 py-2 text-[14px] text-white/55 no-underline transition-colors duration-300 hover:text-white"
+              <Link
+                href={isHomePage ? `#${item.toLowerCase()}` : `/#${item.toLowerCase()}`}
+                className={[
+                  "rounded-full px-5 py-2 text-[14px] no-underline transition-colors duration-300",
+                  currentActiveTarget === item.toLowerCase()
+                    ? "text-[#f8ab59]"
+                    : "text-white/55 hover:text-white",
+                ].join(" ")}
               >
                 {item}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
 
         <div className="flex items-center gap-4">
-          <a
-            href="#saved"
-            className="inline-flex h-9 items-center gap-2 rounded-full px-2 text-[14px] text-white/55 no-underline transition-colors duration-300 hover:text-white"
+          <Link
+            href="/bookmarks"
+            className={[
+              "inline-flex h-9 items-center gap-2 rounded-full px-2 text-[14px] no-underline transition-colors duration-300",
+              pathname === "/bookmarks"
+                ? "text-[#f8ab59]"
+                : "text-white/55 hover:text-white",
+            ].join(" ")}
           >
             <svg
               aria-hidden="true"
@@ -121,10 +170,10 @@ export function SiteHeader() {
               <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z" />
             </svg>
             Saved
-          </a>
+          </Link>
 
-          <a
-            href="#contact"
+          <Link
+            href={isHomePage ? "#contact" : "/#contact"}
             className={[
               "relative inline-flex h-9 items-center overflow-hidden rounded-full px-6 text-[13px] font-bold text-[#231a12] no-underline",
               "transition-[filter,box-shadow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -149,7 +198,7 @@ export function SiteHeader() {
               ].join(" ")}
             />
             <span className="relative">Send Enquiry</span>
-          </a>
+          </Link>
         </div>
       </nav>
     </header>
