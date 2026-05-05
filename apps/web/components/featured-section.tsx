@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowRight, ArrowBigDown } from "lucide-react";
 import { Raleway } from "next/font/google";
 
 import { featuredProducts } from "../lib/products";
@@ -9,24 +10,6 @@ const raleway = Raleway({
   style: ["normal", "italic"],
   display: "swap"
 });
-
-function ArrowIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-3.5 w-3.5"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M5 12h14" />
-      <path d="m12 5 7 7-7 7" />
-    </svg>
-  );
-}
 
 export function FeaturedSection() {
   return (
@@ -55,21 +38,35 @@ export function FeaturedSection() {
           type="button"
         >
           View all products
-          <ArrowIcon />
+          <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
         </button>
       </div>
 
       <div className="mx-auto mt-10 max-w-330">
-        <div
-          className="flex h-fit snap-x snap-mandatory gap-5 overflow-x-auto overscroll-x-contain bg-[#f9eee4] pb-10 outline-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:hidden"
-          style={{
-            WebkitOverflowScrolling: "touch",
-            WebkitTapHighlightColor: "transparent"
-          }}
-        >
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.productName} product={product} />
-          ))}
+        <div className="relative pb-15">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {featuredProducts.map((product) => (
+              <ProductCard
+                className="!min-w-0 !w-full !flex-auto !snap-none"
+                key={product.productName}
+                product={product}
+              />
+            ))}
+          </div>
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-32 bg-[linear-gradient(180deg,rgba(249,238,228,0)_0%,rgba(249,238,228,0.64)_38%,rgba(249,238,228,0.9)_68%,#f9eee4_100%)]" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-7 z-10 flex justify-center">
+            <div className="h-16 w-64 rounded-full bg-[radial-gradient(circle,rgba(246,147,0,0.18)_0%,rgba(246,147,0,0.08)_42%,transparent_72%)] blur-2xl" />
+          </div>
+
+          <div className="absolute inset-x-0 bottom-5 z-20 flex justify-center hover:translate-y-0.5 transition-transform p-2">
+            <button
+              type="button"
+              className="w-12"
+            >
+              <ArrowBigDown aria-hidden="true" className="mx-auto h-4 w-4" strokeWidth={2} />
+            </button>
+          </div>
         </div>
       </div>
     </section>

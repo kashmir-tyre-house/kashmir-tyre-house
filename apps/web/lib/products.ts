@@ -103,6 +103,19 @@ export const productCatalog: Product[] = [
     starRating: 4.3,
     image: "/images/home-image-1.png",
     isBookmarked: false
+  },
+  {
+    brand: "Continental",
+    category: "Urban Delivery Tyre",
+    productName: "CityHaul CD-12",
+    primarySize: "225/70 R17.5",
+    availableSizesCount: 4,
+    vehicleType: "Delivery Truck",
+    loadIndex: "129/127",
+    plyRating: "12PR",
+    starRating: 4.4,
+    image: "/images/home-image-3.png",
+    isBookmarked: false
   }
 ];
 

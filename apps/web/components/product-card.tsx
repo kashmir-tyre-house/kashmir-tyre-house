@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "@kth/ui";
+import { Bookmark } from "lucide-react";
 import { Inter } from "next/font/google";
 
 import type { Product } from "../lib/products";
@@ -15,23 +16,6 @@ type ProductCardProps = {
   product: Product;
   className?: string;
 };
-
-function BookmarkIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-3.5 w-3.5"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z" />
-    </svg>
-  );
-}
 
 function StarRating({ rating }: { rating: number }) {
   const filledStars = Math.round(rating);
@@ -96,7 +80,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
             className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#F3E7DB] text-[#231a12] shadow-[0_8px_20px_rgba(35,26,18,0.08)] transition-colors duration-300 hover:text-[#f69300]"
             type="button"
           >
-            <BookmarkIcon />
+            <Bookmark aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
           </button>
         </div>
 
