@@ -11,12 +11,18 @@ export function SiteHeader() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const [activeTarget, setActiveTarget] = useState(
-    pathname === "/bookmarks" ? "bookmarks" : "home"
+    pathname === "/bookmarks"
+      ? "bookmarks"
+      : pathname === "/contact"
+        ? "contact"
+        : "home"
   );
   const currentActiveTarget = isHomePage
     ? activeTarget
     : pathname === "/bookmarks"
       ? "bookmarks"
+      : pathname === "/contact"
+        ? "contact"
       : "home";
   const [isHidden, setIsHidden] = useState(false);
   const [isDarkGlass, setIsDarkGlass] = useState(!isHomePage);
@@ -134,7 +140,13 @@ export function SiteHeader() {
           {navItems.map((item) => (
             <li key={item}>
               <Link
-                href={isHomePage ? `#${item.toLowerCase()}` : `/#${item.toLowerCase()}`}
+                href={
+                  item === "Contact"
+                    ? "/contact"
+                    : isHomePage
+                      ? `#${item.toLowerCase()}`
+                      : `/#${item.toLowerCase()}`
+                }
                 className={[
                   "rounded-full px-5 py-2 text-[14px] no-underline transition-colors duration-300",
                   currentActiveTarget === item.toLowerCase()
@@ -163,7 +175,7 @@ export function SiteHeader() {
           </Link>
 
           <Link
-            href={isHomePage ? "#contact" : "/#contact"}
+            href="/contact"
             className={[
               "relative inline-flex h-9 items-center overflow-hidden rounded-full px-6 text-[13px] font-bold text-[#231a12] no-underline",
               "transition-[filter,box-shadow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
