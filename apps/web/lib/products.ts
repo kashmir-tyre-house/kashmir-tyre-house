@@ -4,9 +4,10 @@ export type Product = {
   productName: string;
   primarySize: string;
   availableSizesCount: number;
-  application: string;
-  keyFeature: string;
+  vehicleType: string;
   loadIndex: string;
+  plyRating: string;
+  starRating: number;
   image: string;
   isBookmarked: boolean;
 };
@@ -18,9 +19,10 @@ export const productCatalog: Product[] = [
     productName: "Highway Pro HP-300",
     primarySize: "295/80 R22.5",
     availableSizesCount: 6,
-    application: "Truck / Highway",
-    keyFeature: "High load capacity",
+    vehicleType: "Truck",
     loadIndex: "152/148",
+    plyRating: "16PR",
+    starRating: 4.8,
     image: "/images/tyre-image.jpeg",
     isBookmarked: true
   },
@@ -30,9 +32,10 @@ export const productCatalog: Product[] = [
     productName: "TerraGrip MX",
     primarySize: "10.00 R20",
     availableSizesCount: 4,
-    application: "Mixed Service",
-    keyFeature: "Strong road grip",
+    vehicleType: "Truck",
     loadIndex: "146/143",
+    plyRating: "16PR",
+    starRating: 4.6,
     image: "/images/tyre-image.jpeg",
     isBookmarked: true
   },
@@ -42,9 +45,10 @@ export const productCatalog: Product[] = [
     productName: "UrbanRide CT-90",
     primarySize: "215/75 R15",
     availableSizesCount: 8,
-    application: "Light Truck",
-    keyFeature: "Long tread life",
+    vehicleType: "Light Truck",
     loadIndex: "110/108",
+    plyRating: "8PR",
+    starRating: 4.4,
     image: "/images/tyre-image.jpeg",
     isBookmarked: true
   },
@@ -54,9 +58,10 @@ export const productCatalog: Product[] = [
     productName: "OffRoad Beast OR-X",
     primarySize: "385/65 R22.5",
     availableSizesCount: 5,
-    application: "Off-Road / Site",
-    keyFeature: "Rugged terrain ready",
+    vehicleType: "Heavy Truck",
     loadIndex: "160",
+    plyRating: "20PR",
+    starRating: 4.9,
     image: "/images/tyre-image.jpeg",
     isBookmarked: true
   },
@@ -66,9 +71,10 @@ export const productCatalog: Product[] = [
     productName: "Duratrail RH-7",
     primarySize: "11.00 R20",
     availableSizesCount: 3,
-    application: "Regional Transport",
-    keyFeature: "Stable long-haul wear",
+    vehicleType: "Regional Transport",
     loadIndex: "150/146",
+    plyRating: "18PR",
+    starRating: 4.7,
     image: "/images/home-image-2.png",
     isBookmarked: true
   },
@@ -78,9 +84,10 @@ export const productCatalog: Product[] = [
     productName: "SiteMaster XM",
     primarySize: "315/80 R22.5",
     availableSizesCount: 5,
-    application: "Construction / Fleet",
-    keyFeature: "Cut-resistant compound",
+    vehicleType: "Construction Fleet",
     loadIndex: "156/150",
+    plyRating: "18PR",
+    starRating: 4.5,
     image: "/images/home-image-4.png",
     isBookmarked: false
   },
@@ -90,9 +97,10 @@ export const productCatalog: Product[] = [
     productName: "RoadTerrain AT-5",
     primarySize: "265/70 R19.5",
     availableSizesCount: 4,
-    application: "Utility / Mixed Terrain",
-    keyFeature: "Balanced grip and mileage",
+    vehicleType: "Utility Vehicle",
     loadIndex: "140/137",
+    plyRating: "14PR",
+    starRating: 4.3,
     image: "/images/home-image-1.png",
     isBookmarked: false
   }
