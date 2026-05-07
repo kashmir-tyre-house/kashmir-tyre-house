@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import { Raleway } from "next/font/google";
 
+import { ContactSelectedProducts } from "../../components/contact-selected-products";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteHeader } from "../../components/site-header";
 import { productCatalog } from "../../lib/products";
@@ -43,83 +43,12 @@ export default function ContactPage() {
 
           {/* ── Main two-column grid ─────────────────────────────── */}
           <div className="grid gap-5 lg:grid-cols-[380px_1fr]">
-
-            {/* ── LEFT: Selected Products ──────────────────────── */}
-            <aside className="flex flex-col gap-5 self-start lg:sticky lg:top-28">
-              <div className="rounded-[24px] border border-[#ead9c9] bg-white p-6 shadow-[0_18px_46px_rgba(35,26,18,0.06)]">
-                <div className="flex items-center justify-between">
-                  <h2 className={`${raleway.className} text-[17px] font-semibold tracking-[-0.03em] text-[#231a12]`}>
-                    Selected Products
-                  </h2>
-                  <span className="rounded-full bg-[#fff1de] px-2.5 py-1 text-[11px] font-semibold text-[#a06000]">
-                    {selectedProducts.length} items
-                  </span>
-                </div>
-
-                <ul className="mt-5 space-y-3">
-                  {selectedProducts.map((product) => (
-                    <li
-                      className="group relative flex gap-3.5 rounded-[16px] border border-[#f0dfd1] bg-[#fffcfa] p-2 transition-shadow duration-300 hover:shadow-[0_6px_20px_rgba(35,26,18,0.06)]"
-                      key={product.productName}
-                    >
-                      {/* Thumbnail */}
-                      <div className="relative h-[72px] w-[80px] shrink-0 overflow-hidden rounded-[10px] bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.14),transparent_38%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
-                        <Image
-                          alt={`${product.brand} ${product.productName}`}
-                          className="object-cover"
-                          fill
-                          sizes="80px"
-                          src={product.image}
-                        />
-                      </div>
-
-                      {/* Info */}
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-extrabold tracking-[0.18em] text-[#8a5100]">
-                          {product.brand.toUpperCase()}
-                        </p>
-                        <h3 className="mt-0.5 text-[14px] font-bold leading-[1.2] tracking-[-0.025em] text-[#231a12]">
-                          {product.productName}
-                        </h3>
-                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                          <span className="text-[11px] font-semibold text-[#8b7a6c]">
-                            {product.primarySize}
-                          </span>
-                          <span className="text-[11px] text-[#c0ac9e]">·</span>
-                          <span className="text-[11px] font-semibold text-[#8b7a6c]">
-                            {product.vehicleType}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Qty badge */}
-                      <span className="absolute right-3 top-3 rounded-full border border-[#ead9c9] bg-white px-2 py-0.5 text-[10px] font-bold text-[#8b7a6c]">
-                        ×1
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Add more CTA card */}
-              <div className="rounded-[24px] border border-dashed border-[#d9c4ae] bg-[#fdf5ec] p-5">
-                <p className="text-[13px] leading-[1.75] text-[#6f6258]">
-                  Need more options? Browse and shortlist additional tyres before submitting.
-                </p>
-                <button
-                  className="mt-4 inline-flex h-9 items-center gap-2 rounded-full border border-[#231a12]/18 bg-white px-4 text-[12px] font-bold text-[#231a12] shadow-[0_2px_8px_rgba(35,26,18,0.06)] transition-all duration-300 hover:border-[#231a12] hover:bg-[#231a12] hover:text-[#fff8f5]"
-                  type="button"
-                >
-                  Browse products
-                  <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
-                </button>
-              </div>
-            </aside>
+            <ContactSelectedProducts initialProducts={selectedProducts} />
 
             {/* ── RIGHT: Enquiry Form ──────────────────────────── */}
             <section className="rounded-[24px] border border-[#ead9c9] bg-white p-7 shadow-[0_18px_46px_rgba(35,26,18,0.06)] sm:p-6">
               <h2 className={`${raleway.className} text-[22px] font-semibold tracking-[-0.03em] text-[#231a12]`}>
-                Your Details
+                Your Details 
               </h2>
               <p className="mt-2 text-[13px] leading-[1.75] text-[#6f6258]">
                 Share a few details and our team will get back with pricing,
@@ -129,66 +58,66 @@ export default function ContactPage() {
               <form className="mt-8" action="#">
 
                 {/* Row 1 */}
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="group relative">
-                    <label className="absolute left-4 top-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#8b7a6c] transition-all duration-200">
-                      Full Name <span className="text-[#f69300]">*</span>
-                    </label>
+                <div className={`${raleway.className} grid gap-4 sm:grid-cols-2`}>
+                  <label className="block">
+                    <span className="mb-1.5 block text-[12px] font-semibold tracking-[0.1em] text-[#8b7a6c]">
+                      Full Name <span className="text-[#f69300] text-[18px]">*</span>
+                    </span>
                     <input
-                      className="h-[68px] w-full rounded-[16px] border border-[#ead9c9] bg-[#fffaf6] pb-3 pt-7 px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
-                      // placeholder="e.g. Rajesh Kumar"
+                      className="h-[45px] w-full rounded-[12px] border border-[#ead9c9] bg-[#fffaf6] px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
+                      placeholder="Enter your full name"
                       type="text"
                     />
-                  </div>
+                  </label>
 
-                  <div className="relative">
-                    <label className="absolute left-4 top-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#8b7a6c]">
-                      Contact Number <span className="text-[#f69300]">*</span>
-                    </label>
+                  <label className="block">
+                    <span className="mb-1.5 block text-[12px] font-semibold tracking-[0.1em] text-[#8b7a6c]">
+                      Contact Number <span className="text-[#f69300] text-[18px]">*</span>
+                    </span>
                     <input
-                      className="h-[68px] w-full rounded-[16px] border border-[#ead9c9] bg-[#fffaf6] pb-3 pt-7 px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
-                      placeholder="+91 98765 43210"
+                      className="h-[45px] w-full rounded-[12px] border border-[#ead9c9] bg-[#fffaf6] px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
+                      placeholder="Enter your contact number"
                       type="tel"
                     />
-                  </div>
+                  </label>
                 </div>
 
                 {/* Row 2 */}
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <div className="relative">
-                    <label className="absolute left-4 top-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#8b7a6c]">
+                  <label className="block">
+                    <span className="mb-1.5 block text-[12px] font-semibold tracking-[0.1em] text-[#8b7a6c]">
                       Email Address
-                    </label>
+                    </span>
                     <input
-                      className="h-[68px] w-full rounded-[16px] border border-[#ead9c9] bg-[#fffaf6] pb-3 pt-7 px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
-                      placeholder="you@company.com"
+                      className="h-[45px] w-full rounded-[12px] border border-[#ead9c9] bg-[#fffaf6] px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
+                      placeholder="Enter your email address"
                       type="email"
                     />
-                  </div>
+                  </label>
 
-                  <div className="relative">
-                    <label className="absolute left-4 top-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#8b7a6c]">
+                  <label className="block">
+                    <span className="mb-1.5 block text-[12px] font-semibold tracking-[0.1em] text-[#8b7a6c]">
                       Company
-                    </label>
+                    </span>
                     <input
-                      className="h-[68px] w-full rounded-[16px] border border-[#ead9c9] bg-[#fffaf6] pb-3 pt-7 px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
-                      placeholder="Optional"
+                      className="h-[45px] w-full rounded-[12px] border border-[#ead9c9] bg-[#fffaf6] px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)]"
+                      placeholder="Enter your company name"
                       type="text"
                     />
-                  </div>
+                  </label>
                 </div>
 
 
                 {/* Message */}
-                <div className="relative mt-4">
-                  <label className="absolute left-4 top-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#8b7a6c]">
+                <label className="mt-4 block">
+                  <span className="mb-1.5 block text-[12px] font-semibold tracking-[0.1em] text-[#8b7a6c]">
                     Message
-                  </label>
+                  </span>
                   <textarea
-                    className="min-h-[150px] w-full rounded-[16px] border border-[#ead9c9] bg-[#fffaf6] pb-4 pt-8 px-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)] resize-none"
+                    className="min-h-[150px] w-full rounded-[12px] border border-[#ead9c9] bg-[#fffaf6] px-4 py-4 text-[14px] font-semibold text-[#231a12] outline-none transition-all duration-300 placeholder:text-[#bfad9f] placeholder:font-normal focus:border-[#f69300] focus:shadow-[0_0_0_3px_rgba(246,147,0,0.1)] resize-none"
                     placeholder="Quantity needed, delivery location, urgency, special requirements..."
                   />
-                </div>
+                </label>
 
                 {/* Footer row */}
                 <div className="mt-7 flex flex-col gap-4 border-t border-[#f0dfd1] pt-6 sm:flex-row sm:items-center sm:justify-between">
