@@ -1,4 +1,4 @@
-import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Raleway } from "next/font/google";
 
 import { ContactSelectedProducts } from "../../components/contact-selected-products";
