@@ -200,13 +200,13 @@ export default function Home() {
         </div>
       </section>
 
+      <BrandsSection />
+
       <FeaturedSection />
 
       <ServicesSection />
 
       <AboutSection />
-
-      <BrandsSection />
 
       <SiteFooter />
     </main>
