@@ -1,6 +1,7 @@
 import { Button } from "@kth/ui";
 
 import { AboutSection } from "../components/about-section";
+import { BrandsSection } from "../components/brands-section";
 import { FeaturedSection } from "../components/featured-section";
 import { HeroBackgroundRotator } from "../components/hero-background-rotator";
 import { ServicesSection } from "../components/services-section";
@@ -204,6 +205,8 @@ export default function Home() {
       <ServicesSection />
 
       <AboutSection />
+
+      <BrandsSection />
 
       <SiteFooter />
     </main>

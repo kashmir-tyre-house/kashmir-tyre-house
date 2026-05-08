@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const navItems = ["Home", "Tyres", "Services", "About", "Contact"];
+const navItems = ["Home", "Tyres", "Services", "About", "Brand"];
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -35,7 +35,7 @@ export function SiteHeader() {
     }
 
     previousScrollY.current = window.scrollY;
-    const sectionIds = ["home", "tyres", "services", "about", "contact"];
+    const sectionIds = ["home", "tyres", "services", "about", "brand"];
 
     function updateActiveTarget() {
       const marker = window.scrollY + 180;
@@ -141,11 +141,9 @@ export function SiteHeader() {
             <li key={item}>
               <Link
                 href={
-                  item === "Contact"
-                    ? "/contact"
-                    : isHomePage
-                      ? `#${item.toLowerCase()}`
-                      : `/#${item.toLowerCase()}`
+                  isHomePage
+                    ? `#${item.toLowerCase()}`
+                    : `/#${item.toLowerCase()}`
                 }
                 className={[
                   "rounded-full px-5 py-2 text-[14px] no-underline transition-colors duration-300",
