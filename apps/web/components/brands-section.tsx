@@ -34,7 +34,7 @@ export function BrandsSection() {
   return (
     <section
       aria-labelledby="brand-heading"
-      className="px-4 pb-8 pt-18 text-[#231a12] sm:px-6 lg:px-8"
+      className="px-4 pb-8 pt-24 text-[#231a12] sm:px-6 lg:px-8"
       id="brand"
     >
       <div className="mx-auto max-w-[1480px]">

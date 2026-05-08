@@ -15,7 +15,7 @@ export function FeaturedSection() {
   return (
     <section
       aria-labelledby="featured-heading"
-      className="px-4 text-[#231a12] sm:px-6 lg:px-8 lg:pt-16"
+      className="px-4 pt-20 text-[#231a12] sm:px-6 lg:px-8"
       id="tyres"
     >
       <h2

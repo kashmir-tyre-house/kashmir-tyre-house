@@ -81,12 +81,12 @@ export function AboutSection() {
   return (
     <section
       aria-labelledby="about-heading"
-      className={`${karla.className} max-w-330 mx-auto overflow-hidden text-[#231a12]`}
+      className={`${karla.className} mx-auto max-w-330 overflow-hidden pt-24 text-[#231a12]`}
       id="about"
     >
       <div className="mx-auto mb-12 max-w-3xl text-center">
         <h2
-          className={`${raleway.className} mt-3 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+          className={`${raleway.className} text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="about-heading"
         >
           About Us

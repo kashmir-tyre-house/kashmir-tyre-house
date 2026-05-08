@@ -152,7 +152,7 @@ export function ServicesSection() {
   return (
     <section
       aria-labelledby="services-heading"
-      className="bg-[#f9eee4] px-4 py-14 sm:px-6 lg:px-8 lg:py-14"
+      className="bg-[#f9eee4] px-4 pt-18 sm:px-6 lg:px-8"
       id="services"
     >
       <div className="mx-auto mb-12 max-w-3xl text-center">
