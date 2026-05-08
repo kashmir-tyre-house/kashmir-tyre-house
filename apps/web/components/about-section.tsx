@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Karla, Raleway } from "next/font/google";
 
+import { Reveal } from "./reveal";
+
 const karla = Karla({
   subsets: ["latin"],
   weight: "variable",
@@ -84,25 +86,25 @@ export function AboutSection() {
       className={`${karla.className} mx-auto max-w-330 overflow-hidden pt-24 text-[#231a12]`}
       id="about"
     >
-      <div className="mx-auto mb-12 max-w-3xl text-center">
+      <Reveal className="mx-auto mb-12 max-w-3xl text-center" distance="sm">
         <h2
           className={`${raleway.className} text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="about-heading"
         >
           About Us
         </h2>
-      </div>
+      </Reveal>
 
       <div className="mx-auto grid gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:px-8">
-        <div className="lg:pt-1">
+        <Reveal className="lg:pt-1" distance="sm">
           <h2
             className={`${raleway.className} max-w-2xl font-semibold leading-[1.03] tracking-[-0.055em] text-[#231a12] lg:text-[54px]`}
           >
             Over two decades of keeping Kashmir moving.
           </h2>
-        </div>
+        </Reveal>
 
-        <div>
+        <Reveal delayMs={90}>
           <p className="max-w-3xl text-[16px] font-medium leading-[1.8] text-[#6f6258] sm:text-[18px]">
             Kashmir Tyre House began as a single workshop and has grown into one
             of the region&apos;s trusted names in tyre sales and service. We
@@ -128,16 +130,16 @@ export function AboutSection() {
               </div>
             ))}
           </div>
-        </div>
+        </Reveal>
       </div>
 
-      <div className="relative mt-14 space-y-4 sm:mt-16">
+      <Reveal className="relative mt-14 space-y-4 sm:mt-16" delayMs={140}>
         <div className="pointer-events-none absolute bottom-[-20px] left-0 top-[-20px] z-10 w-24 bg-[linear-gradient(90deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
         <div className="pointer-events-none absolute bottom-[-20px] right-0 top-[-20px] z-10 w-24 bg-[linear-gradient(270deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
 
         <GalleryRow direction="left" images={galleryImages} />
         <GalleryRow direction="right" images={galleryImages} />
-      </div>
+      </Reveal>
     </section>
   );
 }

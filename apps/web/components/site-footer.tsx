@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Raleway, Karla } from "next/font/google";
+import { Karla } from "next/font/google";
 
 const karla = Karla({
   subsets: ["latin"],
@@ -32,7 +32,7 @@ export function SiteFooter() {
                 href="#home"
                 className="inline-flex items-center text-white no-underline"
               >
-                <div className="relative h-166 shrink-0 sm:h-20 sm:w-50">
+                <div className="relative h-166 shrink-0 sm:h-20 sm:w-50 mt-[-10px]">
                   <Image
                     alt="Kashmir Tyre House logo"
                     className="object-contain object-left"

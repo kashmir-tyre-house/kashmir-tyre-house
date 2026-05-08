@@ -118,7 +118,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
 
         <div className="mt-5 flex gap-2">
           <Button
-            className="h-9 flex-1 rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-transform duration-3000 hover:brightness-110"
+            className="h-9 flex-1 rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
             size="sm"
           >
             Enquire

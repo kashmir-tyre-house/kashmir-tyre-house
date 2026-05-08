@@ -4,6 +4,7 @@ import { AboutSection } from "../components/about-section";
 import { BrandsSection } from "../components/brands-section";
 import { FeaturedSection } from "../components/featured-section";
 import { HeroBackgroundRotator } from "../components/hero-background-rotator";
+import { Reveal } from "../components/reveal";
 import { ServicesSection } from "../components/services-section";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
@@ -80,7 +81,7 @@ export default function Home() {
         <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_360px]">
 
           {/* Left */}
-          <div className="flex flex-col">
+          <Reveal className="flex flex-col" delayMs={40} distance="sm">
             <div className="mb-8 flex items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#c8922a]/35 bg-[#c8922a]/10 px-4 py-1.5 text-[10px] font-semibold  tracking-[0.14em] text-[#c8922a]">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#c8922a]" />
@@ -144,30 +145,37 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
+          </Reveal>
 
           {/* Right — spec cards */}
-          <div className="hidden flex-col gap-3 rounded-[28px] border border-white/[0.08] bg-[#00000038]/55 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md lg:flex">
-            {specItems.map((item) => (
-              <div
+          <Reveal
+            className="hidden flex-col gap-3 rounded-[28px] border border-white/[0.08] bg-[#00000038]/55 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md lg:flex"
+            delayMs={160}
+          >
+            {specItems.map((item, index) => (
+              <Reveal
+                className="group"
+                delayMs={220 + index * 90}
+                distance="sm"
                 key={item.label}
-                className="group flex cursor-default items-center gap-4 rounded-2xl border border-white/[0.10] bg-white/[0.06] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all hover:border-[#c8922a]/35 hover:bg-[#c8922a]/[0.08]"
               >
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-[#c8922a]/35 bg-[#c8922a]/15 text-[#c8922a] shadow-[0_0_28px_rgba(200,146,42,0.12)]">
-                  {item.icon}
+                <div className="flex cursor-default items-center gap-4 rounded-2xl border border-white/[0.10] bg-white/[0.06] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:border-[#c8922a]/35 hover:bg-[#c8922a]/[0.08] hover:shadow-[0_18px_34px_rgba(0,0,0,0.16)]">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-[#c8922a]/35 bg-[#c8922a]/15 text-[#c8922a] shadow-[0_0_28px_rgba(200,146,42,0.12)]">
+                    {item.icon}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13px] font-semibold leading-none tracking-[0.02em] text-white/95">
+                      {item.label}
+                    </p>
+                    <p className="mt-1.5 text-[11px] font-normal tracking-[0.07em] text-white/50">
+                      {item.value}
+                    </p>
+                  </div>
+                  <span className="rounded-[6px] border border-[#c8922a]/35 bg-[#c8922a]/15 px-2.5 py-1 text-[10px] font-semibold  tracking-[0.07em] text-[#dca947]">
+                    {item.badge}
+                  </span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[13px] font-semibold leading-none tracking-[0.02em] text-white/95">
-                    {item.label}
-                  </p>
-                  <p className="mt-1.5 text-[11px] font-normal tracking-[0.07em] text-white/50">
-                    {item.value}
-                  </p>
-                </div>
-                <span className="rounded-[6px] border border-[#c8922a]/35 bg-[#c8922a]/15 px-2.5 py-1 text-[10px] font-semibold  tracking-[0.07em] text-[#dca947]">
-                  {item.badge}
-                </span>
-              </div>
+              </Reveal>
             ))}
 
             <div className="mt-2 border-t border-white/[0.10] px-2 pt-5">
@@ -186,18 +194,22 @@ export default function Home() {
                 <span className="ml-1 text-[11px] text-white/42">+12 brands</span>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
 
         {/* Scroll hint */}
-        <div className="absolute bottom-8 left-8 flex items-center gap-3">
+        <Reveal
+          className="absolute bottom-8 left-8 flex items-center gap-3"
+          delayMs={320}
+          distance="sm"
+        >
           <div className="relative h-px w-8 overflow-hidden bg-white/15">
             <div className="absolute inset-y-0 left-0 w-full animate-[scrollAnim_2s_ease-in-out_infinite] bg-[#c8922a]" />
           </div>
           <span className="text-[10px] font-medium  tracking-[0.18em] text-white/20">
             Scroll to explore
           </span>
-        </div>
+        </Reveal>
       </section>
 
       <BrandsSection />

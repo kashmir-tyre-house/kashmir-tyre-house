@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Raleway } from "next/font/google";
 
+import { Reveal } from "./reveal";
+
 const raleway = Raleway({
   subsets: ["latin"],
   weight: "variable",
@@ -38,7 +40,7 @@ export function BrandsSection() {
       id="brand"
     >
       <div className="mx-auto max-w-[1480px]">
-        <div className="mx-auto mb-12 max-w-3xl text-center">
+        <Reveal className="mx-auto mb-12 max-w-3xl text-center" distance="sm">
           <h2
             className={`${raleway.className} mt-5 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
             id="brand-heading"
@@ -50,38 +52,39 @@ export function BrandsSection() {
             field-tested durability, and dependable support across industrial,
             fleet, and commercial applications.
           </p>
-        </div>
+        </Reveal>
 
         <div className="grid gap-5 lg:grid-cols-3">
-          {brands.map((brand) => (
-            <article
-              className="group relative overflow-hidden rounded-[24px] border border-[#ead9c9] bg-white p-5 shadow-[0_18px_46px_rgba(35,26,18,0.06)] transition-[border-color,box-shadow] duration-300 hover:border-[#d8b997] hover:shadow-[0_24px_52px_rgba(35,26,18,0.08)]"
-              key={brand.name}
-            >
+          {brands.map((brand, index) => (
+            <Reveal delayMs={index * 70} distance="sm" key={brand.name}>
+              <article
+                className="group relative overflow-hidden rounded-[24px] border border-[#ead9c9] bg-white p-5 shadow-[0_18px_46px_rgba(35,26,18,0.06)] transition-[transform,border-color,box-shadow] duration-300 hover:border-[#d8b997] hover:shadow-[0_24px_52px_rgba(35,26,18,0.08)]"
+              >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_16%,rgba(246,147,0,0.08),transparent_34%),linear-gradient(180deg,rgba(255,248,245,0.85)_0%,rgba(255,255,255,1)_100%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-              <div className="relative">
-                <div className="flex h-[112px] items-center justify-center rounded-[12px] border border-[#f0dfd1] bg-[#fffaf6] px-6">
-                  <div className="relative h-28 w-40">
-                    <Image
-                      alt={`${brand.name} logo`}
-                      src={brand.logo}
-                      fill
-                      className="object-contain"
-                      sizes="160px"
-                    />
-                  </div>        
+                <div className="relative">
+                  <div className="flex h-[112px] items-center justify-center rounded-[12px] border border-[#f0dfd1] bg-[#fffaf6] px-6">
+                    <div className="relative h-28 w-40">
+                      <Image
+                        alt={`${brand.name} logo`}
+                        className="object-contain"
+                        fill
+                        sizes="160px"
+                        src={brand.logo}
+                      />
+                    </div>
+                  </div>
+
+                  <h3 className="mt-5 text-[20px] font-bold tracking-[-0.03em] text-[#231a12]">
+                    {brand.name}
+                  </h3>
+
+                  <p className="mt-3 text-[14px] leading-[1.75] text-[#6f6258]">
+                    {brand.description}
+                  </p>
                 </div>
-
-                <h3 className="mt-5 text-[20px] font-bold tracking-[-0.03em] text-[#231a12]">
-                  {brand.name}
-                </h3>
-
-                <p className="mt-3 text-[14px] leading-[1.75] text-[#6f6258]">
-                  {brand.description}
-                </p>
-              </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

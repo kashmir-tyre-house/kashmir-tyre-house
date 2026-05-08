@@ -1,5 +1,7 @@
 import { Raleway, Karla } from "next/font/google";
 
+import { Reveal } from "./reveal";
+
 const karla = Karla({
   subsets: ["latin"],
   weight: "variable",
@@ -155,20 +157,20 @@ export function ServicesSection() {
       className="bg-[#f9eee4] px-4 pt-18 sm:px-6 lg:px-8"
       id="services"
     >
-      <div className="mx-auto mb-12 max-w-3xl text-center">
+      <Reveal className="mx-auto mb-12 max-w-3xl text-center" distance="sm">
         <h2
           className={`${raleway.className} text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="services-heading"
         >
           Our Services
         </h2>
-      </div>
+      </Reveal>
 
       <div className={`${karla.className} mx-auto grid max-w-330 gap-4 md:grid-cols-2 xl:grid-cols-3`}>
-        {services.map((service) => (
+        {services.map((service, index) => (
+          <Reveal delayMs={index * 55} distance="sm" key={service.number}>
             <article
               className="group relative flex min-h-60 items-start overflow-hidden rounded-[18px] border border-[#ead9c9]/70 bg-[linear-gradient(145deg,#ffffff_0%,#fff8f5_52%,#f3e4d6_100%)] px-7 py-7 shadow-[0_12px_40px_rgba(35,26,18,0.07)] transition-shadow duration-500 ease-in-out hover:shadow-[0_20px_56px_rgba(138,81,0,0.14)]"
-              key={service.number}
             >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_12%,rgba(246,147,0,0.22),transparent_62%),radial-gradient(circle_at_86%_88%,rgba(138,81,0,0.09),transparent_62%)] opacity-100 transition-opacity duration-700 ease-in-out group-hover:opacity-0" />
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_86%_88%,rgba(246,147,0,0.22),transparent_62%),radial-gradient(circle_at_14%_12%,rgba(138,81,0,0.09),transparent_62%)] opacity-0 transition-opacity duration-700 ease-in-out group-hover:opacity-100" />
@@ -190,7 +192,8 @@ export function ServicesSection() {
                 </p>
               </div>
             </article>
-          ))}
+          </Reveal>
+        ))}
       </div>
     </section>
   );

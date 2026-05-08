@@ -3,6 +3,7 @@ import { Raleway } from "next/font/google";
 
 import { featuredProducts } from "../lib/products";
 import { ProductCard } from "./product-card";
+import { Reveal } from "./reveal";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -18,14 +19,16 @@ export function FeaturedSection() {
       className="px-4 pt-20 text-[#231a12] sm:px-6 lg:px-8"
       id="tyres"
     >
-      <h2
-        className={`${raleway.className} mb-10 mt-3 place-self-center font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
-        id="services-heading"
-      >
-        Featured Products
-      </h2>
+      <Reveal className="mx-auto max-w-3xl text-center" distance="sm">
+        <h2
+          className={`${raleway.className} mb-10 mt-3 place-self-center font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+          id="services-heading"
+        >
+          Featured Products
+        </h2>
+      </Reveal>
 
-      <div className="mt-3 flex flex-col items-center gap-6 text-center">
+      <Reveal className="mt-3 flex flex-col items-center gap-6 text-center" delayMs={70}>
         <h2
           className={`${raleway.className} max-w-2xl text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[32px] lg:text-[24px]`}
           id="featured-heading"
@@ -40,17 +43,23 @@ export function FeaturedSection() {
           View all products
           <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
         </button>
-      </div>
+      </Reveal>
 
       <div className="mx-auto mt-10 max-w-330">
         <div className="relative pb-15">
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {featuredProducts.map((product) => (
-              <ProductCard
-                className="!min-w-0 !w-full !flex-auto !snap-none"
+            {featuredProducts.map((product, index) => (
+              <Reveal
+                className="h-full"
+                delayMs={index * 55}
+                distance="sm"
                 key={product.productName}
-                product={product}
-              />
+              >
+                <ProductCard
+                  className="!min-w-0 !w-full !flex-auto !snap-none"
+                  product={product}
+                />
+              </Reveal>
             ))}
           </div>
 
@@ -59,11 +68,8 @@ export function FeaturedSection() {
             <div className="h-16 w-64 rounded-full bg-[radial-gradient(circle,rgba(246,147,0,0.18)_0%,rgba(246,147,0,0.08)_42%,transparent_72%)] blur-2xl" />
           </div>
 
-          <div className="absolute inset-x-0 bottom-5 z-20 flex justify-center hover:translate-y-0.5 transition-transform p-2">
-            <button
-              type="button"
-              className="w-12"
-            >
+          <div className="absolute inset-x-0 bottom-5 z-20 flex justify-center transition-transform hover:translate-y-0.5">
+            <button type="button" className="w-12">
               <ArrowBigDown aria-hidden="true" className="mx-auto h-4 w-4" strokeWidth={2} />
             </button>
           </div>
