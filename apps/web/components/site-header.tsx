@@ -1,6 +1,7 @@
 "use client";
 
 import { Bookmark } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -130,10 +131,18 @@ export function SiteHeader() {
       >
         <Link
           href="/"
-          className="-ml-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1c] text-[15px] font-black tracking-wide text-white no-underline"
           aria-label="Kashmir Tyre House Home"
         >
-          K
+          <div className="relative w-22 h-22 mt-1">
+            <Image
+              alt="Kashmir Tyre House logo"
+              className="object-contain"
+              fill
+              priority
+              sizes="160px"
+              src="/logo/kthpl-logo.png"
+            />
+          </div>
         </Link>
 
         <ul className="absolute left-1/2 top-1/2 m-0 hidden -translate-x-1/2 -translate-y-1/2 list-none items-center gap-0 p-0 lg:flex">

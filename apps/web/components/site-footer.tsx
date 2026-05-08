@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Raleway, Karla } from "next/font/google";
 
 const karla = Karla({
@@ -29,18 +30,20 @@ export function SiteFooter() {
             <div>
               <a
                 href="#home"
-                className="inline-flex items-center gap-3 text-white no-underline"
+                className="inline-flex items-center text-white no-underline"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#f69300] text-[18px] font-black text-[#231a12] shadow-[0_18px_38px_rgba(246,147,0,0.22)] sm:h-12 sm:w-12">
-                  K
-                </span>
-
-                <span className="text-[22px] font-bold tracking-[-0.02em] sm:text-[24px]">
-                  Kashmir Tyre House
-                </span>
+                <div className="relative h-166 shrink-0 sm:h-20 sm:w-50">
+                  <Image
+                    alt="Kashmir Tyre House logo"
+                    className="object-contain object-left"
+                    fill
+                    sizes="(min-width: 640px) 188px, 172px"
+                    src="/logo/kthpl-tyre-logo.png"
+                  />
+                </div>
               </a>
 
-              <p className="mt-6 max-w-2xl text-[15px] leading-[1.75] text-[#ffeee0]/58 sm:text-[16px] italic">
+              <p className="max-w-2xl text-[15px] leading-[1.75] text-[#ffeee0]/58 sm:text-[16px] italic">
                 Premium tyres for industrial vehicles, trucks, and heavy-duty
                 applications. Backed by technical expertise, site support, and
                 reliable product guidance.
