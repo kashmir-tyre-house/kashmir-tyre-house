@@ -1,0 +1,19 @@
+:root {
+  --admin-sidebar-background: #181311;
+  --admin-main-background: #1f1a17;
+  --admin-card-background: #26201c;
+  --admin-hover-surface: #312923;
+  --admin-border-color: #3a3029;
+
+  --admin-primary-text: #f5eee8;
+  --admin-secondary-text: #b7a89b;
+  --admin-disabled-text: #7b6e64;
+
+  --admin-primary-accent: #f69300;
+  --admin-secondary-accent: #c46b00;
+
+  --admin-success: #2dbe7f;
+  --admin-warning: #f6b100;
+  --admin-error: #e45858;
+  --admin-info: #4ca7ff;
+}
