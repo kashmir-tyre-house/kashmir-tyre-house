@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Figtree, Inter } from "next/font/google";
 
-import { Providers } from "./providers";
 import "./globals.css";
 
 const display = Figtree({
@@ -31,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${display.variable} ${sans.variable} font-sans`}>
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   );
