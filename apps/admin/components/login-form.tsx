@@ -2,6 +2,7 @@
 
 import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
@@ -152,12 +153,12 @@ export function LoginForm({
           </div>
         </div>
 
-        <a
+        <Link
           className="-mt-1 block text-right text-xs font-semibold text-[#6e6d78] transition hover:text-[#2d2c33]"
-          href="mailto:support@kashmirtyrehouse.com"
+          href="/forgot-password?stage=email"
         >
-          Having trouble signing in?
-        </a>
+          Forgot password?
+        </Link>
 
         <button
           className="relative mt-6 flex h-[54px] w-full items-center justify-center overflow-hidden rounded-[14px] bg-[#2d2c33] text-[15px] text-white shadow-[0_4px_16px_rgba(45,44,51,0.22)] transition duration-200 after:absolute after:inset-0 after:bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,transparent_60%)] after:content-[''] hover:-translate-y-px hover:bg-[#47464f] hover:shadow-[0_8px_28px_rgba(45,44,51,0.28)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d2c33] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"

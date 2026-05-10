@@ -126,7 +126,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return session;
     },
     authorized({ auth, request }) {
-      if (request.nextUrl.pathname.startsWith("/login")) {
+      if (isPublicAuthPath(request.nextUrl.pathname)) {
         return true;
       }
 
@@ -137,6 +137,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
 function normalizeEmail(email: string | null | undefined) {
   return email?.trim().toLowerCase() || null;
+}
+
+function isPublicAuthPath(pathname: string) {
+  return (
+    pathname.startsWith("/login") || pathname.startsWith("/forgot-password")
+  );
 }
 
 function getAuthSecret() {

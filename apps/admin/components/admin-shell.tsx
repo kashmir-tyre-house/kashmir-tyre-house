@@ -42,7 +42,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         }}
       />
 
-      {pathname.startsWith("/login") ? (
+      {isPublicAuthPath(pathname) ? (
         children
       ) : (
         <SessionProvider>
@@ -93,4 +93,10 @@ function getSidebarState() {
 
 function getServerSidebarState() {
   return false;
+}
+
+function isPublicAuthPath(pathname: string) {
+  return (
+    pathname.startsWith("/login") || pathname.startsWith("/forgot-password")
+  );
 }
