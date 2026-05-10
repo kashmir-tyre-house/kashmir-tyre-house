@@ -151,28 +151,6 @@ export const aboutImages = pgTable("about_images", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
 });
 
-export const users = pgTable(
-  "users",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    name: varchar("name", { length: 120 }).notNull(),
-    email: varchar("email", { length: 160 }).notNull(),
-    role: adminRole("role").default("viewer").notNull(),
-    isActive: boolean("is_active").default(true).notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull()
-  },
-  (table) => [
-    uniqueIndex("users_email_unique").on(table.email),
-    index("users_role_idx").on(table.role),
-    index("users_is_active_idx").on(table.isActive)
-  ]
-);
-
 export const adminUsers = pgTable(
   "admin_users",
   {

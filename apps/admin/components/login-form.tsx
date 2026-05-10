@@ -62,14 +62,12 @@ export function LoginForm({
         redirectTo: callbackUrl
       });
 
-      if (result?.ok) {
-        window.location.assign(result.url ?? callbackUrl);
+      if (result?.ok && result.url && !result.error) {
+        window.location.assign(result.url);
         return;
       }
 
-      toast.error(
-        "Invalid email or password, or this admin account is not approved."
-      );
+      toast.error(getAuthErrorMessage(result?.error) ?? INVALID_LOGIN_MESSAGE);
     } catch {
       toast.error("We could not sign you in. Please try again.");
     } finally {
@@ -95,6 +93,7 @@ export function LoginForm({
 
       <form
         className="relative mt-8 flex flex-col gap-4"
+        noValidate
         onSubmit={handleCredentialsSignIn}
       >
         <div className="space-y-2">
@@ -206,11 +205,14 @@ function getAuthErrorMessage(error?: string) {
   }
 
   if (error === "CredentialsSignin") {
-    return "Invalid email or password, or this admin account is not approved.";
+    return INVALID_LOGIN_MESSAGE;
   }
 
   return "We could not sign you in. Please try again.";
 }
+
+const INVALID_LOGIN_MESSAGE =
+  "Invalid email or password, or this admin account is not approved.";
 
 function GoogleIcon() {
   return (

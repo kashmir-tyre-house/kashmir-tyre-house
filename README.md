@@ -119,6 +119,7 @@ For local PostgreSQL, apply the generated SQL with `psql`:
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0000_kth-initial-entities.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0001_daffy_wind_dancer.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0002_gigantic_thena.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0003_dark_echo.sql
 ```
 
 If your shell has not loaded `.env.local`, run:
@@ -130,6 +131,7 @@ set +a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0000_kth-initial-entities.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0001_daffy_wind_dancer.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0002_gigantic_thena.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0003_dark_echo.sql
 ```
 
 Verify tables:

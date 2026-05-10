@@ -15,6 +15,7 @@ const credentialsSchema = z.object({
 });
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  secret: getAuthSecret(),
   pages: {
     signIn: "/login",
     error: "/login"
@@ -138,24 +139,41 @@ function normalizeEmail(email: string | null | undefined) {
   return email?.trim().toLowerCase() || null;
 }
 
-async function getActiveAdminUserByEmail(email: string) {
-  const db = getDb();
-  const [adminUser] = await db
-    .select({
-      id: adminUsers.id,
-      name: adminUsers.name,
-      email: adminUsers.email,
-      role: adminUsers.role,
-      passwordHash: adminUsers.passwordHash
-    })
-    .from(adminUsers)
-    .where(
-      and(
-        eq(adminUsers.isActive, true),
-        sql`lower(${adminUsers.email}) = ${email}`
-      )
-    )
-    .limit(1);
+function getAuthSecret() {
+  if (process.env.AUTH_SECRET) {
+    return process.env.AUTH_SECRET;
+  }
 
-  return adminUser ?? null;
+  if (process.env.NODE_ENV === "development") {
+    return "kth-admin-local-development-secret";
+  }
+
+  return undefined;
+}
+
+async function getActiveAdminUserByEmail(email: string) {
+  try {
+    const db = getDb();
+    const [adminUser] = await db
+      .select({
+        id: adminUsers.id,
+        name: adminUsers.name,
+        email: adminUsers.email,
+        role: adminUsers.role,
+        passwordHash: adminUsers.passwordHash
+      })
+      .from(adminUsers)
+      .where(
+        and(
+          eq(adminUsers.isActive, true),
+          sql`lower(${adminUsers.email}) = ${email}`
+        )
+      )
+      .limit(1);
+
+    return adminUser ?? null;
+  } catch (error) {
+    console.error("Admin auth lookup failed", error);
+    return null;
+  }
 }
