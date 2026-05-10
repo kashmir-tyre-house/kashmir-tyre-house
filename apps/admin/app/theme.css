@@ -1,19 +1,22 @@
 :root {
-  --admin-sidebar-background: #181311;
-  --admin-main-background: #1f1a17;
-  --admin-card-background: #26201c;
-  --admin-hover-surface: #312923;
-  --admin-border-color: #3a3029;
+  --sidebar-primary: #2d2c33;
+  --app-frame-gradient: linear-gradient(
+    185deg,
+    #15243c 0%,
+    #171e35 40%,
+    #2e1733 75%,
+    #41122c 100%
+  );
+  --sidebar-gradient: #2d2c33;
+  --sidebar-text: rgba(255, 255, 255, 0.94);
+  --sidebar-muted: rgba(255, 255, 255, 0.62);
+  --sidebar-faint: rgba(255, 255, 255, 0.16);
+  --sidebar-highlight: rgba(255, 255, 255, 0.1);
+  --sidebar-badge: #cf0626;
 
-  --admin-primary-text: #f5eee8;
-  --admin-secondary-text: #b7a89b;
-  --admin-disabled-text: #7b6e64;
-
-  --admin-primary-accent: #f69300;
-  --admin-secondary-accent: #c46b00;
-
-  --admin-success: #2dbe7f;
-  --admin-warning: #f6b100;
-  --admin-error: #e45858;
-  --admin-info: #4ca7ff;
+  --background: #f7f5f2;
+  --foreground: #07162d;
+  --muted-foreground: #657083;
+  --border: #dedede;
+  --surface: #ffffff;
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Figtree, Inter } from "next/font/google";
 
+import { AdminShell } from "../components/admin-shell";
 import "./globals.css";
 
 const display = Figtree({
@@ -30,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${display.variable} ${sans.variable} font-sans`}>
-        {children}
+        <AdminShell>{children}</AdminShell>
       </body>
     </html>
   );

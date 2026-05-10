@@ -11,6 +11,8 @@
 
 body {
   margin: 0;
+  background: #2D2C33;
+  color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
 }
 
@@ -20,4 +22,37 @@ body {
 
 .font-sans {
   font-family: var(--font-sans), sans-serif;
+}
+
+.admin-sidebar-shell {
+  background: #2D2C33;
+  background-image: #2D2C33;
+}
+
+.admin-sidebar-shell::before,
+.admin-sidebar-shell::after {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.admin-sidebar-shell::after {
+  background: #2D2C33;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar-shell::before {
+    animation: none;
+  }
+}
+
+@keyframes sidebar-stars {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-48px);
+  }
 }
