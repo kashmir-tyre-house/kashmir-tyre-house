@@ -47,12 +47,28 @@ For the local API app, also create:
 cp .env.example apps/api/.env.local
 ```
 
+For the admin app, create:
+
+```bash
+cp apps/admin/.env.example apps/admin/.env.local
+```
+
 At minimum, both env files need:
 
 ```env
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/kashmir_tyre_house
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:3002
+```
+
+Admin login also needs Google OAuth and Auth.js values in `apps/admin/.env.local`:
+
+```env
+AUTH_SECRET=your-random-secret
+AUTH_TRUST_HOST=true
+AUTH_URL=http://localhost:3001
+AUTH_GOOGLE_ID=your-google-client-id
+AUTH_GOOGLE_SECRET=your-google-client-secret
 ```
 
 ## Local Database
@@ -101,6 +117,8 @@ For local PostgreSQL, apply the generated SQL with `psql`:
 
 ```bash
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0000_kth-initial-entities.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0001_daffy_wind_dancer.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0002_gigantic_thena.sql
 ```
 
 If your shell has not loaded `.env.local`, run:
@@ -110,6 +128,8 @@ set -a
 . ./.env.local
 set +a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0000_kth-initial-entities.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0001_daffy_wind_dancer.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f packages/db/drizzle/0002_gigantic_thena.sql
 ```
 
 Verify tables:
@@ -119,6 +139,36 @@ psql "$DATABASE_URL" -c "\dt"
 ```
 
 `npm run db:migrate` is intended for the configured remote database flow. The current DB package uses the Neon serverless driver, so local TCP Postgres migrations should be applied with `psql`.
+
+## Admin Login
+
+The admin portal uses Auth.js with two login options:
+
+- Email and password
+- Google OAuth, when `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` are configured
+
+There is no signup flow. An admin can only log in when their email exists in `admin_users` and `is_active` is `true`. Password login also requires a valid `password_hash`.
+
+Generate a password hash:
+
+```bash
+npm run hash-password -w @kth/admin -- "change-this-password"
+```
+
+Seed an approved admin manually by pasting the generated hash:
+
+```bash
+psql "$DATABASE_URL" <<'SQL'
+insert into admin_users (name, email, role, password_hash)
+values ('Admin', 'admin@example.com', 'admin', 'pbkdf2-sha256$...');
+SQL
+```
+
+For Google login, the same `admin_users.email` allowlist is used. In Google Cloud Console, configure the OAuth callback URL:
+
+```text
+http://localhost:3001/api/auth/callback/google
+```
 
 ## Run The Apps
 
@@ -184,7 +234,7 @@ http://localhost:3001
 ## Notes
 
 - Frontend customers do not need accounts.
-- Admin authentication is intentionally left for the admin feature phase.
+- Admin authentication uses Google OAuth and the `admin_users` allowlist table.
 - `DATABASE_URL` is required before product APIs can query PostgreSQL.
 - Product and about images should use Cloudflare R2 once media upload flows are added.
 

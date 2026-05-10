@@ -173,6 +173,29 @@ export const users = pgTable(
   ]
 );
 
+export const adminUsers = pgTable(
+  "admin_users",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: varchar("name", { length: 120 }),
+    email: varchar("email", { length: 160 }).notNull(),
+    passwordHash: text("password_hash"),
+    role: adminRole("role").default("viewer").notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull()
+  },
+  (table) => [
+    uniqueIndex("admin_users_email_unique").on(table.email),
+    index("admin_users_role_idx").on(table.role),
+    index("admin_users_is_active_idx").on(table.isActive)
+  ]
+);
+
 export const brandsRelations = relations(brands, ({ many }) => ({
   tyreProducts: many(tyreProducts)
 }));

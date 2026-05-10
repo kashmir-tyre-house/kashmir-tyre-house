@@ -8,6 +8,20 @@
       "when": 1778406798599,
       "tag": "0000_kth-initial-entities",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778411670048,
+      "tag": "0001_daffy_wind_dancer",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778412450973,
+      "tag": "0002_gigantic_thena",
+      "breakpoints": true
     }
   ]
 }

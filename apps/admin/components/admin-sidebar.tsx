@@ -7,10 +7,10 @@ import {
   LayoutDashboard,
   MessageSquareText,
   PanelLeft,
-  UserRound,
   Tags,
 } from "lucide-react";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -50,8 +50,12 @@ type AdminSidebarProps = {
 
 export function AdminSidebar({ collapsed }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const adminName = session?.user?.name ?? "admin";
+  const adminEmail = session?.user?.email ?? "admin@gmail.com";
+  const adminInitials = getInitials(adminName, adminEmail);
 
   useEffect(() => {
     if (!isProfileOpen) {
@@ -160,16 +164,16 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
             type="button"
           >
             <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-[#e8f2fb] text-[11px] font-semibold text-[#3d4653]">
-              AD
+              {adminInitials}
             </span>
             {!collapsed ? (
               <>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[13px] font-medium">
-                    admin
+                    {adminName}
                   </span>
                   <span className="mt-0.5 block truncate text-[11.5px] font-normal text-white/60">
-                    admin@gmail.com
+                    {adminEmail}
                   </span>
                 </span>
                 <ChevronsUpDown aria-hidden className="size-3.5 shrink-0 text-white/40" />
@@ -189,20 +193,21 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
             >
               <div className="flex items-center gap-3 p-2">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-[8px] bg-[#e8f2fb] text-[11px] font-semibold text-[#4b5563]">
-                  AD
+                  {adminInitials}
                 </span>
                 <span className="min-w-0">
                   <span className="block truncate text-[13px] font-semibold tracking-[-0.01em]">
-                    admin
+                    {adminName}
                   </span>
                   <span className="mt-0.5 block truncate text-[11.5px] font-normal text-[#6b7280]">
-                    admin@gmail.com
+                    {adminEmail}
                   </span>
                 </span>
               </div>
               <div className="border-t border-[#e5e7eb]">
                 <button
                   className="flex h-10 w-full items-center gap-3 px-3 text-left text-[13px] font-medium transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#07162d]"
+                  onClick={() => signOut({ redirectTo: "/login" })}
                   role="menuitem"
                   type="button"
                 >
@@ -252,4 +257,16 @@ function isNavItemActive(
   pathname: string,
 ) {
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
+}
+
+function getInitials(name: string, email: string) {
+  const source = name || email;
+  const initials = source
+    .split(/\s|@/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+
+  return initials || "AD";
 }
