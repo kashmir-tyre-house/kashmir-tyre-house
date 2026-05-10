@@ -1,31 +1,65 @@
 import { z } from "zod";
 
-export const productStatusSchema = z.enum(["draft", "active", "archived"]);
+export const tyreImageTypeSchema = z.enum(["hero", "gallery"]);
 
-export const productSchema = z.object({
+export const adminRoleSchema = z.enum(["admin", "manager", "viewer"]);
+
+export const brandSchema = z.object({
+  name: z.string().min(2).max(120),
+  logoUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: z.string().url().optional().or(z.literal("")),
+  isActive: z.boolean().default(true)
+});
+
+export const tyreProductSchema = z.object({
+  brandId: z.string().uuid(),
   name: z.string().min(2).max(140),
-  brand: z.string().min(2).max(80),
-  size: z.string().min(2).max(40),
-  vehicleType: z.string().min(2).max(80),
-  plyRating: z.string().max(40).optional(),
-  loadIndex: z.string().max(40).optional(),
-  priceNote: z.string().max(120).optional(),
   description: z.string().max(1200).optional(),
-  status: productStatusSchema.default("draft")
+  category: z.string().max(80).optional(),
+  pattern: z.string().min(1).max(80),
+  tyreSize: z.string().min(2).max(40),
+  application: z.string().min(2).max(80),
+  vehicleType: z.string().min(2).max(120),
+  tyreType: z.string().max(80).optional(),
+  starRating: z.string().max(20).optional(),
+  plyRating: z.string().max(40).optional(),
+  loadIndex: z.string().max(80).optional(),
+  tyreFeatures: z.array(z.string().min(1).max(160)).default([]),
+  isActive: z.boolean().default(true)
+});
+
+export const tyreImageSchema = z.object({
+  tyreProductId: z.string().uuid(),
+  imageUrl: z.string().url(),
+  imageType: tyreImageTypeSchema.default("gallery"),
+  isPrimaryImage: z.boolean().default(false)
 });
 
 export const enquiryItemSchema = z.object({
-  productId: z.string().uuid(),
-  quantity: z.coerce.number().int().min(1).max(99).default(1)
+  tyreProductId: z.string().uuid()
 });
 
 export const enquirySchema = z.object({
   customerName: z.string().min(2).max(120),
   phone: z.string().min(7).max(24),
   email: z.string().email().optional().or(z.literal("")),
+  companyName: z.string().max(160).optional(),
   message: z.string().max(1000).optional(),
   items: z.array(enquiryItemSchema).min(1)
 });
 
-export type ProductInput = z.infer<typeof productSchema>;
+export const userSchema = z.object({
+  name: z.string().min(2).max(120),
+  email: z.string().email().max(160),
+  role: adminRoleSchema.default("viewer"),
+  isActive: z.boolean().default(true)
+});
+
+export const productSchema = tyreProductSchema;
+
+export type BrandInput = z.infer<typeof brandSchema>;
+export type TyreProductInput = z.infer<typeof tyreProductSchema>;
+export type ProductInput = TyreProductInput;
+export type TyreImageInput = z.infer<typeof tyreImageSchema>;
 export type EnquiryInput = z.infer<typeof enquirySchema>;
+export type UserInput = z.infer<typeof userSchema>;

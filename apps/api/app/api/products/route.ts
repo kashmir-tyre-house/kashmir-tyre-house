@@ -1,4 +1,4 @@
-import { getDb, products } from "@kth/db";
+import { getDb, tyreProducts } from "@kth/db";
 import { desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -17,9 +17,9 @@ export async function GET() {
     const db = getDb();
     const data = await db
       .select()
-      .from(products)
-      .where(eq(products.status, "active"))
-      .orderBy(desc(products.createdAt))
+      .from(tyreProducts)
+      .where(eq(tyreProducts.isActive, true))
+      .orderBy(desc(tyreProducts.createdAt))
       .limit(24);
 
     return NextResponse.json({ data });

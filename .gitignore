@@ -12,3 +12,5 @@ coverage
 .env.local
 .env.*.local
 drizzle
+!packages/db/drizzle/
+!packages/db/drizzle/**
