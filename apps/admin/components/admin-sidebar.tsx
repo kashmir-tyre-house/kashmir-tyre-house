@@ -3,13 +3,16 @@
 import {
   ChevronsUpDown,
   CircleGauge,
+  LogOut,
   LayoutDashboard,
   MessageSquareText,
   PanelLeft,
+  UserRound,
   Tags,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 type NavItem = {
   label: string;
@@ -47,11 +50,42 @@ type AdminSidebarProps = {
 
 export function AdminSidebar({ collapsed }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isProfileOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isProfileOpen]);
 
   return (
     <aside
       className={[
-        "admin-sidebar-shell fixed inset-y-0 left-0 z-30 hidden overflow-hidden text-white transition-[width] duration-300 ease-out lg:block",
+        "admin-sidebar-shell fixed inset-y-0 left-0 z-50 hidden overflow-visible text-white transition-[width] duration-300 ease-out lg:block",
         collapsed ? "w-17" : "w-60",
       ].join(" ")}
     >
@@ -95,7 +129,7 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
                       "focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-white",
                       collapsed ? "justify-center" : "gap-2.5 px-3",
                       isParentActive
-                        ? "bg-(--sidebar-highlight) text-white"
+                        ? "bg-[var(--sidebar-highlight)] text-white"
                         : "text-white/55 hover:bg-white/5 hover:text-white",
                     ].join(" ")}
                     href={item.href}
@@ -114,12 +148,15 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
           </ul>
         </nav>
 
-        <div className="border-t border-white/12 pt-2">
+        <div className="relative border-t border-white/12 pt-2" ref={profileMenuRef}>
           <button
+            aria-expanded={isProfileOpen}
+            aria-haspopup="menu"
             className={[
               "flex w-full items-center rounded-xl text-left text-white transition duration-200 hover:bg-white/6 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-white",
               collapsed ? "justify-center p-1" : "gap-2.5 p-2",
             ].join(" ")}
+            onClick={() => setIsProfileOpen((currentValue) => !currentValue)}
             type="button"
           >
             <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-[#e8f2fb] text-[11px] font-semibold text-[#3d4653]">
@@ -139,6 +176,42 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
               </>
             ) : null}
           </button>
+
+          {isProfileOpen ? (
+            <div
+              className={[
+                "absolute z-[100] overflow-hidden rounded-[14px] border border-[#dde1e7] bg-white text-[#07162d] shadow-[0_8px_24px_rgba(15,23,42,0.12)]",
+                collapsed
+                  ? "left-full ml-3 bottom-0 w-55"
+                  : "left-full ml-3 bottom-0 w-55",
+              ].join(" ")}
+              role="menu"
+            >
+              <div className="flex items-center gap-3 p-2">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-[8px] bg-[#e8f2fb] text-[11px] font-semibold text-[#4b5563]">
+                  AD
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-[13px] font-semibold tracking-[-0.01em]">
+                    admin
+                  </span>
+                  <span className="mt-0.5 block truncate text-[11.5px] font-normal text-[#6b7280]">
+                    admin@gmail.com
+                  </span>
+                </span>
+              </div>
+              <div className="border-t border-[#e5e7eb]">
+                <button
+                  className="flex h-10 w-full items-center gap-3 px-3 text-left text-[13px] font-medium transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#07162d]"
+                  role="menuitem"
+                  type="button"
+                >
+                  <LogOut aria-hidden className="size-4 text-[#6b7280]" />
+                  Sign out
+                </button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </aside>
@@ -155,7 +228,7 @@ export function AdminTopbar({
     "Dashboard";
 
   return (
-    <header className="flex h-13 shrink-0 items-center justify-between border-b border-(--border) px-5">
+    <header className="flex h-13 shrink-0 items-center justify-between border-b border-[var(--border)] px-5">
       <div className="flex min-w-0 items-center gap-3">
         <button
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -165,7 +238,7 @@ export function AdminTopbar({
         >
           <PanelLeft aria-hidden className="size-4" />
         </button>
-        <span className="h-6 w-px bg-(--border)" />
+        <span className="h-6 w-px bg-[var(--border)]" />
         <h1 className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[#07162d]">
           {pageTitle}
         </h1>
