@@ -107,10 +107,10 @@ export function LoginForm({
           <div className="relative">
             <input
               autoComplete="email"
-              className="h-[54px] w-full rounded-[12px] border-[1.5px] border-[#e8e7ec] bg-[#f9f8fb] px-4 pr-12 text-[15px] font-medium text-[#2d2c33] outline-none transition placeholder:text-[#b8b7bf] focus:border-[#2d2c33] focus:bg-white focus:shadow-[0_0_0_3px_rgba(45,44,51,0.08)]"
+              className="h-13.5 w-full rounded-xl border-[1.5px] border-[#e8e7ec] bg-[#f9f8fb] px-4 pr-12 text-[15px] text-[#2d2c33] outline-none transition placeholder:text-[#b8b7bf] focus:border-[#2d2c33] focus:bg-white focus:shadow-[0_0_0_3px_rgba(45,44,51,0.08)]"
               id="email"
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@company.com"
+              placeholder="xyz@gmail.com"
               type="email"
               value={email}
             />
@@ -131,7 +131,7 @@ export function LoginForm({
           <div className="relative">
             <input
               autoComplete="current-password"
-              className="h-[54px] w-full rounded-[12px] border-[1.5px] border-[#e8e7ec] bg-[#f9f8fb] px-4 pr-12 text-[15px] font-medium text-[#2d2c33] outline-none transition placeholder:text-[#b8b7bf] focus:border-[#2d2c33] focus:bg-white focus:shadow-[0_0_0_3px_rgba(45,44,51,0.08)]"
+              className="h-13.5 w-full rounded-xl border-[1.5px] border-[#e8e7ec] bg-[#f9f8fb] px-4 pr-12 text-[15px] text-[#2d2c33] outline-none transition placeholder:text-[#b8b7bf] focus:border-[#2d2c33] focus:bg-white focus:shadow-[0_0_0_3px_rgba(45,44,51,0.08)]"
               id="password"
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"

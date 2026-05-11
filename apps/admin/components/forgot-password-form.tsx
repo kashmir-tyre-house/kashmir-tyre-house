@@ -9,7 +9,16 @@ import type {
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Eye, EyeOff, KeyRound, Mail } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  KeyRound,
+  Mail,
+  RotateCcwKey,
+  Send,
+  ShieldCheck
+} from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -150,7 +159,9 @@ export function ForgotPasswordForm({
             </div>
           </div>
 
-          <PrimaryButton>Send reset code</PrimaryButton>
+          <PrimaryButton icon={<Send aria-hidden="true" className="size-4" />}>
+            Send reset code
+          </PrimaryButton>
 
           <BackLink href="/login">Back to sign in</BackLink>
         </form>
@@ -193,7 +204,11 @@ export function ForgotPasswordForm({
             </p>
           </div>
 
-          <PrimaryButton disabled={codeValue.length !== 6} className="mt-4">
+          <PrimaryButton
+            className="mt-4"
+            disabled={codeValue.length !== 6}
+            icon={<ShieldCheck aria-hidden="true" className="size-4" />}
+          >
             Verify code
           </PrimaryButton>
 
@@ -226,7 +241,11 @@ export function ForgotPasswordForm({
           />
 
           <div className="mt-6">
-            <PrimaryButton>Reset password</PrimaryButton>
+            <PrimaryButton
+              icon={<RotateCcwKey aria-hidden="true" className="size-4" />}
+            >
+              Reset password
+            </PrimaryButton>
           </div>
 
           <BackButton onClick={() => goToStage("verify")}>
@@ -241,19 +260,22 @@ export function ForgotPasswordForm({
 function PrimaryButton({
   children,
   disabled,
+  icon,
   className = ""
 }: {
   children: ReactNode;
   disabled?: boolean;
+  icon: ReactNode;
   className?: string;
 }) {
   return (
     <button
-      className={`flex h-11.5 w-full items-center justify-center gap-1.5 rounded-[12px] bg-[#2d2c33] text-[13.5px] font-semibold tracking-[-0.01em] text-white transition duration-150 hover:-translate-y-px hover:bg-[#47464f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d2c33] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 ${className}`}
+      className={`relative flex h-[54px] w-full items-center justify-center overflow-hidden rounded-[14px] bg-[#2d2c33] text-[15px] font-semibold text-white shadow-[0_4px_16px_rgba(45,44,51,0.22)] transition duration-200 after:absolute after:inset-0 after:bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,transparent_60%)] after:content-[''] hover:-translate-y-px hover:bg-[#47464f] hover:shadow-[0_8px_28px_rgba(45,44,51,0.28)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2d2c33] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 ${className}`}
       disabled={disabled}
       type="submit"
     >
-      {children}
+      <span className="relative z-10 mr-2 flex items-center">{icon}</span>
+      <span className="relative z-10">{children}</span>
     </button>
   );
 }
