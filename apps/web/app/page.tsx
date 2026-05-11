@@ -13,13 +13,15 @@ const specItems = [
   {
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/>
-        <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+        <path d="M3 21h18" />
+        <path d="M5 21V7l8-4v18" />
+        <path d="M19 21V11l-6-4" />
+        <path d="M9 9h1M9 13h1M9 17h1M15 13h1M15 17h1" />
       </svg>
     ),
-    label: "Heavy-duty fitments",
-    value: "OTR / LCV / Industrial",
-    badge: "Core",
+    label: "Kashmir Tyre House Pvt. Ltd.",
+    value: "A leading heavy-duty tyre partner for industrial, mining, and earthmover operations.",
+    badge: "KTHPL",
   },
   {
     icon: (
@@ -27,20 +29,9 @@ const specItems = [
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
       </svg>
     ),
-    label: "Technical support",
-    value: "On-site advisory",
-    badge: "Advisory",
-  },
-  {
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="5" width="18" height="14" rx="2"/>
-        <path d="m3 7 9 6 9-6"/>
-      </svg>
-    ),
-    label: "Enquiry flow",
-    value: "No customer login",
-    badge: "Fast",
+    label: "Authorised Brand Dealer",
+    value: "Authorised dealer for Michelin, Maxam, and Bridgestone earthmover and industrial tyres.",
+    badge: "Brands",
   },
 ];
 
@@ -87,10 +78,6 @@ export default function Home() {
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#c8922a]" />
                 Premium Supplier
               </span>
-              <div className="h-4 w-px bg-white/10" />
-              <span className="text-[10px] font-medium  tracking-[0.1em] text-white/25">
-                OTR · LCV · Industrial
-              </span>
             </div>
 
             <h1 className="font-display text-[58px] font-extrabold  leading-[0.9] tracking-[0.01em] text-white sm:text-[72px] lg:text-[50px]">
@@ -104,9 +91,7 @@ export default function Home() {
             </h1>
 
             <p className="mt-7 max-w-lg text-[15px] font-normal leading-[1.8] text-white/45">
-              Engineered for endurance and precision. Kashmir Tyre House helps
-              teams discover premium heavy-duty tyre solutions for industrial,
-              commercial, and site performance.
+              Kashmir Tyre House Private Limited is a leading authorised OTR tyre dealer in India, representing trusted brands like Bridgestone, Maxam, and Michelin for mining, construction, industrial, and earthmover applications across Central India.
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -135,7 +120,7 @@ export default function Home() {
                     <span className="font-display text-[30px] font-bold  leading-none tracking-[0.02em] text-white">
                       {s.num}
                     </span>
-                    <span className="text-[10px] font-medium  tracking-[0.14em] text-white/[0.28]">
+                    <span className="text-[11px] font-medium tracking-[0.14em] text-[#f9eee482]">
                       {s.label}
                     </span>
                   </div>
@@ -159,7 +144,7 @@ export default function Home() {
                 distance="sm"
                 key={item.label}
               >
-                <div className="flex cursor-default items-center gap-4 rounded-2xl border border-white/[0.10] bg-white/[0.06] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:border-[#c8922a]/35 hover:bg-[#c8922a]/[0.08] hover:shadow-[0_18px_34px_rgba(0,0,0,0.16)]">
+                <div className="flex cursor-default items-center gap-4 rounded-2xl border border-white/[0.10] bg-white/[0.06] p-5 transition-all duration-300 hover:border-[#c8922a]/35 hover:bg-[#c8922a]/[0.08] hover:shadow-[0_18px_34px_rgba(0,0,0,0.16)]">
                   <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-[#c8922a]/35 bg-[#c8922a]/15 text-[#c8922a] shadow-[0_0_28px_rgba(200,146,42,0.12)]">
                     {item.icon}
                   </div>
@@ -178,21 +163,10 @@ export default function Home() {
               </Reveal>
             ))}
 
-            <div className="mt-2 border-t border-white/[0.10] px-2 pt-5">
-              <p className="text-[11px] font-medium  tracking-[0.14em] text-white/35">
+            <div className="mt-2 border-t border-white/[0.10] px-2 pt-3">
+              <p className="text-[11px] font-medium tracking-[0.14em] text-white/35 text-center">
                 Trusted by fleets across the region
               </p>
-              <div className="mt-3 flex items-center gap-2">
-                {["B", "M", "A", "G"].map((l) => (
-                  <div
-                    key={l}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.07] text-[11px] font-bold text-white/48"
-                  >
-                    {l}
-                  </div>
-                ))}
-                <span className="ml-1 text-[11px] text-white/42">+12 brands</span>
-              </div>
             </div>
           </Reveal>
         </div>
@@ -214,7 +188,7 @@ export default function Home() {
 
       <BrandsSection />
 
-      <FeaturedSection />
+      {/* <FeaturedSection /> */}
 
       <ServicesSection />
 

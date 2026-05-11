@@ -28,7 +28,7 @@ const galleryImages = [
   },
   {
     src: "/images/home-image-3.png",
-    alt: "Industrial vehicle prepared for demanding road conditions",
+    alt: "Industrial vehicle prepared for heavy-duty site operations",
   },
   {
     src: "/images/home-image-4.png",
@@ -100,7 +100,7 @@ export function AboutSection() {
           <h2
             className={`${raleway.className} max-w-2xl font-semibold leading-[1.03] tracking-[-0.055em] text-[#231a12] lg:text-[54px]`}
           >
-            Over two decades of keeping Kashmir moving.
+            Over two decades of marching forward.
           </h2>
         </Reveal>
 
@@ -108,9 +108,8 @@ export function AboutSection() {
           <p className="max-w-3xl text-[16px] font-medium leading-[1.8] text-[#6f6258] sm:text-[18px]">
             Kashmir Tyre House began as a single workshop and has grown into one
             of the region&apos;s trusted names in tyre sales and service. We
-            work with leading brands to offer reliable tyres for trucks,
-            industrial vehicles, construction equipment, and demanding road
-            conditions.
+            work with leading brands to offer reliable tyres for industrial,
+            construction, mining, and earthmover equipment.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-8 border-t border-[#231a12]/10 pt-6">
@@ -137,8 +136,8 @@ export function AboutSection() {
         <div className="pointer-events-none absolute bottom-[-20px] left-0 top-[-20px] z-10 w-24 bg-[linear-gradient(90deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
         <div className="pointer-events-none absolute bottom-[-20px] right-0 top-[-20px] z-10 w-24 bg-[linear-gradient(270deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
 
-        <GalleryRow direction="left" images={galleryImages} />
-        <GalleryRow direction="right" images={galleryImages} />
+        {/* <GalleryRow direction="left" images={galleryImages} />
+        <GalleryRow direction="right" images={galleryImages} /> */}
       </Reveal>
     </section>
   );

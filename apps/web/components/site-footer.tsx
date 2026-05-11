@@ -142,7 +142,6 @@ export function SiteFooter() {
 
           <div className="flex flex-col gap-2 pt-5 text-[11px] text-[#ffeee0]/35 sm:flex-row sm:items-center sm:justify-between">
             <p>Kashmir Tyre House. Built for confident product enquiries.</p>
-            <p>OTR · LCV · Industrial · Advisory</p>
           </div>
         </div>
       </div>

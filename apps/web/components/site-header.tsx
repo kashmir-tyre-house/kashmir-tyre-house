@@ -133,14 +133,14 @@ export function SiteHeader() {
           href="/"
           aria-label="Kashmir Tyre House Home"
         >
-          <div className="relative w-22 h-22 mt-1">
+          <div className="relative h-[38px] w-24 ml-[-2px] overflow-hidden rounded-full border border-[#f8ab59]/30 bg-[#fff8f5] px-3 shadow-[0_8px_22px_rgba(35,26,18,0.16)]">
             <Image
               alt="Kashmir Tyre House logo"
-              className="object-contain"
+              className="object-contain scale-125"
               fill
               priority
               sizes="160px"
-              src="/logo/kthpl-logo.png"
+              src="/logo/kthpl-tyre-logo.png"
             />
           </div>
         </Link>

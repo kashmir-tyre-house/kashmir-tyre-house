@@ -65,7 +65,7 @@ const services = [
     number: "03",
     title: "On-Site Service",
     description:
-      "We come to you. Bulk fittings at your depot, emergency replacements on the road — minimising fleet downtime.",
+      "We come to you. Bulk fittings at your depot and planned service support help minimise fleet downtime.",
     icon: (
       <svg
         aria-hidden="true"
@@ -86,7 +86,7 @@ const services = [
   },
   {
     number: "04",
-    title: "Tyre Inspection & Health Checks",
+    title: "Tyre Inspection",
     description:
       "Regular wear, pressure and alignment checks to spot issues before they become breakdowns.",
     icon: (

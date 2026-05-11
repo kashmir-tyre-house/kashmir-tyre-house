@@ -29,13 +29,6 @@ export function FeaturedSection() {
       </Reveal>
 
       <Reveal className="mt-3 flex flex-col items-center gap-6 text-center" delayMs={70}>
-        <h2
-          className={`${raleway.className} max-w-2xl text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[32px] lg:text-[24px]`}
-          id="featured-heading"
-        >
-          Tyres our customers keep coming back for.
-        </h2>
-
         <button
           className="inline-flex h-10 items-center gap-2 rounded-md border border-[#231a12]/25 bg-transparent px-5 text-[13px] font-bold text-[#231a12] transition-all duration-300 hover:border-[#231a12] hover:bg-[#231a12] hover:text-[#fff8f5]"
           type="button"
