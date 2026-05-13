@@ -30,14 +30,6 @@ const galleryImages = [
     src: "/images/home-image-3.png",
     alt: "Industrial vehicle prepared for heavy-duty site operations",
   },
-  {
-    src: "/images/home-image-4.png",
-    alt: "Tyre support for construction and fleet applications",
-  },
-  {
-    src: "/images/home-image-5.png",
-    alt: "Heavy-duty tyre solution for rugged terrain",
-  },
 ];
 
 const aboutStats = [

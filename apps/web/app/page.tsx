@@ -45,8 +45,6 @@ const heroImages = [
   "/images/home-image-1.png",
   "/images/home-image-2.png",
   "/images/home-image-3.png",
-  "/images/home-image-4.png",
-  "/images/home-image-5.png"
 ];
 
 export default function Home() {
@@ -134,7 +132,7 @@ export default function Home() {
 
           {/* Right — spec cards */}
           <Reveal
-            className="hidden flex-col gap-3 rounded-[28px] border border-white/[0.08] bg-[#00000038]/55 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md lg:flex"
+            className="hidden flex-col gap-3 rounded-[28px] border border-white/[0.08] bg-[#0000009a]/55 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md lg:flex"
             delayMs={160}
           >
             {specItems.map((item, index) => (

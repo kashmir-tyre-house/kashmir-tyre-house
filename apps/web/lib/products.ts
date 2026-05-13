@@ -88,7 +88,7 @@ export const productCatalog: Product[] = [
     loadIndex: "156/150",
     plyRating: "18PR",
     starRating: 4.5,
-    image: "/images/home-image-4.png",
+    image: "/images/home-image-1.png",
     isBookmarked: false
   },
   {
