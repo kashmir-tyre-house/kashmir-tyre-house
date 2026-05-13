@@ -32,19 +32,19 @@ export function SiteFooter() {
                 href="#home"
                 className="inline-flex items-center text-white no-underline"
               >
-                <div className="relative h-166 shrink-0 sm:h-20 sm:w-50 mt-[-10px]">
+                <div className="relative mb-5 ml-[-2px] h-[42px] w-28 overflow-hidden rounded-full border border-[#f8ab59]/30 bg-[#fff8f5] px-3 shadow-[0_8px_22px_rgba(35,26,18,0.16)]">
                   <Image
                     alt="Kashmir Tyre House logo"
-                    className="object-contain object-left"
+                    className="mt-0.5 object-contain scale-110"
                     fill
-                    sizes="(min-width: 640px) 188px, 172px"
-                    src="/logo/kthpl-tyre-logo.png"
+                    sizes="160px"
+                    src="/logo/kthpl-tyre-logo-2.png"
                   />
                 </div>
               </a>
 
               <p className="max-w-2xl text-[15px] leading-[1.75] text-[#ffeee0]/58 sm:text-[16px] italic">
-                Premium tyres for industrial vehicles, trucks, and heavy-duty
+                Premium tyres for industrial vehicles, and heavy-duty
                 applications. Backed by technical expertise, site support, and
                 reliable product guidance.
               </p>
