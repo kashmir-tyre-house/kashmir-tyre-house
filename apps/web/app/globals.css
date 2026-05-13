@@ -126,3 +126,8 @@ body {
   line-height: 1;
   text-transform: uppercase;
 }
+
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0%); }
+}
