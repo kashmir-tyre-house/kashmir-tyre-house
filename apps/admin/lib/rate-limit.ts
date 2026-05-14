@@ -12,6 +12,10 @@ type RateLimitEntry = {
 const buckets = new Map<string, RateLimitEntry>();
 
 export function checkRateLimit({ key, limit, windowMs }: RateLimitOptions) {
+  if (process.env.NODE_ENV === "development") {
+    return { allowed: true, retryAfterSeconds: 0 };
+  }
+
   const now = Date.now();
   const current = buckets.get(key);
 
