@@ -187,7 +187,7 @@ export default function Home() {
 
       <BrandsSection />
 
-      <CustomersSection />
+      {/* <CustomersSection /> */}
 
       {/* <FeaturedSection /> */}
 
