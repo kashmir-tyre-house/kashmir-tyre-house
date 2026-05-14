@@ -174,6 +174,34 @@ export const adminUsers = pgTable(
   ]
 );
 
+export const adminPasswordResetTokens = pgTable(
+  "admin_password_reset_tokens",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    adminUserId: uuid("admin_user_id")
+      .references(() => adminUsers.id, { onDelete: "cascade" })
+      .notNull(),
+    codeHash: text("code_hash").notNull(),
+    resetTokenHash: text("reset_token_hash"),
+    attempts: integer("attempts").default(0).notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull()
+  },
+  (table) => [
+    index("admin_password_reset_tokens_admin_user_id_idx").on(
+      table.adminUserId
+    ),
+    index("admin_password_reset_tokens_expires_at_idx").on(table.expiresAt),
+    index("admin_password_reset_tokens_reset_token_hash_idx").on(
+      table.resetTokenHash
+    )
+  ]
+);
+
 export const brandsRelations = relations(brands, ({ many }) => ({
   tyreProducts: many(tyreProducts)
 }));
@@ -208,3 +236,17 @@ export const enquiryItemsRelations = relations(enquiryItems, ({ one }) => ({
     references: [tyreProducts.id]
   })
 }));
+
+export const adminUsersRelations = relations(adminUsers, ({ many }) => ({
+  passwordResetTokens: many(adminPasswordResetTokens)
+}));
+
+export const adminPasswordResetTokensRelations = relations(
+  adminPasswordResetTokens,
+  ({ one }) => ({
+    adminUser: one(adminUsers, {
+      fields: [adminPasswordResetTokens.adminUserId],
+      references: [adminUsers.id]
+    })
+  })
+);

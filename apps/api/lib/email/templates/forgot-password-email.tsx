@@ -11,7 +11,7 @@ export type ForgotPasswordEmailProps = {
 export function ForgotPasswordEmail({
   name,
   code,
-  expiresInMinutes = 15
+  expiresInMinutes = 15,
 }: ForgotPasswordEmailProps) {
   const digits = code.split("");
 
@@ -32,7 +32,10 @@ export function ForgotPasswordEmail({
       {/* OTP digits */}
       <Section style={codeRowStyle}>
         {digits.map((digit, index) => (
-          <span key={index} style={index === 3 ? digitStyleWithGap : digitStyle}>
+          <span
+            key={index}
+            style={index === 3 ? digitStyleWithGap : digitStyle}
+          >
             {digit}
           </span>
         ))}
@@ -69,7 +72,7 @@ const greetingStyle = {
   color: "#6f6258",
   fontSize: "14px",
   lineHeight: "1.75",
-  margin: "0 0 24px"
+  margin: "0 0 24px",
 };
 
 const codeLabelStyle = {
@@ -78,12 +81,12 @@ const codeLabelStyle = {
   fontWeight: "700",
   letterSpacing: "0.12em",
   margin: "0 0 12px",
-  textAlign: "center" as const
+  textAlign: "center" as const,
 };
 
 const codeRowStyle = {
   margin: "0 auto 16px",
-  textAlign: "center" as const
+  textAlign: "center" as const,
 };
 
 const baseDigitStyle = {
@@ -99,19 +102,19 @@ const baseDigitStyle = {
   lineHeight: "52px",
   margin: "0 4px",
   textAlign: "center" as const,
-  width: "44px"
+  width: "44px",
 };
 
 const digitStyle = baseDigitStyle;
 
 const digitStyleWithGap = {
   ...baseDigitStyle,
-  marginLeft: "14px"
+  marginLeft: "14px",
 };
 
 const expiryBadgeStyle = {
   margin: "0 auto 24px",
-  textAlign: "center" as const
+  textAlign: "center" as const,
 };
 
 const expiryTextStyle = {
@@ -123,30 +126,30 @@ const expiryTextStyle = {
   fontSize: "12px",
   fontWeight: "600",
   margin: "0",
-  padding: "6px 14px"
+  padding: "6px 14px",
 };
 
 const dividerStyle = {
   borderColor: "#ead9c9",
-  margin: "0 0 20px"
+  margin: "0 0 20px",
 };
 
 const instructionStyle = {
   color: "#6f6258",
   fontSize: "13px",
   lineHeight: "1.75",
-  margin: "0 0 20px"
+  margin: "0 0 20px",
 };
 
 const securityBoxStyle = {
   backgroundColor: "#f3f2f6",
   borderRadius: "10px",
-  padding: "12px 16px"
+  padding: "12px 16px",
 };
 
 const securityTextStyle = {
   color: "#6e6d78",
   fontSize: "12px",
   lineHeight: "1.6",
-  margin: "0"
+  margin: "0",
 };

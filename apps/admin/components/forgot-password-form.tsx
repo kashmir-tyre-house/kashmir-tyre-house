@@ -43,6 +43,8 @@ const passwordSchema = z
     path: ["confirmPassword"]
   });
 
+const RESET_TOKEN_STORAGE_PREFIX = "kth-admin-password-reset-token";
+
 export function ForgotPasswordForm({
   initialEmail = "",
   stage
@@ -52,6 +54,8 @@ export function ForgotPasswordForm({
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetToken, setResetToken] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const codeRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -64,38 +68,138 @@ export function ForgotPasswordForm({
     router.push(`/forgot-password?${params.toString()}`);
   }
 
-  function handleEmailSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleEmailSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const parsedEmail = emailSchema.safeParse({ email });
     if (!parsedEmail.success) {
       toast.error(parsedEmail.error.issues[0]?.message ?? "Enter your email.");
       return;
     }
-    toast.success("Reset code sent", {
-      description: "Check your email for the 6-digit verification code."
-    });
-    goToStage("verify", parsedEmail.data.email);
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/forgot-password/request", {
+        body: JSON.stringify({ email: parsedEmail.data.email }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST"
+      });
+      const payload = await readApiResponse(response);
+
+      if (!response.ok) {
+        toast.error(payload.message ?? "Unable to send reset code.");
+        return;
+      }
+
+      setEmail(parsedEmail.data.email);
+      toast.success("Reset code sent", {
+        description: "Check your email for the 6-digit verification code."
+      });
+      goToStage("verify", parsedEmail.data.email);
+    } catch {
+      toast.error("Unable to send reset code right now.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  function handleVerifySubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleVerifySubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const parsedEmail = emailSchema.safeParse({ email });
+    if (!parsedEmail.success) {
+      toast.error("Use a valid email before verifying the code.");
+      goToStage("email", "");
+      return;
+    }
+
     if (codeValue.length !== 6) {
       toast.error("Enter the 6-digit verification code.");
       return;
     }
-    toast.success("Code verified");
-    goToStage("reset");
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/forgot-password/verify", {
+        body: JSON.stringify({
+          code: codeValue,
+          email: parsedEmail.data.email
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST"
+      });
+      const payload = await readApiResponse(response);
+
+      if (!response.ok || !payload.resetToken) {
+        toast.error(payload.message ?? "Invalid or expired verification code.");
+        return;
+      }
+
+      setResetToken(payload.resetToken);
+      sessionStorage.setItem(
+        getResetTokenStorageKey(parsedEmail.data.email),
+        payload.resetToken
+      );
+      toast.success("Code verified");
+      goToStage("reset", parsedEmail.data.email);
+    } catch {
+      toast.error("Unable to verify the code right now.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  function handleResetSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleResetSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const parsedEmail = emailSchema.safeParse({ email });
+    if (!parsedEmail.success) {
+      toast.error("Use a valid email before resetting your password.");
+      goToStage("email", "");
+      return;
+    }
+
     const parsedPassword = passwordSchema.safeParse({ password, confirmPassword });
     if (!parsedPassword.success) {
       toast.error(parsedPassword.error.issues[0]?.message ?? "Check your new password.");
       return;
     }
-    toast.success("Password reset", { description: "Use your new password to sign in." });
-    router.push("/login");
+
+    const activeResetToken =
+      resetToken || sessionStorage.getItem(getResetTokenStorageKey(parsedEmail.data.email));
+
+    if (!activeResetToken) {
+      toast.error("Your reset session has expired. Please verify the code again.");
+      goToStage("verify", parsedEmail.data.email);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/forgot-password/reset", {
+        body: JSON.stringify({
+          confirmPassword: parsedPassword.data.confirmPassword,
+          email: parsedEmail.data.email,
+          password: parsedPassword.data.password,
+          resetToken: activeResetToken
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST"
+      });
+      const payload = await readApiResponse(response);
+
+      if (!response.ok) {
+        toast.error(payload.message ?? "Unable to reset password.");
+        return;
+      }
+
+      sessionStorage.removeItem(getResetTokenStorageKey(parsedEmail.data.email));
+      toast.success("Password reset", {
+        description: "Use your new password to sign in."
+      });
+      router.push("/login");
+    } catch {
+      toast.error("Unable to reset password right now.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleCodeChange(index: number, value: string) {
@@ -159,8 +263,11 @@ export function ForgotPasswordForm({
             </div>
           </div>
 
-          <PrimaryButton icon={<Send aria-hidden="true" className="size-4" />}>
-            Send reset code
+          <PrimaryButton
+            disabled={isSubmitting}
+            icon={<Send aria-hidden="true" className="size-4" />}
+          >
+            {isSubmitting ? "Sending..." : "Send reset code"}
           </PrimaryButton>
 
           <BackLink href="/login">Back to sign in</BackLink>
@@ -206,13 +313,19 @@ export function ForgotPasswordForm({
 
           <PrimaryButton
             className="mt-4"
-            disabled={codeValue.length !== 6}
+            disabled={codeValue.length !== 6 || isSubmitting}
             icon={<ShieldCheck aria-hidden="true" className="size-4" />}
           >
-            Verify code
+            {isSubmitting ? "Verifying..." : "Verify code"}
           </PrimaryButton>
 
-          <BackButton onClick={() => goToStage("email", "")}>
+          <BackButton
+            onClick={() => {
+              setCode(["", "", "", "", "", ""]);
+              setResetToken("");
+              goToStage("email", "");
+            }}
+          >
             Use a different email
           </BackButton>
         </form>
@@ -242,9 +355,10 @@ export function ForgotPasswordForm({
 
           <div className="mt-6">
             <PrimaryButton
+              disabled={isSubmitting}
               icon={<RotateCcwKey aria-hidden="true" className="size-4" />}
             >
-              Reset password
+              {isSubmitting ? "Resetting..." : "Reset password"}
             </PrimaryButton>
           </div>
 
@@ -255,6 +369,19 @@ export function ForgotPasswordForm({
       ) : null}
     </section>
   );
+}
+
+type ForgotPasswordApiResponse = {
+  message?: string;
+  resetToken?: string;
+};
+
+async function readApiResponse(response: Response): Promise<ForgotPasswordApiResponse> {
+  return response.json().catch(() => ({}));
+}
+
+function getResetTokenStorageKey(email: string) {
+  return `${RESET_TOKEN_STORAGE_PREFIX}:${email}`;
 }
 
 function PrimaryButton({

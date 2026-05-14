@@ -141,7 +141,9 @@ function normalizeEmail(email: string | null | undefined) {
 
 function isPublicAuthPath(pathname: string) {
   return (
-    pathname.startsWith("/login") || pathname.startsWith("/forgot-password")
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/api/forgot-password")
   );
 }
 
