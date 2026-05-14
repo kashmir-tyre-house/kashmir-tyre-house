@@ -84,12 +84,12 @@ export default function Home() {
               right{" "}
               <span className="text-[#c8922a]">tyre.</span>
               <br />
-              <span style={{ WebkitTextStroke: "1.5px rgba(255,255,255,0.2)", color: "transparent" }}>
+              <span style={{ WebkitTextStroke: "1.5px rgba(255,255,255,0.45)", color: "transparent" }}>
                 Every time.
               </span>
             </h1>
 
-            <p className="mt-7 max-w-lg text-[15px] font-normal leading-[1.8] text-white/45">
+            <p className="mt-7 max-w-lg text-[15px] font-normal leading-[1.8] text-white/70">
               Kashmir Tyre House Private Limited is a leading authorised OTR tyre dealer in India, representing trusted brands like Bridgestone, Maxam, and Michelin for mining, construction, industrial, and earthmover applications across Central India.
             </p>
 
@@ -119,7 +119,7 @@ export default function Home() {
                     <span className="font-display text-[30px] font-bold  leading-none tracking-[0.02em] text-white">
                       {s.num}
                     </span>
-                    <span className="text-[11px] font-medium tracking-[0.14em] text-[#f9eee482]">
+                    <span className="text-[11px] font-medium tracking-[0.14em] text-[#f9eee4b8]">
                       {s.label}
                     </span>
                   </div>
@@ -151,7 +151,7 @@ export default function Home() {
                     <p className="text-[13px] font-semibold leading-none tracking-[0.02em] text-white/95">
                       {item.label}
                     </p>
-                    <p className="mt-1.5 text-[11px] font-normal tracking-[0.07em] text-white/50">
+                    <p className="mt-1.5 text-[11px] font-normal tracking-[0.07em] text-white/70">
                       {item.value}
                     </p>
                   </div>
@@ -163,7 +163,7 @@ export default function Home() {
             ))}
 
             <div className="mt-2 border-t border-white/[0.10] px-2 pt-3">
-              <p className="text-[11px] font-medium tracking-[0.14em] text-white/35 text-center">
+              <p className="text-[11px] font-medium tracking-[0.14em] text-white/55 text-center">
                 Trusted by fleets across the region
               </p>
             </div>
@@ -179,7 +179,7 @@ export default function Home() {
           <div className="relative h-px w-8 overflow-hidden bg-white/15">
             <div className="absolute inset-y-0 left-0 w-full animate-[scrollAnim_2s_ease-in-out_infinite] bg-[#c8922a]" />
           </div>
-          <span className="text-[10px] font-medium  tracking-[0.18em] text-white/20">
+          <span className="text-[10px] font-medium  tracking-[0.18em] text-white/40">
             Scroll to explore
           </span>
         </Reveal>
