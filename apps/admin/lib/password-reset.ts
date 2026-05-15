@@ -62,13 +62,19 @@ export async function requestPasswordReset(
     expiresAt
   });
 
+  const logoUrl = process.env.AUTH_URL
+    ? `${process.env.AUTH_URL}/logo/kthpl-logo.png`
+    : undefined;
+
   await sendTemplateEmail({
     subject: "Your Kashmir Tyre House admin reset code",
     template: ForgotPasswordEmail,
     templateProps: {
       code,
       expiresInMinutes: RESET_CODE_EXPIRY_MINUTES,
-      name: adminUser.name ?? undefined
+      name: adminUser.name ?? undefined,
+      logoUrl,
+      recipientEmail: adminUser.email
     },
     to: adminUser.email
   });

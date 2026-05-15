@@ -4,10 +4,11 @@ import {
   ChevronsUpDown,
   CircleGauge,
   LogOut,
-  LayoutDashboard,
+  // LayoutDashboard,
+  GalleryHorizontal,
   MessageSquareText,
   PanelLeft,
-  Tags,
+  // Tags,
 } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
@@ -21,26 +22,31 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Enquiries",
-    href: "/enquiries",
-    icon: MessageSquareText,
-  },
+  // {
+  //   label: "Dashboard",
+  //   href: "/dashboard",
+  //   icon: LayoutDashboard,
+  // },
   {
     label: "Tyres",
     href: "/tyres",
     icon: CircleGauge,
   },
   {
-    label: "Brands",
-    href: "/brands",
-    icon: Tags,
+    label: "Gallery Upload",
+    href: "/gallery-upload",
+    icon: GalleryHorizontal,
   },
+  {
+    label: "Enquiries",
+    href: "/enquiries",
+    icon: MessageSquareText,
+  },
+  // {
+  //   label: "Brands",
+  //   href: "/brands",
+  //   icon: Tags,
+  // },
 ];
 
 type AdminSidebarProps = {
