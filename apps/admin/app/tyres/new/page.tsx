@@ -615,7 +615,7 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
+    <div className="rounded-xl border border-(--border) bg-white">
       <div className="border-b border-[var(--border)] px-5 py-3.5">
         <h2 className="text-[13px] font-semibold text-[var(--foreground)]">
           {title}

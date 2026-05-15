@@ -2,12 +2,10 @@
 
 import {
   ArrowUpDown,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Pencil,
   Plus,
-  SlidersHorizontal,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
@@ -240,18 +238,6 @@ export default function TyresPage() {
           <button
             className={[
               "flex h-8 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition",
-              statusFilter === "all"
-                ? "border-[var(--foreground)] bg-[var(--foreground)] text-white"
-                : "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-slate-50",
-            ].join(" ")}
-            onClick={() => { setStatusFilter("all"); setPage(1); }}
-          >
-            All
-            <ChevronDown className="size-3.5 opacity-60" />
-          </button>
-          <button
-            className={[
-              "flex h-8 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition",
               statusFilter === "active"
                 ? "border-[#16a34a] bg-[#16a34a] text-white"
                 : "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-slate-50",
@@ -279,10 +265,6 @@ export default function TyresPage() {
               {selected.size} selected
             </span>
           ) : null}
-          <button className="flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] font-medium text-[var(--foreground)] transition hover:bg-slate-50">
-            <SlidersHorizontal className="size-3.5" />
-            Filter
-          </button>
           <Link
             className="flex h-8 items-center gap-1.5 rounded-lg bg-(--foreground) px-3 text-[13px] font-medium text-white transition hover:opacity-90"
             href="/tyres/new"
