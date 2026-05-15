@@ -43,6 +43,13 @@
       "when": 1778820754403,
       "tag": "0005_whole_glorian",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778853467642,
+      "tag": "0006_gorgeous_wasp",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,2 @@
+UPDATE "tyre_products" SET "vehicle_type" = NULL WHERE "vehicle_type" IS NOT NULL AND "vehicle_type" NOT IN ('Earthmover', 'Grader', 'Loader and dozer', 'Compactor', 'Underground', 'Mobile crane (High-speed)', 'Mining and Logging', 'Industrial');--> statement-breakpoint
+ALTER TABLE "tyre_products" ADD CONSTRAINT "tyre_products_vehicle_type_check" CHECK ("tyre_products"."vehicle_type" is null or "tyre_products"."vehicle_type" in ('Earthmover', 'Grader', 'Loader and dozer', 'Compactor', 'Underground', 'Mobile crane (High-speed)', 'Mining and Logging', 'Industrial'));

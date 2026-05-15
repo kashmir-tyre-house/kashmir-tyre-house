@@ -6,6 +6,17 @@ export const adminRoleSchema = z.enum(["admin", "manager", "viewer"]);
 
 export const tyreCategorySchema = z.enum(["Radial", "Bais"]);
 
+export const tyreVehicleTypeSchema = z.enum([
+  "Earthmover",
+  "Grader",
+  "Loader and dozer",
+  "Compactor",
+  "Underground",
+  "Mobile crane (High-speed)",
+  "Mining and Logging",
+  "Industrial"
+]);
+
 const optionalPositiveNumberSchema = z.preprocess(
   (value) => (value === "" || value === null ? undefined : value),
   z.coerce.number().positive().optional()
@@ -27,7 +38,7 @@ export const tyreProductSchema = z.object({
   tyreSize: z.string().min(2).max(40),
   tyreWeight: optionalPositiveNumberSchema,
   application: z.string().min(2).max(80),
-  vehicleType: z.string().min(2).max(120).optional().or(z.literal("")),
+  vehicleType: tyreVehicleTypeSchema.optional().or(z.literal("")),
   tyreType: z.string().max(80).optional(),
   starRating: z.string().max(20).optional(),
   plyRating: z.string().max(40).optional(),

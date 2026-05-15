@@ -94,6 +94,10 @@ export const tyreProducts = pgTable(
     check(
       "tyre_products_tyre_weight_check",
       sql`${table.tyreWeight} is null or ${table.tyreWeight} > 0`
+    ),
+    check(
+      "tyre_products_vehicle_type_check",
+      sql`${table.vehicleType} is null or ${table.vehicleType} in ('Earthmover', 'Grader', 'Loader and dozer', 'Compactor', 'Underground', 'Mobile crane (High-speed)', 'Mining and Logging', 'Industrial')`
     )
   ]
 );
