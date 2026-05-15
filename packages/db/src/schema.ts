@@ -1,9 +1,11 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
   integer,
   jsonb,
+  numeric,
   pgEnum,
   pgTable,
   text,
@@ -56,8 +58,13 @@ export const tyreProducts = pgTable(
     category: varchar("category", { length: 80 }),
     pattern: varchar("pattern", { length: 80 }).notNull(),
     tyreSize: varchar("tyre_size", { length: 40 }).notNull(),
+    tyreWeight: numeric("tyre_weight", {
+      precision: 10,
+      scale: 2,
+      mode: "number"
+    }),
     application: varchar("application", { length: 80 }).notNull(),
-    vehicleType: varchar("vehicle_type", { length: 120 }).notNull(),
+    vehicleType: varchar("vehicle_type", { length: 120 }),
     tyreType: varchar("tyre_type", { length: 80 }),
     starRating: varchar("star_rating", { length: 20 }),
     plyRating: varchar("ply_rating", { length: 40 }),
@@ -77,8 +84,17 @@ export const tyreProducts = pgTable(
     index("tyre_products_category_idx").on(table.category),
     index("tyre_products_pattern_idx").on(table.pattern),
     index("tyre_products_tyre_size_idx").on(table.tyreSize),
+    index("tyre_products_tyre_weight_idx").on(table.tyreWeight),
     index("tyre_products_application_idx").on(table.application),
-    index("tyre_products_vehicle_type_idx").on(table.vehicleType)
+    index("tyre_products_vehicle_type_idx").on(table.vehicleType),
+    check(
+      "tyre_products_category_check",
+      sql`${table.category} in ('Radial', 'Bais')`
+    ),
+    check(
+      "tyre_products_tyre_weight_check",
+      sql`${table.tyreWeight} is null or ${table.tyreWeight} > 0`
+    )
   ]
 );
 

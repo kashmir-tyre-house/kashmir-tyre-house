@@ -4,6 +4,13 @@ export const tyreImageTypeSchema = z.enum(["hero", "gallery"]);
 
 export const adminRoleSchema = z.enum(["admin", "manager", "viewer"]);
 
+export const tyreCategorySchema = z.enum(["Radial", "Bais"]);
+
+const optionalPositiveNumberSchema = z.preprocess(
+  (value) => (value === "" || value === null ? undefined : value),
+  z.coerce.number().positive().optional()
+);
+
 export const brandSchema = z.object({
   name: z.string().min(2).max(120),
   logoUrl: z.string().url().optional().or(z.literal("")),
@@ -15,11 +22,12 @@ export const tyreProductSchema = z.object({
   brandId: z.string().uuid(),
   name: z.string().min(2).max(140),
   description: z.string().max(1200).optional(),
-  category: z.string().max(80).optional(),
+  category: tyreCategorySchema,
   pattern: z.string().min(1).max(80),
   tyreSize: z.string().min(2).max(40),
+  tyreWeight: optionalPositiveNumberSchema,
   application: z.string().min(2).max(80),
-  vehicleType: z.string().min(2).max(120),
+  vehicleType: z.string().min(2).max(120).optional().or(z.literal("")),
   tyreType: z.string().max(80).optional(),
   starRating: z.string().max(20).optional(),
   plyRating: z.string().max(40).optional(),
