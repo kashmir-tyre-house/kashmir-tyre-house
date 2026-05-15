@@ -1,21 +1,19 @@
 "use client";
 
-import { ArrowLeft, ImagePlus, Plus, Save, Star, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  ImagePlus,
+  Plus,
+  Save,
+  Star,
+  X,
+} from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const BRANDS = [
-  "Apollo",
-  "BKT",
-  "Bridgestone",
-  "CEAT",
-  "Continental",
-  "Goodyear",
-  "Michelin",
-  "MRF",
-];
+type Brand = { id: string; name: string; logoUrl: string | null };
 const CATEGORIES = ["Radial", "Bais"] as const;
 const VEHICLE_TYPES = [
   "Earthmover",
@@ -61,8 +59,21 @@ type FormValues = {
 export default function NewTyrePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const featureInputRef = useRef<HTMLInputElement>(null);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [brandsLoading, setBrandsLoading] = useState(true);
   const [images, setImages] = useState<ImageEntry[]>([]);
   const [featureDraft, setFeatureDraft] = useState("");
+
+  useEffect(() => {
+    fetch("/api/brands")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok) setBrands(data.brands);
+      })
+      .catch(() => {})
+      .finally(() => setBrandsLoading(false));
+  }, []);
+
   const [form, setForm] = useState<FormValues>({
     name: "",
     brandId: "",
@@ -187,20 +198,13 @@ export default function NewTyrePage() {
               </Field>
 
               <Field label="Brand" required>
-                <select
-                  className={selectCls(form.brandId === "")}
-                  onChange={(e) => set("brandId", e.target.value)}
+                <CustomSelect
+                  loading={brandsLoading}
+                  onChange={(v) => set("brandId", v)}
+                  options={brands.map((b) => ({ value: b.id, label: b.name, icon: b.logoUrl ?? undefined }))}
+                  placeholder="Select brand"
                   value={form.brandId}
-                >
-                  <option value="" disabled>
-                    Select brand
-                  </option>
-                  {BRANDS.map((b) => (
-                    <option key={b} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </select>
+                />
               </Field>
 
               <Field label="Pattern" required>
@@ -213,9 +217,9 @@ export default function NewTyrePage() {
                 />
               </Field>
 
-              <Field label="Description" className="sm:col-span-2">
+              <Field label="Description" className="sm:col-span-2 mb-[-6]">
                 <textarea
-                  className={`${inputCls} resize-none`}
+                  className={`${textareaCls} resize-none`}
                   onChange={(e) => set("description", e.target.value)}
                   placeholder="Optional product description…"
                   rows={3}
@@ -229,18 +233,12 @@ export default function NewTyrePage() {
           <Card title="Specifications">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Field label="Category">
-                <select
-                  className={selectCls(form.category === "")}
-                  onChange={(e) => set("category", e.target.value)}
+                <CustomSelect
+                  onChange={(v) => set("category", v)}
+                  options={CATEGORIES.map((c) => ({ value: c, label: c }))}
+                  placeholder="Select category"
                   value={form.category}
-                >
-                  <option value="">Select category</option>
-                  {CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                />
               </Field>
 
               <Field label="Tyre Size" required>
@@ -321,18 +319,12 @@ export default function NewTyrePage() {
               </Field>
 
               <Field label="Vehicle Type">
-                <select
-                  className={selectCls(form.vehicleType === "")}
-                  onChange={(e) => set("vehicleType", e.target.value)}
+                <CustomSelect
+                  onChange={(v) => set("vehicleType", v)}
+                  options={VEHICLE_TYPES.map((v) => ({ value: v, label: v }))}
+                  placeholder="Select vehicle type"
                   value={form.vehicleType}
-                >
-                  <option value="">Select vehicle type</option>
-                  {VEHICLE_TYPES.map((v) => (
-                    <option key={v} value={v}>
-                      {v}
-                    </option>
-                  ))}
-                </select>
+                />
               </Field>
             </div>
           </Card>
@@ -369,7 +361,7 @@ export default function NewTyrePage() {
                 {form.tyreFeatures.map((f) => (
                   <span
                     key={f}
-                    className="flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-slate-50 py-1 pl-3 pr-2 text-[12px] font-medium text-[var(--foreground)]"
+                    className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-slate-50 py-1 pl-3 pr-2 text-[12px] font-medium text-[var(--foreground)]"
                   >
                     {f}
                     <button
@@ -510,17 +502,110 @@ export default function NewTyrePage() {
 
 // ── Shared style helpers ──────────────────────────────────────────────────────
 
-const inputCls =
-  "h-9 w-full rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none transition focus:border-[var(--foreground)] focus:ring-2 focus:ring-[var(--foreground)]/8";
+const inputBaseCls =
+  "w-full rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none transition focus:border-[var(--foreground)] focus:ring-2 focus:ring-[var(--foreground)]/8";
 
-function selectCls(isEmpty: boolean) {
-  return [
-    "h-9 w-full rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] outline-none transition focus:border-[var(--foreground)] focus:ring-2 focus:ring-[var(--foreground)]/8 appearance-none",
-    isEmpty ? "text-[var(--muted-foreground)]" : "text-[var(--foreground)]",
-  ].join(" ");
-}
+const inputCls = `h-9 ${inputBaseCls}`;
+const textareaCls = `py-2 ${inputBaseCls}`;
 
 // ── Sub-components ────────────────────────────────────────────────────────────
+
+function CustomSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "Select…",
+  loading,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string; icon?: string }[];
+  placeholder?: string;
+  loading?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = options.find((o) => o.value === value);
+
+  useEffect(() => {
+    if (!open) return;
+    function handlePointerDown(e: PointerEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        className={[
+          "flex h-9 w-full items-center justify-between rounded-lg border border-(--border) bg-white px-3 text-[13px] transition",
+          "outline-none focus:border-(--foreground) focus:ring-2 focus:ring-(--foreground)/8",
+          open ? "border-(--foreground) ring-2 ring-(--foreground)/8" : "",
+          selected ? "text-(--foreground)" : "text-(--muted-foreground)",
+        ].join(" ")}
+        onClick={() => setOpen((o) => !o)}
+        type="button"
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          {selected?.icon ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img alt="" className="size-4 shrink-0 rounded object-contain" src={selected.icon} />
+          ) : null}
+          <span className="truncate">
+            {loading ? "Loading…" : (selected?.label ?? placeholder)}
+          </span>
+        </span>
+        <ChevronDown
+          className={[
+            "ml-2 size-3.5 shrink-0 text-(--muted-foreground) transition-transform duration-150",
+            open ? "rotate-180" : "",
+          ].join(" ")}
+        />
+      </button>
+
+      {open ? (
+        <ul className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 max-h-56 overflow-y-auto rounded-lg border border-(--border) bg-white py-1 shadow-lg shadow-black/8">
+          {options.length === 0 ? (
+            <li className="px-3 py-2 text-[12px] text-(--muted-foreground)">
+              No options
+            </li>
+          ) : (
+            options.map((opt) => (
+              <li key={opt.value}>
+                <button
+                  className={[
+                    "flex w-full items-center gap-2 px-3 py-2 text-[13px] transition hover:bg-slate-50",
+                    opt.value === value
+                      ? "font-medium text-(--foreground)"
+                      : "text-(--foreground)",
+                  ].join(" ")}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setOpen(false);
+                  }}
+                  type="button"
+                >
+                  {opt.icon ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img alt="" className="size-4 shrink-0 rounded object-contain" src={opt.icon} />
+                  ) : null}
+                  <span className="flex-1 truncate text-left">{opt.label}</span>
+                  {opt.value === value ? (
+                    <Check className="size-3.5 shrink-0 text-(--foreground)" />
+                  ) : null}
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
 
 function Card({
   title,
@@ -584,7 +669,7 @@ function Toggle({
       <span
         className={[
           "inline-block size-3.5 rounded-full bg-white shadow transition-transform",
-          checked ? "translate-x-4" : "translate-x-0.5",
+          checked ? "translate-x-[20px]" : "translate-x-0.5",
         ].join(" ")}
       />
     </button>
