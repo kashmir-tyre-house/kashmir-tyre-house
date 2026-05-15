@@ -3,10 +3,14 @@
 import {
   ArrowUpDown,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Pencil,
+  Plus,
   SlidersHorizontal,
   Trash2,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 type TyreRow = {
@@ -171,10 +175,13 @@ type SortKey = keyof TyreRow;
 type SortDir = "asc" | "desc";
 
 export default function TyresPage() {
+  const PAGE_SIZE = 7;
+
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [sortKey, setSortKey] = useState<SortKey>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [page, setPage] = useState(1);
 
   const filtered = DUMMY_TYRES.filter((t) => {
     if (statusFilter === "active") return t.isActive;
@@ -192,14 +199,18 @@ export default function TyresPage() {
     return sortDir === "asc" ? cmp : -cmp;
   });
 
-  const allSelected = sorted.length > 0 && sorted.every((t) => selected.has(t.id));
-  const someSelected = sorted.some((t) => selected.has(t.id)) && !allSelected;
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageRows = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const allSelected = pageRows.length > 0 && pageRows.every((t) => selected.has(t.id));
+  const someSelected = pageRows.some((t) => selected.has(t.id)) && !allSelected;
 
   function toggleAll() {
     if (allSelected) {
       setSelected(new Set());
     } else {
-      setSelected(new Set(sorted.map((t) => t.id)));
+      setSelected(new Set(pageRows.map((t) => t.id)));
     }
   }
 
@@ -218,6 +229,7 @@ export default function TyresPage() {
       setSortKey(key);
       setSortDir("asc");
     }
+    setPage(1);
   }
 
   return (
@@ -232,7 +244,7 @@ export default function TyresPage() {
                 ? "border-[var(--foreground)] bg-[var(--foreground)] text-white"
                 : "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-slate-50",
             ].join(" ")}
-            onClick={() => setStatusFilter("all")}
+            onClick={() => { setStatusFilter("all"); setPage(1); }}
           >
             All
             <ChevronDown className="size-3.5 opacity-60" />
@@ -244,7 +256,7 @@ export default function TyresPage() {
                 ? "border-[#16a34a] bg-[#16a34a] text-white"
                 : "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-slate-50",
             ].join(" ")}
-            onClick={() => setStatusFilter("active")}
+            onClick={() => { setStatusFilter("active"); setPage(1); }}
           >
             Active
           </button>
@@ -255,7 +267,7 @@ export default function TyresPage() {
                 ? "border-[#dc2626] bg-[#dc2626] text-white"
                 : "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-slate-50",
             ].join(" ")}
-            onClick={() => setStatusFilter("inactive")}
+            onClick={() => { setStatusFilter("inactive"); setPage(1); }}
           >
             Inactive
           </button>
@@ -271,6 +283,13 @@ export default function TyresPage() {
             <SlidersHorizontal className="size-3.5" />
             Filter
           </button>
+          <Link
+            className="flex h-8 items-center gap-1.5 rounded-lg bg-(--foreground) px-3 text-[13px] font-medium text-white transition hover:opacity-90"
+            href="/tyres/new"
+          >
+            <Plus className="size-3.5" />
+            New Product
+          </Link>
         </div>
       </div>
 
@@ -303,7 +322,7 @@ export default function TyresPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)]">
-              {sorted.map((tyre) => {
+              {pageRows.map((tyre) => {
                 const isChecked = selected.has(tyre.id);
                 return (
                   <tr
@@ -364,14 +383,52 @@ export default function TyresPage() {
           </table>
         </div>
 
-        {/* Footer */}
+        {/* Pagination footer */}
         <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
           <p className="text-[12px] text-[var(--muted-foreground)]">
-            {sorted.length} tyre{sorted.length !== 1 ? "s" : ""}
+            {sorted.length === 0
+              ? "No results"
+              : `${(safePage - 1) * PAGE_SIZE + 1}–${Math.min(safePage * PAGE_SIZE, sorted.length)} of ${sorted.length} tyre${sorted.length !== 1 ? "s" : ""}`}
           </p>
-          <p className="text-[12px] text-[var(--muted-foreground)]">
-            Showing dummy data
-          </p>
+
+          <div className="flex items-center gap-1">
+            <button
+              aria-label="Previous page"
+              className="flex size-7 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground) transition hover:bg-slate-50 hover:text-(--foreground) disabled:pointer-events-none disabled:opacity-40"
+              disabled={safePage <= 1}
+              onClick={() => setPage((p) => p - 1)}
+              type="button"
+            >
+              <ChevronLeft className="size-3.5" />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                aria-current={p === safePage ? "page" : undefined}
+                className={[
+                  "flex size-7 items-center justify-center rounded-lg border text-[12px] font-medium transition",
+                  p === safePage
+                    ? "border-(--foreground) bg-(--foreground) text-white"
+                    : "border-(--border) bg-white text-(--muted-foreground) hover:bg-slate-50 hover:text-(--foreground)",
+                ].join(" ")}
+                onClick={() => setPage(p)}
+                type="button"
+              >
+                {p}
+              </button>
+            ))}
+
+            <button
+              aria-label="Next page"
+              className="flex size-7 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground) transition hover:bg-slate-50 hover:text-(--foreground) disabled:pointer-events-none disabled:opacity-40"
+              disabled={safePage >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              type="button"
+            >
+              <ChevronRight className="size-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

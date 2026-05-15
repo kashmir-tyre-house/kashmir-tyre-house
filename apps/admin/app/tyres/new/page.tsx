@@ -1,0 +1,592 @@
+"use client";
+
+import { ArrowLeft, ImagePlus, Plus, Save, Star, X } from "lucide-react";
+import Link from "next/link";
+import { useRef, useState } from "react";
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const BRANDS = [
+  "Apollo",
+  "BKT",
+  "Bridgestone",
+  "CEAT",
+  "Continental",
+  "Goodyear",
+  "Michelin",
+  "MRF",
+];
+const CATEGORIES = ["Radial", "Bais"] as const;
+const VEHICLE_TYPES = [
+  "Earthmover",
+  "Grader",
+  "Loader and dozer",
+  "Compactor",
+  "Underground",
+  "Mobile crane (High-speed)",
+  "Mining and Logging",
+  "Industrial",
+] as const;
+const MAX_IMAGES = 5;
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+type ImageEntry = {
+  id: string;
+  file: File;
+  previewUrl: string;
+  isPrimary: boolean;
+};
+
+type FormValues = {
+  name: string;
+  brandId: string;
+  pattern: string;
+  description: string;
+  category: string;
+  tyreSize: string;
+  tyreWeight: string;
+  loadIndex: string;
+  plyRating: string;
+  starRating: string;
+  tyreType: string;
+  application: string;
+  vehicleType: string;
+  tyreFeatures: string[];
+  isActive: boolean;
+};
+
+// ── Page ─────────────────────────────────────────────────────────────────────
+
+export default function NewTyrePage() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const featureInputRef = useRef<HTMLInputElement>(null);
+  const [images, setImages] = useState<ImageEntry[]>([]);
+  const [featureDraft, setFeatureDraft] = useState("");
+  const [form, setForm] = useState<FormValues>({
+    name: "",
+    brandId: "",
+    pattern: "",
+    description: "",
+    category: "",
+    tyreSize: "",
+    tyreWeight: "",
+    loadIndex: "",
+    plyRating: "",
+    starRating: "",
+    tyreType: "",
+    application: "",
+    vehicleType: "",
+    tyreFeatures: [],
+    isActive: true,
+  });
+
+  function set<K extends keyof FormValues>(key: K, value: FormValues[K]) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  // ── Image handlers ──────────────────────────────────────────────────────────
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    const remaining = MAX_IMAGES - images.length;
+    const toAdd = files.slice(0, remaining);
+
+    const entries: ImageEntry[] = toAdd.map((file, i) => ({
+      id: `${Date.now()}-${i}`,
+      file,
+      previewUrl: URL.createObjectURL(file),
+      isPrimary: images.length === 0 && i === 0,
+    }));
+
+    setImages((prev) => [...prev, ...entries]);
+    e.target.value = "";
+  }
+
+  function removeImage(id: string) {
+    setImages((prev) => {
+      const next = prev.filter((img) => img.id !== id);
+      if (next.length > 0 && !next.some((img) => img.isPrimary)) {
+        next[0].isPrimary = true;
+      }
+      return next;
+    });
+  }
+
+  function setPrimary(id: string) {
+    setImages((prev) =>
+      prev.map((img) => ({ ...img, isPrimary: img.id === id })),
+    );
+  }
+
+  // ── Feature tag handlers ────────────────────────────────────────────────────
+
+  function addFeature() {
+    const trimmed = featureDraft.trim();
+    if (!trimmed || form.tyreFeatures.includes(trimmed)) return;
+    set("tyreFeatures", [...form.tyreFeatures, trimmed]);
+    setFeatureDraft("");
+    featureInputRef.current?.focus();
+  }
+
+  function removeFeature(feature: string) {
+    set(
+      "tyreFeatures",
+      form.tyreFeatures.filter((f) => f !== feature),
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6 p-2">
+      {/* ── Page header ── */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Link
+            className="flex size-8 items-center justify-center rounded-lg border border-[var(--border)] bg-white text-[var(--muted-foreground)] transition hover:bg-slate-50 hover:text-[var(--foreground)]"
+            href="/tyres"
+          >
+            <ArrowLeft className="size-4" />
+          </Link>
+          <h1 className="text-[17px] font-semibold tracking-[-0.01em] text-[var(--foreground)]">
+            New Product
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link
+            className="flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-white px-4 text-[13px] font-medium text-[var(--foreground)] transition hover:bg-slate-50"
+            href="/tyres"
+          >
+            Cancel
+          </Link>
+          <button
+            className="flex h-9 items-center gap-1.5 rounded-lg bg-(--foreground) px-4 text-[13px] font-medium text-white transition hover:opacity-90"
+            type="button"
+          >
+            <Save className="size-3.5" />
+            Save Product
+          </button>
+        </div>
+      </div>
+
+      {/* ── Two-column layout ── */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_300px]">
+        {/* ── Left column ── */}
+        <div className="flex flex-col gap-5">
+          {/* Product information */}
+          <Card title="Product Information">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Product Name" required className="sm:col-span-2">
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("name", e.target.value)}
+                  placeholder="e.g. XDR Minemaster 40"
+                  type="text"
+                  value={form.name}
+                />
+              </Field>
+
+              <Field label="Brand" required>
+                <select
+                  className={selectCls(form.brandId === "")}
+                  onChange={(e) => set("brandId", e.target.value)}
+                  value={form.brandId}
+                >
+                  <option value="" disabled>
+                    Select brand
+                  </option>
+                  {BRANDS.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Pattern" required>
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("pattern", e.target.value)}
+                  placeholder="e.g. XDR"
+                  type="text"
+                  value={form.pattern}
+                />
+              </Field>
+
+              <Field label="Description" className="sm:col-span-2">
+                <textarea
+                  className={`${inputCls} resize-none`}
+                  onChange={(e) => set("description", e.target.value)}
+                  placeholder="Optional product description…"
+                  rows={3}
+                  value={form.description}
+                />
+              </Field>
+            </div>
+          </Card>
+
+          {/* Specifications */}
+          <Card title="Specifications">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <Field label="Category">
+                <select
+                  className={selectCls(form.category === "")}
+                  onChange={(e) => set("category", e.target.value)}
+                  value={form.category}
+                >
+                  <option value="">Select category</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field label="Tyre Size" required>
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("tyreSize", e.target.value)}
+                  placeholder="e.g. 27.00 R49"
+                  type="text"
+                  value={form.tyreSize}
+                />
+              </Field>
+
+              <Field label="Tyre Weight (kg)">
+                <input
+                  className={inputCls}
+                  min="0"
+                  onChange={(e) => set("tyreWeight", e.target.value)}
+                  placeholder="e.g. 540.00"
+                  step="0.01"
+                  type="number"
+                  value={form.tyreWeight}
+                />
+              </Field>
+
+              <Field label="Load Index">
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("loadIndex", e.target.value)}
+                  placeholder="e.g. 210A2"
+                  type="text"
+                  value={form.loadIndex}
+                />
+              </Field>
+
+              <Field label="Ply Rating">
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("plyRating", e.target.value)}
+                  placeholder="e.g. 16PR"
+                  type="text"
+                  value={form.plyRating}
+                />
+              </Field>
+
+              <Field label="Star Rating">
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("starRating", e.target.value)}
+                  placeholder="e.g. 3★"
+                  type="text"
+                  value={form.starRating}
+                />
+              </Field>
+
+              <Field label="Tyre Type" className="sm:col-span-2 lg:col-span-3">
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("tyreType", e.target.value)}
+                  placeholder="e.g. Tubeless, Tube-type"
+                  type="text"
+                  value={form.tyreType}
+                />
+              </Field>
+            </div>
+          </Card>
+
+          {/* Application */}
+          <Card title="Application">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Application" required>
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("application", e.target.value)}
+                  placeholder="e.g. Mining, Construction"
+                  type="text"
+                  value={form.application}
+                />
+              </Field>
+
+              <Field label="Vehicle Type">
+                <select
+                  className={selectCls(form.vehicleType === "")}
+                  onChange={(e) => set("vehicleType", e.target.value)}
+                  value={form.vehicleType}
+                >
+                  <option value="">Select vehicle type</option>
+                  {VEHICLE_TYPES.map((v) => (
+                    <option key={v} value={v}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+          </Card>
+
+          {/* Features */}
+          <Card title="Tyre Features">
+            <div className="flex gap-2">
+              <input
+                ref={featureInputRef}
+                className={`${inputCls} flex-1`}
+                onChange={(e) => setFeatureDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addFeature();
+                  }
+                }}
+                placeholder="e.g. Self-cleaning tread"
+                type="text"
+                value={featureDraft}
+              />
+              <button
+                className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] font-medium text-[var(--foreground)] transition hover:bg-slate-50"
+                onClick={addFeature}
+                type="button"
+              >
+                <Plus className="size-3.5" />
+                Add
+              </button>
+            </div>
+
+            {form.tyreFeatures.length > 0 ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {form.tyreFeatures.map((f) => (
+                  <span
+                    key={f}
+                    className="flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-slate-50 py-1 pl-3 pr-2 text-[12px] font-medium text-[var(--foreground)]"
+                  >
+                    {f}
+                    <button
+                      aria-label={`Remove ${f}`}
+                      className="flex size-4 items-center justify-center rounded-full text-[var(--muted-foreground)] transition hover:bg-slate-200 hover:text-[var(--foreground)]"
+                      onClick={() => removeFeature(f)}
+                      type="button"
+                    >
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-[12px] text-[var(--muted-foreground)]">
+                No features added yet. Press Enter or click Add.
+              </p>
+            )}
+          </Card>
+        </div>
+
+        {/* ── Right column ── */}
+        <div className="flex flex-col gap-5">
+          {/* Status */}
+          <Card title="Status">
+            <label className="flex cursor-pointer items-center justify-between gap-3">
+              <div>
+                <p className="text-[13px] font-medium text-[var(--foreground)]">
+                  Active
+                </p>
+                <p className="text-[12px] text-[var(--muted-foreground)]">
+                  Visible on the public site
+                </p>
+              </div>
+              <Toggle
+                checked={form.isActive}
+                onChange={(v) => set("isActive", v)}
+              />
+            </label>
+          </Card>
+
+          {/* Images */}
+          <Card title={`Images (${images.length}/${MAX_IMAGES})`}>
+            <div className="flex flex-col gap-3">
+              {/* Upload zone */}
+              {images.length < MAX_IMAGES ? (
+                <>
+                  <button
+                    className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[var(--border)] py-6 text-[var(--muted-foreground)] transition hover:border-slate-400 hover:bg-slate-50"
+                    onClick={() => fileInputRef.current?.click()}
+                    type="button"
+                  >
+                    <ImagePlus className="size-6 opacity-50" />
+                    <span className="text-[12px] font-medium">
+                      Click to upload
+                    </span>
+                    <span className="text-[11px] opacity-60">
+                      PNG, JPG, WEBP — max {MAX_IMAGES} images
+                    </span>
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    accept="image/png,image/jpeg,image/webp"
+                    className="hidden"
+                    multiple
+                    onChange={handleFileChange}
+                    type="file"
+                  />
+                </>
+              ) : null}
+
+              {/* Previews */}
+              {images.length > 0 ? (
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2">
+                  {images.map((img) => (
+                    <div
+                      key={img.id}
+                      className="group relative aspect-square overflow-hidden rounded-lg border border-[var(--border)] bg-slate-100"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt="Tyre preview"
+                        className="size-full object-cover"
+                        src={img.previewUrl}
+                      />
+
+                      {/* Primary badge */}
+                      {img.isPrimary ? (
+                        <span className="absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
+                          <Star className="size-2.5" />
+                          Primary
+                        </span>
+                      ) : null}
+
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                        {!img.isPrimary ? (
+                          <button
+                            className="flex items-center gap-1 rounded-md bg-white/90 px-2.5 py-1 text-[11px] font-medium text-[var(--foreground)] transition hover:bg-white"
+                            onClick={() => setPrimary(img.id)}
+                            type="button"
+                          >
+                            <Star className="size-3" />
+                            Set primary
+                          </button>
+                        ) : null}
+                        <button
+                          className="flex items-center gap-1 rounded-md bg-red-500/90 px-2.5 py-1 text-[11px] font-medium text-white transition hover:bg-red-500"
+                          onClick={() => removeImage(img.id)}
+                          type="button"
+                        >
+                          <X className="size-3" />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+
+              {images.length === 0 ? (
+                <p className="text-center text-[12px] text-[var(--muted-foreground)]">
+                  No images uploaded yet.
+                </p>
+              ) : null}
+
+              <p className="text-[11px] text-[var(--muted-foreground)]">
+                The <strong>primary</strong> image is shown as the hero on
+                product pages. Hover any image to change it.
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Shared style helpers ──────────────────────────────────────────────────────
+
+const inputCls =
+  "h-9 w-full rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none transition focus:border-[var(--foreground)] focus:ring-2 focus:ring-[var(--foreground)]/8";
+
+function selectCls(isEmpty: boolean) {
+  return [
+    "h-9 w-full rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] outline-none transition focus:border-[var(--foreground)] focus:ring-2 focus:ring-[var(--foreground)]/8 appearance-none",
+    isEmpty ? "text-[var(--muted-foreground)]" : "text-[var(--foreground)]",
+  ].join(" ");
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function Card({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
+      <div className="border-b border-[var(--border)] px-5 py-3.5">
+        <h2 className="text-[13px] font-semibold text-[var(--foreground)]">
+          {title}
+        </h2>
+      </div>
+      <div className="p-5">{children}</div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  required,
+  children,
+  className,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <label className="mb-1.5 block text-[12px] font-medium text-[var(--foreground)]">
+        {label}
+        {required ? <span className="ml-0.5 text-red-500">*</span> : null}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function Toggle({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      aria-checked={checked}
+      className={[
+        "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--foreground)]",
+        checked ? "bg-[var(--foreground)]" : "bg-slate-200",
+      ].join(" ")}
+      onClick={() => onChange(!checked)}
+      role="switch"
+      type="button"
+    >
+      <span
+        className={[
+          "inline-block size-3.5 rounded-full bg-white shadow transition-transform",
+          checked ? "translate-x-4" : "translate-x-0.5",
+        ].join(" ")}
+      />
+    </button>
+  );
+}
