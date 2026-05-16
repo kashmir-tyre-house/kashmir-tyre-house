@@ -137,7 +137,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       .update(tyreProducts)
       .set({ ...parsed.data, updatedAt: new Date() })
       .where(eq(tyreProducts.id, id))
-      .returning({ id: tyreProducts.id });
+      .returning();
 
     if (!updated) return notFound();
 
@@ -162,7 +162,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     const [deleted] = await db
       .delete(tyreProducts)
       .where(eq(tyreProducts.id, id))
-      .returning({ id: tyreProducts.id });
+      .returning();
 
     if (!deleted) return notFound();
 

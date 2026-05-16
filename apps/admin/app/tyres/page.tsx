@@ -40,6 +40,7 @@ export default function TyresPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -85,8 +86,13 @@ export default function TyresPage() {
     return () => { cancelled = true; };
   }, [sortKey, sortDir, statusFilter, page, refreshKey]);
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this tyre product? This action cannot be undone.")) return;
+  function promptDelete(tyre: TyreRow) {
+    setDeleteTarget({ id: tyre.id, name: tyre.name });
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    const { id } = deleteTarget;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/tyres/${id}`, { method: "DELETE" });
@@ -98,7 +104,9 @@ export default function TyresPage() {
         return next;
       });
       setRefreshKey((k) => k + 1);
+      setDeleteTarget(null);
     } catch (err) {
+      setDeleteTarget(null);
       alert(err instanceof Error ? err.message : "Failed to delete.");
     } finally {
       setDeletingId(null);
@@ -138,6 +146,7 @@ export default function TyresPage() {
   const to = Math.min(page * PAGE_SIZE, total);
 
   return (
+    <>
     <div className="flex flex-1 min-h-0 flex-col gap-5">
       {/* ── Toolbar ── */}
       <div className="flex shrink-0 items-center justify-between gap-3">
@@ -334,7 +343,7 @@ export default function TyresPage() {
                           <button
                             aria-label="Delete"
                             className="flex size-7 items-center justify-center rounded-lg border border-[#fecaca] bg-[#fef2f2] text-[#dc2626] transition hover:bg-[#fee2e2]"
-                            onClick={() => handleDelete(tyre.id)}
+                            onClick={() => promptDelete(tyre)}
                             type="button"
                           >
                             <Trash2 className="size-3.5" />
@@ -398,6 +407,16 @@ export default function TyresPage() {
         </div>
       </div>
     </div>
+
+    {deleteTarget ? (
+      <ConfirmDeleteModal
+        deleting={deletingId !== null}
+        name={deleteTarget.name}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
+    ) : null}
+    </>
   );
 }
 
@@ -506,5 +525,63 @@ function StatusBadge({ active }: { active: boolean }) {
       />
       {active ? "Active" : "Inactive"}
     </span>
+  );
+}
+
+function ConfirmDeleteModal({
+  name,
+  deleting,
+  onConfirm,
+  onCancel,
+}: {
+  name: string;
+  deleting: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+        onClick={deleting ? undefined : onCancel}
+      />
+
+      {/* Modal */}
+      <div className="relative z-10 mx-4 w-full max-w-sm rounded-2xl border border-(--border) bg-white p-6 shadow-2xl">
+        {/* Icon */}
+        <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-red-50">
+          <Trash2 className="size-4.5 text-red-500" />
+        </div>
+
+        <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-(--foreground)">
+          Delete product?
+        </h2>
+        <p className="mt-1.5 text-[13px] text-(--muted-foreground)">
+          <span className="font-medium text-(--foreground)">{name}</span>{" "}
+          will be permanently deleted. This action cannot be undone.
+        </p>
+
+        <div className="mt-5 flex items-center justify-end gap-2">
+          <button
+            className="flex h-9 items-center rounded-lg border border-(--border) bg-white px-4 text-[13px] font-medium text-(--foreground) transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-50"
+            disabled={deleting}
+            onClick={onCancel}
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            className="flex h-9 items-center gap-1.5 rounded-lg bg-red-600 px-4 text-[13px] font-medium text-white transition hover:bg-red-700 disabled:pointer-events-none disabled:opacity-60"
+            disabled={deleting}
+            onClick={onConfirm}
+            type="button"
+          >
+            <Trash2 className="size-3.5" />
+            {deleting ? "Deleting…" : "Delete"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

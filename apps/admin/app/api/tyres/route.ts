@@ -184,7 +184,7 @@ export async function POST(request: Request) {
     const [created] = await db
       .insert(tyreProducts)
       .values(parsed.data)
-      .returning({ id: tyreProducts.id });
+      .returning();
 
     return NextResponse.json({ ok: true, data: { id: created.id } }, { status: 201 });
   } catch (error) {

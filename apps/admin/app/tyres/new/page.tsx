@@ -154,10 +154,11 @@ export default function NewTyrePage() {
   async function handleSave() {
     setSaveError(null);
 
-    if (!form.brandId)        { setSaveError("Please select a brand."); return; }
-    if (!form.name.trim())    { setSaveError("Product name is required."); return; }
-    if (!form.pattern.trim()) { setSaveError("Pattern is required."); return; }
-    if (!form.tyreSize.trim()) { setSaveError("Tyre size is required."); return; }
+    if (!form.brandId)            { setSaveError("Please select a brand."); return; }
+    if (!form.name.trim())        { setSaveError("Product name is required."); return; }
+    if (!form.category)           { setSaveError("Please select a category."); return; }
+    if (!form.pattern.trim())     { setSaveError("Pattern is required."); return; }
+    if (!form.tyreSize.trim())    { setSaveError("Tyre size is required."); return; }
     if (!form.application.trim()) { setSaveError("Application is required."); return; }
 
     setSaving(true);
@@ -295,9 +296,13 @@ export default function NewTyrePage() {
           {/* Specifications */}
           <Card title="Specifications">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Field label="Category">
+              <Field label="Category" required>
                 <CustomSelect
-                  onChange={(v) => set("category", v)}
+                  onChange={(v) => {
+                    set("category", v);
+                    if (v === "Radial") set("plyRating", "");
+                    if (v === "Bais") set("starRating", "");
+                  }}
                   options={CATEGORIES.map((c) => ({ value: c, label: c }))}
                   placeholder="Select category"
                   value={form.category}
@@ -339,8 +344,9 @@ export default function NewTyrePage() {
               <Field label="Ply Rating">
                 <input
                   className={inputCls}
+                  disabled={form.category !== "Bais"}
                   onChange={(e) => set("plyRating", e.target.value)}
-                  placeholder="e.g. 16PR"
+                  placeholder={form.category === "Radial" ? "Available for Bais only" : "e.g. 16PR"}
                   type="text"
                   value={form.plyRating}
                 />
@@ -349,8 +355,9 @@ export default function NewTyrePage() {
               <Field label="Star Rating">
                 <input
                   className={inputCls}
+                  disabled={form.category !== "Radial"}
                   onChange={(e) => set("starRating", e.target.value)}
-                  placeholder="e.g. 3★"
+                  placeholder={form.category === "Bais" ? "Available for Radial only" : "e.g. 3★"}
                   type="text"
                   value={form.starRating}
                 />
@@ -566,7 +573,7 @@ export default function NewTyrePage() {
 // ── Shared style helpers ──────────────────────────────────────────────────────
 
 const inputBaseCls =
-  "w-full rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none transition focus:border-[var(--foreground)] focus:ring-2 focus:ring-[var(--foreground)]/8";
+  "w-full rounded-lg border border-[var(--border)] bg-white px-3 text-[13px] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none transition focus:border-[var(--foreground)] focus:ring-2 focus:ring-[var(--foreground)]/8 disabled:cursor-not-allowed disabled:bg-[#f9fafb] disabled:text-[var(--muted-foreground)] disabled:opacity-70";
 
 const inputCls = `h-9 ${inputBaseCls}`;
 const textareaCls = `py-2 ${inputBaseCls}`;
