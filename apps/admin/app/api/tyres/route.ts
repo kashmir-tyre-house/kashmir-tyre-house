@@ -158,7 +158,16 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("[tyres] GET list failed", error);
-    return NextResponse.json({ ok: false, message: "Failed to fetch tyres." }, { status: 500 });
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Failed to fetch tyres.",
+        ...(process.env.NODE_ENV === "development" && {
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -189,6 +198,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, data: { id: created.id } }, { status: 201 });
   } catch (error) {
     console.error("[tyres] POST create failed", error);
-    return NextResponse.json({ ok: false, message: "Failed to create tyre product." }, { status: 500 });
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Failed to create tyre product.",
+        ...(process.env.NODE_ENV === "development" && {
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      },
+      { status: 500 }
+    );
   }
 }

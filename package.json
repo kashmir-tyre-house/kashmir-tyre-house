@@ -12,6 +12,7 @@
     "packages/*"
   ],
   "scripts": {
+    "predev": "npm run db:seed",
     "dev": "turbo dev",
     "dev:web": "npm run dev -w @kth/web",
     "dev:admin": "npm run dev -w @kth/admin",
@@ -21,7 +22,8 @@
     "typecheck": "turbo typecheck",
     "db:generate": "npm run db:generate -w @kth/db",
     "db:migrate": "npm run db:migrate -w @kth/db",
-    "db:studio": "npm run db:studio -w @kth/db"
+    "db:studio": "npm run db:studio -w @kth/db",
+    "db:seed": "npm run db:seed -w @kth/db"
   },
   "devDependencies": {
     "turbo": "^2.6.3",

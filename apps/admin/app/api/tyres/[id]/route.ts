@@ -101,7 +101,16 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: true, data: row });
   } catch (error) {
     console.error("[tyres] GET detail failed", error);
-    return NextResponse.json({ ok: false, message: "Failed to fetch tyre product." }, { status: 500 });
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Failed to fetch tyre product.",
+        ...(process.env.NODE_ENV === "development" && {
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -144,7 +153,16 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ ok: true, data: { id: updated.id } });
   } catch (error) {
     console.error("[tyres] PUT update failed", error);
-    return NextResponse.json({ ok: false, message: "Failed to update tyre product." }, { status: 500 });
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Failed to update tyre product.",
+        ...(process.env.NODE_ENV === "development" && {
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      },
+      { status: 500 }
+    );
   }
 }
 
