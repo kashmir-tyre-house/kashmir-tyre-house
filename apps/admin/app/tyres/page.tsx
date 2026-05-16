@@ -8,172 +8,39 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type TyreRow = {
   id: string;
   name: string;
-  brand: string;
-  category: "Radial" | "Bias";
+  brand: { id: string; name: string } | null;
+  category: string | null;
   tyreSize: string;
   pattern: string;
-  loadIndex: string;
-  vehicleType: string;
+  loadIndex: string | null;
+  vehicleType: string | null;
   application: string;
-  tyreWeight: string;
+  tyreWeight: number | null;
   isActive: boolean;
   createdAt: string;
 };
 
-const DUMMY_TYRES: TyreRow[] = [
-  {
-    id: "TP-0001",
-    name: "XDR Minemaster 40",
-    brand: "CEAT",
-    category: "Radial",
-    tyreSize: "27.00 R49",
-    pattern: "XDR",
-    loadIndex: "210A2",
-    vehicleType: "Earthmover",
-    application: "Mining",
-    tyreWeight: "540.00",
-    isActive: true,
-    createdAt: "03/25/24 - 18:45",
-  },
-  {
-    id: "TP-0002",
-    name: "Loadpro HD 12",
-    brand: "Apollo",
-    category: "Bias",
-    tyreSize: "12.00-20",
-    pattern: "Loadpro",
-    loadIndex: "154/150",
-    vehicleType: "Industrial",
-    application: "On-Highway",
-    tyreWeight: "89.50",
-    isActive: true,
-    createdAt: "03/25/24 - 12:30",
-  },
-  {
-    id: "TP-0003",
-    name: "GoldenRock R500",
-    brand: "BKT",
-    category: "Radial",
-    tyreSize: "20.5 R25",
-    pattern: "ROCK",
-    loadIndex: "177A2",
-    vehicleType: "Loader and dozer",
-    application: "Construction",
-    tyreWeight: "310.00",
-    isActive: true,
-    createdAt: "03/24/24 - 15:20",
-  },
-  {
-    id: "TP-0004",
-    name: "CompactorKing CK2",
-    brand: "Michelin",
-    category: "Bias",
-    tyreSize: "23.1-26",
-    pattern: "CK2",
-    loadIndex: "168A8",
-    vehicleType: "Compactor",
-    application: "Compaction",
-    tyreWeight: "210.75",
-    isActive: false,
-    createdAt: "03/23/24 - 10:55",
-  },
-  {
-    id: "TP-0005",
-    name: "Underground Pro UP9",
-    brand: "Continental",
-    category: "Radial",
-    tyreSize: "17.5 R25",
-    pattern: "UP9",
-    loadIndex: "169B",
-    vehicleType: "Underground",
-    application: "Mining",
-    tyreWeight: "195.00",
-    isActive: false,
-    createdAt: "03/23/24 - 04:30",
-  },
-  {
-    id: "TP-0006",
-    name: "GraderMaster GM5",
-    brand: "CEAT",
-    category: "Radial",
-    tyreSize: "17.5 R25",
-    pattern: "GM5",
-    loadIndex: "169A2",
-    vehicleType: "Grader",
-    application: "Road Works",
-    tyreWeight: "185.50",
-    isActive: true,
-    createdAt: "03/22/24 - 17:15",
-  },
-  {
-    id: "TP-0007",
-    name: "MobileCrane MCR1",
-    brand: "Bridgestone",
-    category: "Radial",
-    tyreSize: "385/95 R25",
-    pattern: "MCR",
-    loadIndex: "170E",
-    vehicleType: "Mobile crane (High-speed)",
-    application: "Crane",
-    tyreWeight: "162.00",
-    isActive: true,
-    createdAt: "03/22/24 - 11:40",
-  },
-  {
-    id: "TP-0008",
-    name: "LoggerX LX4",
-    brand: "BKT",
-    category: "Bias",
-    tyreSize: "30.5-32",
-    pattern: "LX4",
-    loadIndex: "182A8",
-    vehicleType: "Mining and Logging",
-    application: "Forestry",
-    tyreWeight: "430.00",
-    isActive: true,
-    createdAt: "03/21/24 - 14:05",
-  },
-  {
-    id: "TP-0009",
-    name: "IndustrialFlex IF2",
-    brand: "Apollo",
-    category: "Bias",
-    tyreSize: "8.25-15",
-    pattern: "IF2",
-    loadIndex: "148A5",
-    vehicleType: "Industrial",
-    application: "Warehouse",
-    tyreWeight: "52.30",
-    isActive: true,
-    createdAt: "03/21/24 - 09:20",
-  },
-  {
-    id: "TP-0010",
-    name: "EarthstarE30 Radial",
-    brand: "Michelin",
-    category: "Radial",
-    tyreSize: "29.5 R29",
-    pattern: "E3R",
-    loadIndex: "192A2",
-    vehicleType: "Earthmover",
-    application: "Mining",
-    tyreWeight: "610.00",
-    isActive: false,
-    createdAt: "03/21/24 - 09:15",
-  },
-];
-
-type SortKey = keyof TyreRow;
+type SortKey = "name" | "category" | "tyreSize" | "application" | "isActive" | "createdAt";
 type SortDir = "asc" | "desc";
 
+const PAGE_SIZE = 20;
+const COL_COUNT = 13;
+
 export default function TyresPage() {
-  const PAGE_SIZE = 7;
+  const [tyres, setTyres] = useState<TyreRow[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [sortKey, setSortKey] = useState<SortKey>("createdAt");
@@ -181,34 +48,71 @@ export default function TyresPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [page, setPage] = useState(1);
 
-  const filtered = DUMMY_TYRES.filter((t) => {
-    if (statusFilter === "active") return t.isActive;
-    if (statusFilter === "inactive") return !t.isActive;
-    return true;
-  });
+  useEffect(() => {
+    let cancelled = false;
 
-  const sorted = [...filtered].sort((a, b) => {
-    const av = a[sortKey];
-    const bv = b[sortKey];
-    const cmp =
-      typeof av === "boolean"
-        ? Number(av) - Number(bv)
-        : String(av).localeCompare(String(bv));
-    return sortDir === "asc" ? cmp : -cmp;
-  });
+    async function load() {
+      setLoading(true);
+      setError(null);
 
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const pageRows = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+      try {
+        const params = new URLSearchParams({
+          sortBy: sortKey,
+          sortDir,
+          page: String(page),
+          limit: String(PAGE_SIZE),
+        });
+        if (statusFilter === "active") params.set("isActive", "true");
+        if (statusFilter === "inactive") params.set("isActive", "false");
 
-  const allSelected = pageRows.length > 0 && pageRows.every((t) => selected.has(t.id));
-  const someSelected = pageRows.some((t) => selected.has(t.id)) && !allSelected;
+        const res = await fetch(`/api/tyres?${params}`);
+        const data = await res.json();
+        if (cancelled) return;
+        if (!data.ok) throw new Error(data.message ?? "Failed to fetch.");
+        setTyres(data.data);
+        setTotal(data.pagination.total);
+        setTotalPages(data.pagination.totalPages);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Failed to load tyres.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    load();
+    return () => { cancelled = true; };
+  }, [sortKey, sortDir, statusFilter, page, refreshKey]);
+
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this tyre product? This action cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/tyres/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.message);
+      setSelected((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      setRefreshKey((k) => k + 1);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  const allSelected = tyres.length > 0 && tyres.every((t) => selected.has(t.id));
+  const someSelected = tyres.some((t) => selected.has(t.id)) && !allSelected;
 
   function toggleAll() {
     if (allSelected) {
       setSelected(new Set());
     } else {
-      setSelected(new Set(pageRows.map((t) => t.id)));
+      setSelected(new Set(tyres.map((t) => t.id)));
     }
   }
 
@@ -230,19 +134,25 @@ export default function TyresPage() {
     setPage(1);
   }
 
+  const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const to = Math.min(page * PAGE_SIZE, total);
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-1 min-h-0 flex-col gap-5">
       {/* ── Toolbar ── */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex shrink-0 items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <button
             className={[
               "flex h-8 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition",
               statusFilter === "active"
                 ? "border-[#16a34a] bg-[#16a34a] text-white"
-                : "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-slate-50",
+                : "border-(--border) bg-white text-(--foreground) hover:bg-slate-50",
             ].join(" ")}
-            onClick={() => { setStatusFilter("active"); setPage(1); }}
+            onClick={() => {
+              setStatusFilter((f) => (f === "active" ? "all" : "active"));
+              setPage(1);
+            }}
           >
             Active
           </button>
@@ -251,9 +161,12 @@ export default function TyresPage() {
               "flex h-8 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition",
               statusFilter === "inactive"
                 ? "border-[#dc2626] bg-[#dc2626] text-white"
-                : "border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-slate-50",
+                : "border-(--border) bg-white text-(--foreground) hover:bg-slate-50",
             ].join(" ")}
-            onClick={() => { setStatusFilter("inactive"); setPage(1); }}
+            onClick={() => {
+              setStatusFilter((f) => (f === "inactive" ? "all" : "inactive"));
+              setPage(1);
+            }}
           >
             Inactive
           </button>
@@ -261,7 +174,7 @@ export default function TyresPage() {
 
         <div className="flex items-center gap-2">
           {selected.size > 0 ? (
-            <span className="text-[13px] text-[var(--muted-foreground)]">
+            <span className="text-[13px] text-(--muted-foreground)">
               {selected.size} selected
             </span>
           ) : null}
@@ -276,12 +189,15 @@ export default function TyresPage() {
       </div>
 
       {/* ── Table card ── */}
-      <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
-        <div className="overflow-x-auto">
-          <table className="border-collapse text-[13px]" style={{ width: "max-content", minWidth: "100%" }}>
-            <thead>
-              <tr className="border-b border-[var(--border)] bg-[#f9fafb]">
-                {/* Select all */}
+      <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-xl border border-(--border) bg-white">
+        {/* Scrollable table area */}
+        <div className="flex-1 min-h-0 overflow-x-auto overflow-y-auto">
+          <table
+            className="h-full border-collapse text-[13px]"
+            style={{ width: "max-content", minWidth: "100%" }}
+          >
+            <thead className="sticky top-0 z-10">
+              <tr className="border-b border-(--border) bg-[#f9fafb]">
                 <th className="w-12 py-3 pl-4">
                   <Checkbox
                     checked={allSelected}
@@ -289,95 +205,163 @@ export default function TyresPage() {
                     onChange={toggleAll}
                   />
                 </th>
-
-                <SortTh label="ID" sortKey="id" current={sortKey} dir={sortDir} onSort={handleSort} className="w-28 min-w-28" />
+                <PlainTh className="w-36 min-w-36">ID</PlainTh>
                 <SortTh label="Name" sortKey="name" current={sortKey} dir={sortDir} onSort={handleSort} className="min-w-50" />
-                <SortTh label="Brand" sortKey="brand" current={sortKey} dir={sortDir} onSort={handleSort} className="w-36 min-w-36" />
+                <PlainTh className="w-36 min-w-36">Brand</PlainTh>
                 <SortTh label="Category" sortKey="category" current={sortKey} dir={sortDir} onSort={handleSort} className="w-28 min-w-28" />
                 <SortTh label="Tyre Size" sortKey="tyreSize" current={sortKey} dir={sortDir} onSort={handleSort} className="w-36 min-w-36" />
-                <SortTh label="Pattern" sortKey="pattern" current={sortKey} dir={sortDir} onSort={handleSort} className="w-28 min-w-28" />
-                <SortTh label="Load Index" sortKey="loadIndex" current={sortKey} dir={sortDir} onSort={handleSort} className="w-32 min-w-32" />
-                <SortTh label="Vehicle Type" sortKey="vehicleType" current={sortKey} dir={sortDir} onSort={handleSort} className="w-56 min-w-56" />
-                <SortTh label="Weight (kg)" sortKey="tyreWeight" current={sortKey} dir={sortDir} onSort={handleSort} className="w-32 min-w-32" />
-                <th className="w-28 min-w-28 px-4 py-3 text-left font-semibold text-(--foreground)">Status</th>
-                <th className="w-24 min-w-24 px-4 py-3 text-right font-semibold text-(--foreground)">Actions</th>
+                <PlainTh className="w-28 min-w-28">Pattern</PlainTh>
+                <PlainTh className="w-32 min-w-32">Load Index</PlainTh>
+                <PlainTh className="w-56 min-w-56">Vehicle Type</PlainTh>
+                <SortTh label="Application" sortKey="application" current={sortKey} dir={sortDir} onSort={handleSort} className="w-36 min-w-36" />
+                <PlainTh className="w-32 min-w-32">Weight (kg)</PlainTh>
+                <SortTh label="Status" sortKey="isActive" current={sortKey} dir={sortDir} onSort={handleSort} className="w-28 min-w-28" />
+                <th className="w-24 min-w-24 px-4 py-3 text-right font-semibold text-(--foreground)">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border)]">
-              {pageRows.map((tyre) => {
-                const isChecked = selected.has(tyre.id);
-                return (
-                  <tr
-                    key={tyre.id}
-                    className={[
-                      "group transition-colors",
-                      isChecked ? "bg-slate-50" : "hover:bg-[#fafafa]",
-                    ].join(" ")}
-                  >
-                    <td className="py-3.5 pl-4">
-                      <Checkbox checked={isChecked} onChange={() => toggleRow(tyre.id)} />
-                    </td>
-                    <td className="px-4 py-3.5 font-mono text-[12px] text-[var(--muted-foreground)]">
-                      {tyre.id}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span className="font-medium text-[var(--foreground)]">{tyre.name}</span>
-                    </td>
-                    <td className="px-4 py-3.5 text-[var(--muted-foreground)]">{tyre.brand}</td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={[
-                          "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium",
-                          tyre.category === "Radial"
-                            ? "bg-blue-50 text-blue-700"
-                            : "bg-amber-50 text-amber-700",
-                        ].join(" ")}
+
+            <tbody className="divide-y divide-(--border)">
+              {loading ? (
+                <tr>
+                  <td colSpan={COL_COUNT} className="py-24 text-center text-[13px] text-(--muted-foreground)">
+                    Loading…
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={COL_COUNT} className="py-24 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <p className="text-[13px] text-red-500">{error}</p>
+                      <button
+                        className="rounded-lg border border-(--border) bg-white px-3 py-1.5 text-[13px] font-medium text-(--foreground) transition hover:bg-slate-50"
+                        onClick={() => setRefreshKey((k) => k + 1)}
+                        type="button"
                       >
-                        {tyre.category}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 font-mono text-[12px] text-[var(--foreground)]">
-                      {tyre.tyreSize}
-                    </td>
-                    <td className="px-4 py-3.5 text-[var(--muted-foreground)]">{tyre.pattern}</td>
-                    <td className="px-4 py-3.5 font-mono text-[12px] text-[var(--foreground)]">
-                      {tyre.loadIndex}
-                    </td>
-                    <td className="px-4 py-3.5 text-[var(--muted-foreground)]">
-                      <span className="line-clamp-1">{tyre.vehicleType}</span>
-                    </td>
-                    <td className="px-4 py-3.5 text-right text-[var(--muted-foreground)]">
-                      {tyre.tyreWeight}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <StatusBadge active={tyre.isActive} />
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                        <ActionBtn icon={<Pencil className="size-3.5" />} label="Edit" />
-                        <ActionBtn icon={<Trash2 className="size-3.5" />} label="Delete" danger />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                        Retry
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : tyres.length === 0 ? (
+                <tr>
+                  <td colSpan={COL_COUNT} className="py-16 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <Image
+                        alt="No products"
+                        className="opacity-80"
+                        height={96}
+                        src="/Illustrations/empty-box.png"
+                        width={96}
+                      />
+                      <p className="text-[13px] font-medium text-(--foreground)">
+                        No tyre products found
+                      </p>
+                      <p className="text-[12px] text-(--muted-foreground)">
+                        Add your first product to get started.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                tyres.map((tyre) => {
+                  const isChecked = selected.has(tyre.id);
+                  const isDeleting = deletingId === tyre.id;
+                  return (
+                    <tr
+                      key={tyre.id}
+                      className={[
+                        "group transition-colors",
+                        isChecked ? "bg-slate-50" : "hover:bg-[#fafafa]",
+                        isDeleting ? "pointer-events-none opacity-50" : "",
+                      ].join(" ")}
+                    >
+                      <td className="py-3.5 pl-4">
+                        <Checkbox checked={isChecked} onChange={() => toggleRow(tyre.id)} />
+                      </td>
+                      <td className="px-4 py-3.5 font-mono text-[12px] text-(--muted-foreground)">
+                        {tyre.id.slice(0, 8)}…
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="font-medium text-(--foreground)">{tyre.name}</span>
+                      </td>
+                      <td className="px-4 py-3.5 text-(--muted-foreground)">
+                        {tyre.brand?.name ?? "—"}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        {tyre.category ? (
+                          <span
+                            className={[
+                              "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium",
+                              tyre.category === "Radial"
+                                ? "bg-blue-50 text-blue-700"
+                                : "bg-amber-50 text-amber-700",
+                            ].join(" ")}
+                          >
+                            {tyre.category}
+                          </span>
+                        ) : (
+                          <span className="text-(--muted-foreground)">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3.5 font-mono text-[12px] text-(--foreground)">
+                        {tyre.tyreSize}
+                      </td>
+                      <td className="px-4 py-3.5 text-(--muted-foreground)">{tyre.pattern}</td>
+                      <td className="px-4 py-3.5 font-mono text-[12px] text-(--foreground)">
+                        {tyre.loadIndex ?? "—"}
+                      </td>
+                      <td className="px-4 py-3.5 text-(--muted-foreground)">
+                        <span className="line-clamp-1">{tyre.vehicleType ?? "—"}</span>
+                      </td>
+                      <td className="px-4 py-3.5 text-(--muted-foreground)">{tyre.application}</td>
+                      <td className="px-4 py-3.5 text-right font-mono text-[12px] text-(--muted-foreground)">
+                        {tyre.tyreWeight != null ? tyre.tyreWeight.toFixed(2) : "—"}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <StatusBadge active={tyre.isActive} />
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                          <Link
+                            aria-label="Edit"
+                            className="flex size-7 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground) transition hover:bg-slate-50 hover:text-(--foreground)"
+                            href={`/tyres/${tyre.id}/edit`}
+                          >
+                            <Pencil className="size-3.5" />
+                          </Link>
+                          <button
+                            aria-label="Delete"
+                            className="flex size-7 items-center justify-center rounded-lg border border-[#fecaca] bg-[#fef2f2] text-[#dc2626] transition hover:bg-[#fee2e2]"
+                            onClick={() => handleDelete(tyre.id)}
+                            type="button"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination footer */}
-        <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
-          <p className="text-[12px] text-[var(--muted-foreground)]">
-            {sorted.length === 0
+        <div className="flex shrink-0 items-center justify-between border-t border-(--border) px-4 py-3">
+          <p className="text-[12px] text-(--muted-foreground)">
+            {total === 0
               ? "No results"
-              : `${(safePage - 1) * PAGE_SIZE + 1}–${Math.min(safePage * PAGE_SIZE, sorted.length)} of ${sorted.length} tyre${sorted.length !== 1 ? "s" : ""}`}
+              : `${from}–${to} of ${total} tyre${total !== 1 ? "s" : ""}`}
           </p>
 
           <div className="flex items-center gap-1">
             <button
               aria-label="Previous page"
               className="flex size-7 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground) transition hover:bg-slate-50 hover:text-(--foreground) disabled:pointer-events-none disabled:opacity-40"
-              disabled={safePage <= 1}
+              disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
               type="button"
             >
@@ -387,10 +371,10 @@ export default function TyresPage() {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
-                aria-current={p === safePage ? "page" : undefined}
+                aria-current={p === page ? "page" : undefined}
                 className={[
                   "flex size-7 items-center justify-center rounded-lg border text-[12px] font-medium transition",
-                  p === safePage
+                  p === page
                     ? "border-(--foreground) bg-(--foreground) text-white"
                     : "border-(--border) bg-white text-(--muted-foreground) hover:bg-slate-50 hover:text-(--foreground)",
                 ].join(" ")}
@@ -404,7 +388,7 @@ export default function TyresPage() {
             <button
               aria-label="Next page"
               className="flex size-7 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground) transition hover:bg-slate-50 hover:text-(--foreground) disabled:pointer-events-none disabled:opacity-40"
-              disabled={safePage >= totalPages}
+              disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
               type="button"
             >
@@ -431,13 +415,13 @@ function Checkbox({
   return (
     <button
       aria-checked={indeterminate ? "mixed" : checked}
-      className="flex size-5 shrink-0 items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--foreground)]"
+      className="flex size-5 shrink-0 items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-(--foreground)"
       onClick={onChange}
       role="checkbox"
       type="button"
     >
       {checked || indeterminate ? (
-        <span className="flex size-5 items-center justify-center rounded bg-[var(--foreground)]">
+        <span className="flex size-5 items-center justify-center rounded bg-(--foreground)">
           {indeterminate ? (
             <span className="block h-px w-2.5 rounded-full bg-white" />
           ) : (
@@ -456,6 +440,24 @@ function Checkbox({
         <span className="block size-5 rounded border border-[#d0d5dd] bg-white" />
       )}
     </button>
+  );
+}
+
+function PlainTh({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <th
+      className={["px-4 py-3 text-left font-semibold text-(--foreground)", className]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {children}
+    </th>
   );
 }
 
@@ -478,16 +480,13 @@ function SortTh({
   return (
     <th className={["px-4 py-3 text-left", className].filter(Boolean).join(" ")}>
       <button
-        className="flex items-center gap-1 font-semibold text-[var(--foreground)] hover:text-[var(--foreground)] focus-visible:outline-none"
+        className="flex items-center gap-1 font-semibold text-(--foreground) focus-visible:outline-none"
         onClick={() => onSort(sortKey)}
         type="button"
       >
         {label}
         <ArrowUpDown
-          className={[
-            "size-3",
-            active ? "text-[var(--foreground)]" : "text-[#c0c8d5]",
-          ].join(" ")}
+          className={["size-3", active ? "text-(--foreground)" : "text-[#c0c8d5]"].join(" ")}
         />
       </button>
     </th>
@@ -499,43 +498,13 @@ function StatusBadge({ active }: { active: boolean }) {
     <span
       className={[
         "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium",
-        active
-          ? "bg-[#f0fdf4] text-[#16a34a]"
-          : "bg-[#fef2f2] text-[#dc2626]",
+        active ? "bg-[#f0fdf4] text-[#16a34a]" : "bg-[#fef2f2] text-[#dc2626]",
       ].join(" ")}
     >
       <span
-        className={[
-          "size-1.5 rounded-full",
-          active ? "bg-[#16a34a]" : "bg-[#dc2626]",
-        ].join(" ")}
+        className={["size-1.5 rounded-full", active ? "bg-[#16a34a]" : "bg-[#dc2626]"].join(" ")}
       />
       {active ? "Active" : "Inactive"}
     </span>
-  );
-}
-
-function ActionBtn({
-  icon,
-  label,
-  danger,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      aria-label={label}
-      className={[
-        "flex size-7 items-center justify-center rounded-lg border transition",
-        danger
-          ? "border-[#fecaca] bg-[#fef2f2] text-[#dc2626] hover:bg-[#fee2e2]"
-          : "border-[var(--border)] bg-white text-[var(--muted-foreground)] hover:bg-slate-50 hover:text-[var(--foreground)]",
-      ].join(" ")}
-      type="button"
-    >
-      {icon}
-    </button>
   );
 }

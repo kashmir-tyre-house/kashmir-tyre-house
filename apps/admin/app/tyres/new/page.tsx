@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type Brand = { id: string; name: string; logoUrl: string | null };
@@ -57,12 +58,15 @@ type FormValues = {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function NewTyrePage() {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const featureInputRef = useRef<HTMLInputElement>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandsLoading, setBrandsLoading] = useState(true);
   const [images, setImages] = useState<ImageEntry[]>([]);
   const [featureDraft, setFeatureDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/brands")
@@ -147,6 +151,60 @@ export default function NewTyrePage() {
     );
   }
 
+  async function handleSave() {
+    setSaveError(null);
+
+    if (!form.brandId)        { setSaveError("Please select a brand."); return; }
+    if (!form.name.trim())    { setSaveError("Product name is required."); return; }
+    if (!form.pattern.trim()) { setSaveError("Pattern is required."); return; }
+    if (!form.tyreSize.trim()) { setSaveError("Tyre size is required."); return; }
+    if (!form.application.trim()) { setSaveError("Application is required."); return; }
+
+    setSaving(true);
+    try {
+      const body = {
+        brandId:      form.brandId,
+        name:         form.name.trim(),
+        description:  form.description.trim() || null,
+        category:     form.category || null,
+        pattern:      form.pattern.trim(),
+        tyreSize:     form.tyreSize.trim(),
+        tyreWeight:   form.tyreWeight ? parseFloat(form.tyreWeight) : null,
+        application:  form.application.trim(),
+        vehicleType:  form.vehicleType || null,
+        tyreType:     form.tyreType.trim() || null,
+        starRating:   form.starRating.trim() || null,
+        plyRating:    form.plyRating.trim() || null,
+        loadIndex:    form.loadIndex.trim() || null,
+        tyreFeatures: form.tyreFeatures,
+        isActive:     form.isActive,
+      };
+
+      const res = await fetch("/api/tyres", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (!data.ok) {
+        if (data.errors) {
+          const first = Object.values(data.errors as Record<string, string[]>)[0]?.[0];
+          setSaveError(first ?? data.message ?? "Validation failed.");
+        } else {
+          setSaveError(data.message ?? "Failed to save product.");
+        }
+        return;
+      }
+
+      router.push("/tyres");
+    } catch {
+      setSaveError("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 p-2">
       {/* ── Page header ── */}
@@ -164,6 +222,9 @@ export default function NewTyrePage() {
         </div>
 
         <div className="flex items-center gap-2">
+          {saveError ? (
+            <p className="text-[13px] text-red-500">{saveError}</p>
+          ) : null}
           <Link
             className="flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] bg-white px-4 text-[13px] font-medium text-[var(--foreground)] transition hover:bg-slate-50"
             href="/tyres"
@@ -171,11 +232,13 @@ export default function NewTyrePage() {
             Cancel
           </Link>
           <button
-            className="flex h-9 items-center gap-1.5 rounded-lg bg-(--foreground) px-4 text-[13px] font-medium text-white transition hover:opacity-90"
+            className="flex h-9 items-center gap-1.5 rounded-lg bg-(--foreground) px-4 text-[13px] font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+            disabled={saving}
+            onClick={handleSave}
             type="button"
           >
             <Save className="size-3.5" />
-            Save Product
+            {saving ? "Saving…" : "Save Product"}
           </button>
         </div>
       </div>
