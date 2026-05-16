@@ -46,17 +46,17 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         children
       ) : (
         <SessionProvider>
-          <div className="admin-app-frame min-h-dvh bg-[#2D2C33]">
+          <div className="admin-app-frame h-dvh overflow-hidden bg-[#2D2C33]">
             <Suspense fallback={null}>
               <AdminSidebar collapsed={collapsed} onToggle={toggleSidebar} />
             </Suspense>
             <div
               className={[
-                "min-h-dvh bg-[#2D2C33] transition-[padding] duration-300 ease-out",
+                "h-dvh bg-[#2D2C33] transition-[padding] duration-300 ease-out",
                 collapsed ? "lg:pl-[68px]" : "lg:pl-[240px]",
               ].join(" ")}
             >
-              <main className="flex min-h-dvh flex-col overflow-hidden bg-[var(--background)] lg:my-3 lg:mr-3 lg:rounded-[22px]">
+              <main className="flex h-dvh flex-col overflow-hidden bg-(--background) lg:my-3 lg:mr-3 lg:h-[calc(100dvh-1.5rem)] lg:rounded-[22px]">
                 <AdminTopbar collapsed={collapsed} onToggle={toggleSidebar} />
                 <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
                   {children}

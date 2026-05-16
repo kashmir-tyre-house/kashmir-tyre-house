@@ -18,7 +18,7 @@ export default async function ForgotPasswordPage({
   const session = await auth();
 
   if (session?.user) {
-    redirect("/dashboard");
+    redirect("/tyres");
   }
 
   const params = await searchParams;

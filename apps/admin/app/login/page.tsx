@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const session = await auth();
 
   if (session?.user) {
-    redirect("/dashboard");
+    redirect("/tyres");
   }
 
   const params = await searchParams;
@@ -25,7 +25,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <div className="absolute inset-0 bg-[rgba(12,16,28,0.48)]" />
       <div className="relative z-10 w-full max-w-[440px]">
         <LoginForm
-          callbackUrl={params?.callbackUrl ?? "/dashboard"}
+          callbackUrl={params?.callbackUrl ?? "/tyres"}
           error={params?.error}
           isGoogleEnabled={Boolean(
             process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET

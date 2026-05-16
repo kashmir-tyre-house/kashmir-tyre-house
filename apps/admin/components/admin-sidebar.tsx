@@ -103,7 +103,7 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
         <div className="flex items-center gap-3 mt-2">
           <Link
             className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-white text-[11px] font-bold tracking-[-0.03em] text-[#17213a] shadow-[0_16px_32px_rgba(0,0,0,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            href="/dashboard"
+            href="/tyres"
           >
             KTH
           </Link>
