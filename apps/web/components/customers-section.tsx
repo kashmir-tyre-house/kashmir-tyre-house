@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Raleway } from "next/font/google";
 
+import { BlurText } from "./blur-text";
 import { Reveal } from "./reveal";
 
 const raleway = Raleway({
@@ -39,18 +40,20 @@ export function CustomersSection() {
         }
       `}</style>
       <div className="mx-auto max-w-[1480px] px-8">
-        <Reveal className="mx-auto mb-14 max-w-3xl text-center" distance="sm">
+        <div className="mx-auto mb-14 max-w-3xl text-center">
           <h2
             className={`${raleway.className} mt-5 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
             id="customers-heading"
           >
-            Our Customers
+            <BlurText text="Our Customers" delay={160} />
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-[1.8] text-[#6f6258]">
-            Trusted by leading industrial conglomerates, mining operations, and
-            steel giants across India for their critical tyre requirements.
-          </p>
-        </Reveal>
+          <Reveal delayMs={200}>
+            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-[1.8] text-[#6f6258]">
+              Trusted by leading industrial conglomerates, mining operations, and
+              steel giants across India for their critical tyre requirements.
+            </p>
+          </Reveal>
+        </div>
       </div>
 
       {/* Marquee track */}

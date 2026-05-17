@@ -2,6 +2,7 @@ import { ArrowDown, ArrowRight, ArrowBigDown } from "lucide-react";
 import { Raleway } from "next/font/google";
 
 import { featuredProducts } from "../lib/products";
+import { BlurText } from "./blur-text";
 import { ProductCard } from "./product-card";
 import { Reveal } from "./reveal";
 
@@ -19,14 +20,14 @@ export function FeaturedSection() {
       className="px-4 pt-20 text-[#231a12] sm:px-6 lg:px-8"
       id="tyres"
     >
-      <Reveal className="mx-auto max-w-3xl text-center" distance="sm">
+      <div className="mx-auto max-w-3xl text-center">
         <h2
           className={`${raleway.className} mb-10 mt-3 place-self-center font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="services-heading"
         >
-          Featured Products
+          <BlurText text="Featured Products" delay={150} />
         </h2>
-      </Reveal>
+      </div>
 
       <Reveal className="mt-3 flex flex-col items-center gap-6 text-center" delayMs={70}>
         <button

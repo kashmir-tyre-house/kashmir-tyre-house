@@ -1,5 +1,6 @@
 import { Raleway, Karla } from "next/font/google";
 
+import { BlurText } from "./blur-text";
 import { Reveal } from "./reveal";
 
 const karla = Karla({
@@ -157,14 +158,14 @@ export function ServicesSection() {
       className="bg-[#f9eee4] px-4 pt-18 sm:px-6 lg:px-8"
       id="services"
     >
-      <Reveal className="mx-auto mb-12 max-w-3xl text-center" distance="sm">
+      <div className="mx-auto mb-12 max-w-3xl text-center">
         <h2
           className={`${raleway.className} text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="services-heading"
         >
-          Our Services
+          <BlurText text="Our Services" delay={160} />
         </h2>
-      </Reveal>
+      </div>
 
       <div className={`${karla.className} mx-auto grid max-w-330 gap-4 md:grid-cols-2 xl:grid-cols-3`}>
         {services.map((service, index) => (

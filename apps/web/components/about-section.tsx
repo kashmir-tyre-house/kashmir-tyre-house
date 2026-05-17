@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Karla, Raleway } from "next/font/google";
 
+import { BlurText } from "./blur-text";
 import { Reveal } from "./reveal";
 
 const karla = Karla({
@@ -78,23 +79,23 @@ export function AboutSection() {
       className={`${karla.className} mx-auto max-w-330 overflow-hidden pt-24 text-[#231a12]`}
       id="about"
     >
-      <Reveal className="mx-auto mb-12 max-w-3xl text-center" distance="sm">
+      <div className="mx-auto mb-12 max-w-3xl text-center">
         <h2
           className={`${raleway.className} text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="about-heading"
         >
-          About Us
+          <BlurText text="About Us" delay={160} />
         </h2>
-      </Reveal>
+      </div>
 
       <div className="mx-auto grid gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:px-8">
-        <Reveal className="lg:pt-1" distance="sm">
+        <div className="lg:pt-1">
           <h2
             className={`${raleway.className} max-w-2xl font-semibold leading-[1.03] tracking-[-0.055em] text-[#231a12] lg:text-[54px]`}
           >
-            Over two decades of marching forward.
+            <BlurText text="Over two decades of marching forward." delay={80} />
           </h2>
-        </Reveal>
+        </div>
 
         <Reveal delayMs={90}>
           <p className="max-w-3xl text-[16px] font-medium leading-[1.8] text-[#6f6258] sm:text-[18px]">

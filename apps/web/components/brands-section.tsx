@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Raleway } from "next/font/google";
 
+import { BlurText } from "./blur-text";
 import { Reveal } from "./reveal";
 
 const raleway = Raleway({
@@ -40,19 +41,21 @@ export function BrandsSection() {
       id="brand"
     >
       <div className="mx-auto max-w-[1480px]">
-        <Reveal className="mx-auto mb-12 max-w-3xl text-center" distance="sm">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
           <h2
             className={`${raleway.className} mt-5 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
             id="brand-heading"
           >
-            Trusted Brands
+            <BlurText text="Trusted Brands" delay={160} />
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-[1.8] text-[#6f6258]">
-            We work with established tyre manufacturers known for reliability,
-            field-tested durability, and dependable support across industrial,
-            fleet, and commercial applications.
-          </p>
-        </Reveal>
+          <Reveal delayMs={200}>
+            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-[1.8] text-[#6f6258]">
+              We work with established tyre manufacturers known for reliability,
+              field-tested durability, and dependable support across industrial,
+              fleet, and commercial applications.
+            </p>
+          </Reveal>
+        </div>
 
         <div className="grid gap-5 lg:grid-cols-3">
           {brands.map((brand, index) => (

@@ -73,10 +73,10 @@ export function Reveal({
       ref={elementRef}
       className={[
         "will-change-[transform,opacity,filter] motion-reduce:transform-none motion-reduce:opacity-100 motion-reduce:blur-none",
-        "transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+        "transition-[opacity,transform,filter] duration-800 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
         isVisible
           ? "translate-y-0 opacity-100 blur-0"
-          : `${distanceMap[distance]} opacity-0 blur-[2px]`,
+          : `${distanceMap[distance]} opacity-0 blur-xs`,
         className
       ].join(" ")}
       style={{ transitionDelay: `${delayMs}ms` } as CSSProperties}
