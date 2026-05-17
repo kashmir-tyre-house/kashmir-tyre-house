@@ -1,9 +1,10 @@
-import { brands, getDb, tyreProducts } from "@kth/db";
-import { eq } from "drizzle-orm";
+import { brands, getDb, tyreImages, tyreProducts } from "@kth/db";
+import { asc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getAdminRole, requireAdmin } from "../../../../../lib/auth";
+import { presignedUrl } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
 
@@ -79,7 +80,27 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
     if (!row) return notFound();
 
-    return NextResponse.json({ ok: true, data: row });
+    const rawImages = await db
+      .select({
+        id:             tyreImages.id,
+        imageUrl:       tyreImages.imageUrl,
+        imageType:      tyreImages.imageType,
+        isPrimaryImage: tyreImages.isPrimaryImage,
+      })
+      .from(tyreImages)
+      .where(eq(tyreImages.tyreProductId, id))
+      .orderBy(asc(tyreImages.createdAt));
+
+    const images = await Promise.all(
+      rawImages.map(async (img) => ({
+        id:             img.id,
+        url:            await presignedUrl(img.imageUrl, 3600),
+        imageType:      img.imageType,
+        isPrimaryImage: img.isPrimaryImage,
+      }))
+    );
+
+    return NextResponse.json({ ok: true, data: { ...row, images } });
   } catch (error) {
     console.error("[tyres] GET detail failed", error);
     return NextResponse.json(

@@ -36,6 +36,13 @@ type ImageEntry = {
   isPrimary: boolean;
 };
 
+type ExistingImage = {
+  id: string;
+  url: string;
+  imageType: string;
+  isPrimaryImage: boolean;
+};
+
 type FormValues = {
   name: string;
   brandId: string;
@@ -82,6 +89,8 @@ export default function EditTyrePage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandsLoading, setBrandsLoading] = useState(true);
   const [images, setImages] = useState<ImageEntry[]>([]);
+  const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
+  const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
   const [featureDraft, setFeatureDraft] = useState("");
 
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -118,6 +127,7 @@ export default function EditTyrePage() {
         if (!data.ok) throw new Error(data.message ?? "Failed to load product.");
         const p = data.data;
         setProductName(p.name);
+        setExistingImages(p.images ?? []);
         setForm({
           name:         p.name ?? "",
           brandId:      p.brand?.id ?? "",
@@ -148,13 +158,13 @@ export default function EditTyrePage() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
-    const remaining = MAX_IMAGES - images.length;
+    const remaining = MAX_IMAGES - existingImages.length - images.length;
     const toAdd = files.slice(0, remaining);
     const entries: ImageEntry[] = toAdd.map((file, i) => ({
       id: `${Date.now()}-${i}`,
       file,
       previewUrl: URL.createObjectURL(file),
-      isPrimary: images.length === 0 && i === 0,
+      isPrimary: existingImages.length === 0 && images.length === 0 && i === 0,
     }));
     setImages((prev) => [...prev, ...entries]);
     e.target.value = "";
@@ -170,6 +180,11 @@ export default function EditTyrePage() {
 
   function setPrimary(imgId: string) {
     setImages((prev) => prev.map((img) => ({ ...img, isPrimary: img.id === imgId })));
+  }
+
+  function removeExistingImage(imageId: string) {
+    setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
+    setRemovedImageIds((prev) => [...prev, imageId]);
   }
 
   // ── Feature tag handlers ──────────────────────────────────────────────────────
@@ -233,6 +248,27 @@ export default function EditTyrePage() {
           setSaveError(data.message ?? "Failed to save product.");
         }
         return;
+      }
+
+      if (removedImageIds.length > 0) {
+        await Promise.all(
+          removedImageIds.map((imageId) =>
+            fetch(`/api/tyres/${id}/images/${imageId}`, { method: "DELETE" })
+          )
+        );
+      }
+
+      if (images.length > 0) {
+        const fd = new FormData();
+        const primaryIdx = Math.max(0, images.findIndex((img) => img.isPrimary));
+        fd.append("primaryIndex", String(primaryIdx));
+        images.forEach((img, i) => fd.append(`image_${i}`, img.file));
+        const imgRes = await fetch(`/api/tyres/${id}/images`, { method: "POST", body: fd });
+        const imgData = await imgRes.json();
+        if (!imgData.ok) {
+          setSaveError(imgData.message ?? "Failed to upload images.");
+          return;
+        }
       }
 
       router.push("/tyres");
@@ -537,9 +573,9 @@ export default function EditTyrePage() {
           </Card>
 
           {/* Images */}
-          <Card title={`Images (${images.length}/${MAX_IMAGES})`}>
+          <Card title={`Images (${existingImages.length + images.length}/${MAX_IMAGES})`}>
             <div className="flex flex-col gap-3">
-              {images.length < MAX_IMAGES ? (
+              {existingImages.length + images.length < MAX_IMAGES ? (
                 <>
                   <button
                     className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-(--border) py-6 text-(--muted-foreground) transition hover:border-slate-400 hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-50"
@@ -562,8 +598,33 @@ export default function EditTyrePage() {
                 </>
               ) : null}
 
-              {images.length > 0 ? (
+              {existingImages.length > 0 || images.length > 0 ? (
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2">
+                  {existingImages.map((img) => (
+                    <div
+                      key={img.id}
+                      className="group relative aspect-square overflow-hidden rounded-lg border border-(--border) bg-slate-100"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img alt="Tyre" className="size-full object-cover" src={img.url} />
+                      {img.isPrimaryImage ? (
+                        <span className="absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
+                          <Star className="size-2.5" />
+                          Primary
+                        </span>
+                      ) : null}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          className="flex items-center gap-1 rounded-md bg-red-500/90 px-2.5 py-1 text-[11px] font-medium text-white transition hover:bg-red-500"
+                          onClick={() => removeExistingImage(img.id)}
+                          type="button"
+                        >
+                          <X className="size-3" />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                   {images.map((img) => (
                     <div
                       key={img.id}
@@ -602,7 +663,7 @@ export default function EditTyrePage() {
                 </div>
               ) : null}
 
-              {images.length === 0 ? (
+              {existingImages.length === 0 && images.length === 0 ? (
                 <p className="text-center text-[12px] text-(--muted-foreground)">
                   No images uploaded yet.
                 </p>
