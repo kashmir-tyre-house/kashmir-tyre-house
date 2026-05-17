@@ -1,10 +1,12 @@
 "use client";
 
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import {
   ArrowLeft,
   Check,
   ChevronDown,
   ImagePlus,
+  Loader2,
   Plus,
   Save,
   Star,
@@ -281,6 +283,16 @@ export default function EditTyrePage() {
 
   // ── Fetch error state ─────────────────────────────────────────────────────────
 
+  if (fetchLoading) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="w-28 mb-20">
+          <DotLottieReact autoplay loop src="/lottie/loading-animation.lottie" />
+        </div>
+      </div>
+    );
+  }
+
   if (fetchError) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24">
@@ -325,12 +337,12 @@ export default function EditTyrePage() {
             Cancel
           </Link>
           <button
-            className="flex h-9 items-center gap-1.5 rounded-lg bg-(--foreground) px-4 text-[13px] font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+            className="flex h-9 items-center gap-1.5 min-w-35.25 justify-center rounded-lg bg-(--foreground) px-4 text-[13px] font-medium text-white transition hover:opacity-90 disabled:opacity-50"
             disabled={saving || fetchLoading}
             onClick={handleSave}
             type="button"
           >
-            <Save className="size-3.5" />
+            {saving ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
             {saving ? "Saving…" : "Save Changes"}
           </button>
         </div>
@@ -605,8 +617,7 @@ export default function EditTyrePage() {
                       key={img.id}
                       className="group relative aspect-square overflow-hidden rounded-lg border border-(--border) bg-slate-100"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img alt="Tyre" className="size-full object-cover" src={img.url} />
+                      <TyreThumbnail src={img.url} />
                       {img.isPrimaryImage ? (
                         <span className="absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-semibold text-white shadow">
                           <Star className="size-2.5" />
@@ -842,5 +853,29 @@ function Toggle({
         ].join(" ")}
       />
     </button>
+  );
+}
+
+function TyreThumbnail({ src }: { src: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded ? (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-100">
+          <div className="w-14">
+            <DotLottieReact autoplay loop src="/lottie/loading-animation.lottie" />
+          </div>
+        </div>
+      ) : null}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        alt="Tyre"
+        className="size-full object-cover"
+        onError={() => setLoaded(true)}
+        onLoad={() => setLoaded(true)}
+        src={src}
+      />
+    </>
   );
 }

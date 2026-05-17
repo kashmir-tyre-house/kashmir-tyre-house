@@ -1,5 +1,6 @@
 "use client";
 
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import {
   ArrowDown,
   ArrowUp,
@@ -309,8 +310,10 @@ export default function GalleryUploadPage() {
 
       {/* Gallery grid */}
       {loading ? (
-        <div className="flex items-center justify-center py-24">
-          <Loader2 className="size-5 animate-spin text-(--muted-foreground)" />
+        <div className="flex justify-center py-16">
+          <div className="w-28">
+            <DotLottieReact autoplay loop src="/lottie/loading-animation.lottie" />
+          </div>
         </div>
       ) : error ? (
         <div className="flex flex-col items-center gap-3 py-16">
@@ -336,16 +339,9 @@ export default function GalleryUploadPage() {
             >
               {/* Image */}
               <div className="relative aspect-square overflow-hidden rounded-lg bg-slate-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <GalleryThumbnail
                   alt={img.alt}
-                  className="size-full object-cover"
-                  onError={(e) => {
-                    const fallback = localPreviews[img.id];
-                    if (fallback && e.currentTarget.src !== fallback) {
-                      e.currentTarget.src = fallback;
-                    }
-                  }}
+                  fallback={localPreviews[img.id]}
                   src={img.url}
                 />
 
@@ -355,7 +351,7 @@ export default function GalleryUploadPage() {
                 </span>
 
                 {/* Delete overlay */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] rounded-lg opacity-0 transition-opacity group-hover:opacity-100">
                   {confirmDeleteId === img.id ? (
                     <div className="flex flex-col items-center gap-1.5 px-2 text-center">
                       <p className="text-[11px] font-medium text-white">Delete?</p>
@@ -462,5 +458,34 @@ export default function GalleryUploadPage() {
       {/* Confirm delete modal */}
       {confirmDeleteId && !images.find((img) => img.id === confirmDeleteId) ? null : null}
     </div>
+  );
+}
+
+function GalleryThumbnail({ src, alt, fallback }: { src: string; alt: string; fallback?: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded ? (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-100">
+          <div className="w-24">
+            <DotLottieReact autoplay loop src="/lottie/loading-animation.lottie" />
+          </div>
+        </div>
+      ) : null}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        alt={alt}
+        className="size-full object-cover"
+        onError={(e) => {
+          if (fallback && e.currentTarget.src !== fallback) {
+            e.currentTarget.src = fallback;
+          }
+          setLoaded(true);
+        }}
+        onLoad={() => setLoaded(true)}
+        src={src}
+      />
+    </>
   );
 }

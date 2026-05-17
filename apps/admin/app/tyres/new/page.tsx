@@ -5,6 +5,7 @@ import {
   Check,
   ChevronDown,
   ImagePlus,
+  Loader2,
   Plus,
   Save,
   Star,
@@ -239,7 +240,7 @@ export default function NewTyrePage() {
             onClick={handleSave}
             type="button"
           >
-            <Save className="size-3.5" />
+            {saving ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
             {saving ? "Saving…" : "Save Product"}
           </button>
         </div>

@@ -1,9 +1,11 @@
 "use client";
 
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  Loader2,
   Pencil,
   Plus,
   Trash2,
@@ -245,8 +247,12 @@ export default function TyresPage() {
             <tbody className="divide-y divide-(--border)">
               {loading ? (
                 <tr>
-                  <td colSpan={COL_COUNT} className="py-24 text-center text-[13px] text-(--muted-foreground)">
-                    Loading…
+                  <td colSpan={COL_COUNT} className="py-16 text-center">
+                    <div className="flex justify-center">
+                      <div className="w-28">
+                        <DotLottieReact autoplay loop src="/lottie/loading-animation.lottie" />
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ) : error ? (
@@ -588,7 +594,7 @@ function ConfirmDeleteModal({
             onClick={onConfirm}
             type="button"
           >
-            <Trash2 className="size-3.5" />
+            {deleting ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
             {deleting ? "Deleting…" : "Delete"}
           </button>
         </div>
