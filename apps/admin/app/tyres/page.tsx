@@ -7,6 +7,7 @@ import {
   Pencil,
   Plus,
   Trash2,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -179,6 +180,16 @@ export default function TyresPage() {
           >
             Inactive
           </button>
+          {statusFilter !== "all" ? (
+            <button
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-(--border) bg-white px-3 text-[13px] font-medium text-(--foreground) transition hover:bg-slate-50"
+              onClick={() => { setStatusFilter("all"); setPage(1); }}
+              type="button"
+            >
+              <X className="size-3.5" />
+              Reset
+            </button>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2">

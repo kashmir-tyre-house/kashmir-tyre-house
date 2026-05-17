@@ -51,10 +51,12 @@ const navItems: NavItem[] = [
 
 type AdminSidebarProps = {
   collapsed: boolean;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
   onToggle: () => void;
 };
 
-export function AdminSidebar({ collapsed }: AdminSidebarProps) {
+export function AdminSidebar({ collapsed, mobileOpen, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -93,9 +95,18 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
   }, [isProfileOpen]);
 
   return (
+    <>
+      {mobileOpen ? (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={onMobileClose}
+        />
+      ) : null}
     <aside
       className={[
-        "admin-sidebar-shell fixed inset-y-0 left-0 z-50 hidden overflow-visible text-white transition-[width] duration-300 ease-out lg:block",
+        "admin-sidebar-shell fixed inset-y-0 left-0 z-50 overflow-visible text-white transition-[width,transform] duration-300 ease-out",
+        mobileOpen ? "translate-x-0" : "-translate-x-full",
+        "lg:translate-x-0",
         collapsed ? "w-17" : "w-60",
       ].join(" ")}
     >
@@ -226,6 +237,7 @@ export function AdminSidebar({ collapsed }: AdminSidebarProps) {
         </div>
       </div>
     </aside>
+    </>
   );
 }
 

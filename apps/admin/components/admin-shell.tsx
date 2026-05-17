@@ -2,7 +2,7 @@
 
 import { SessionProvider } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { Suspense, useSyncExternalStore } from "react";
+import { Suspense, useState, useSyncExternalStore } from "react";
 import { Toaster } from "sonner";
 
 import { AdminSidebar, AdminTopbar } from "./admin-sidebar";
@@ -13,6 +13,7 @@ let canReadSavedSidebarState = false;
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
   const collapsed = useSyncExternalStore(
     subscribeToSidebarState,
     getSidebarState,
@@ -20,8 +21,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   );
 
   const toggleSidebar = () => {
+    if (window.innerWidth < 1024) {
+      setMobileOpen((prev) => !prev);
+      return;
+    }
     const nextValue = !getSidebarState();
-
     window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(nextValue));
     window.dispatchEvent(new Event(SIDEBAR_STORAGE_EVENT));
   };
@@ -48,7 +52,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <SessionProvider>
           <div className="admin-app-frame h-dvh overflow-hidden bg-[#2D2C33]">
             <Suspense fallback={null}>
-              <AdminSidebar collapsed={collapsed} onToggle={toggleSidebar} />
+              <AdminSidebar
+                collapsed={collapsed}
+                mobileOpen={mobileOpen}
+                onMobileClose={() => setMobileOpen(false)}
+                onToggle={toggleSidebar}
+              />
             </Suspense>
             <div
               className={[
@@ -56,7 +65,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 collapsed ? "lg:pl-[68px]" : "lg:pl-[240px]",
               ].join(" ")}
             >
-              <main className="flex h-dvh flex-col overflow-hidden bg-(--background) lg:my-3 lg:mr-3 lg:h-[calc(100dvh-1.5rem)] lg:rounded-[22px]">
+              <main className="flex h-[calc(100dvh-1.5rem)] flex-col overflow-clip bg-(--background) my-3 ml-3 mr-3 rounded-[22px] lg:ml-0">
                 <AdminTopbar collapsed={collapsed} onToggle={toggleSidebar} />
                 <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
                   {children}
