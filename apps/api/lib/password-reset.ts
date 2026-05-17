@@ -62,10 +62,6 @@ export async function requestPasswordReset(
     expiresAt
   });
 
-  const logoUrl = process.env.AUTH_URL
-    ? `${process.env.AUTH_URL}/logo/kthpl-logo.png`
-    : undefined;
-
   await sendTemplateEmail({
     subject: "Your Kashmir Tyre House admin reset code",
     template: ForgotPasswordEmail,
@@ -73,8 +69,6 @@ export async function requestPasswordReset(
       code,
       expiresInMinutes: RESET_CODE_EXPIRY_MINUTES,
       name: adminUser.name ?? undefined,
-      logoUrl,
-      recipientEmail: adminUser.email
     },
     to: adminUser.email
   });
@@ -166,10 +160,7 @@ export async function resetAdminPassword({
 
   await db
     .update(adminUsers)
-    .set({
-      passwordHash,
-      updatedAt: now
-    })
+    .set({ passwordHash, updatedAt: now })
     .where(eq(adminUsers.id, adminUser.id));
 
   await markResetTokenUsed(passwordResetToken.id, now);

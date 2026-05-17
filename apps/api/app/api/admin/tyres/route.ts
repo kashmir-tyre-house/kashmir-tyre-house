@@ -1,13 +1,16 @@
-import { brands, getDb, tyreProducts } from "@kth/db";
+import { brands, getDb, tyreImages, tyreProducts } from "@kth/db";
 import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { auth } from "../../../auth";
+import { getAdminRole, requireAdmin } from "../../../../lib/auth";
+import { uploadToR2 } from "../../../../lib/r2";
 
 export const runtime = "nodejs";
 
-// ── Shared constants ──────────────────────────────────────────────────────────
+const MAX_TYRE_IMAGES = 5;
+const MAX_IMAGE_SIZE  = 3 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const VEHICLE_TYPES = [
   "Earthmover",
@@ -21,8 +24,6 @@ const VEHICLE_TYPES = [
 ] as const;
 
 const SORTABLE_COLS = ["name", "category", "tyreSize", "application", "isActive", "createdAt"] as const;
-
-// ── Schemas ───────────────────────────────────────────────────────────────────
 
 const listQuerySchema = z.object({
   search:      z.string().optional(),
@@ -54,24 +55,7 @@ const createSchema = z.object({
   isActive:     z.boolean().default(true),
 });
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-async function getAdminRole() {
-  const session = await auth();
-  return (session?.user as { role?: string } | undefined)?.role ?? null;
-}
-
-function requireAdmin(role: string | null) {
-  if (role !== "admin") {
-    return NextResponse.json(
-      { ok: false, message: "Forbidden. Admin role required." },
-      { status: 403 }
-    );
-  }
-  return null;
-}
-
-// ── GET /api/tyres ────────────────────────────────────────────────────────────
+// ── GET /api/admin/tyres ──────────────────────────────────────────────────────
 
 export async function GET(request: Request) {
   try {
@@ -149,12 +133,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       ok: true,
       data: rows,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
     console.error("[tyres] GET list failed", error);
@@ -171,17 +150,24 @@ export async function GET(request: Request) {
   }
 }
 
-// ── POST /api/tyres ───────────────────────────────────────────────────────────
+// ── POST /api/admin/tyres ─────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
-  const role = await getAdminRole();
+  const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
 
   try {
-    const body = await request.json().catch(() => null);
-    const parsed = createSchema.safeParse(body);
+    const formData = await request.formData();
 
+    let body: unknown;
+    try {
+      body = JSON.parse(formData.get("data") as string);
+    } catch {
+      return NextResponse.json({ ok: false, message: "Invalid form data." }, { status: 400 });
+    }
+
+    const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
         { ok: false, message: "Validation failed.", errors: parsed.error.flatten().fieldErrors },
@@ -189,11 +175,50 @@ export async function POST(request: Request) {
       );
     }
 
+    const primaryIndex = Number(formData.get("primaryIndex") ?? 0);
+    const imageFiles: File[] = [];
+    for (let i = 0; i < MAX_TYRE_IMAGES; i++) {
+      const file = formData.get(`image_${i}`);
+      if (file instanceof File) imageFiles.push(file);
+    }
+
+    for (const file of imageFiles) {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        return NextResponse.json(
+          { ok: false, message: `Invalid file type: ${file.name}. Only JPEG, PNG, and WEBP are allowed.` },
+          { status: 422 }
+        );
+      }
+      if (file.size > MAX_IMAGE_SIZE) {
+        return NextResponse.json(
+          { ok: false, message: `File too large: ${file.name}. Maximum 3 MB per image.` },
+          { status: 422 }
+        );
+      }
+    }
+
     const db = getDb();
     const [created] = await db
       .insert(tyreProducts)
       .values(parsed.data)
       .returning();
+
+    if (imageFiles.length > 0) {
+      const imageRows = await Promise.all(
+        imageFiles.map(async (file, index) => {
+          const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+          const key = `tyres/${created.id}/${index}-${Date.now()}.${ext}`;
+          const storedKey = await uploadToR2(Buffer.from(await file.arrayBuffer()), key, file.type);
+          return {
+            tyreProductId: created.id,
+            imageUrl:      storedKey,
+            imageType:     (index === primaryIndex ? "hero" : "gallery") as "hero" | "gallery",
+            isPrimaryImage: index === primaryIndex,
+          };
+        })
+      );
+      await db.insert(tyreImages).values(imageRows);
+    }
 
     return NextResponse.json({ ok: true, data: { id: created.id } }, { status: 201 });
   } catch (error) {

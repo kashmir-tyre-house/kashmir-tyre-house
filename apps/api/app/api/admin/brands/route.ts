@@ -2,9 +2,15 @@ import { brands, getDb } from "@kth/db";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+import { getAdminRole, requireAdmin } from "../../../../lib/auth";
+
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
+
   try {
     const db = getDb();
     const rows = await db

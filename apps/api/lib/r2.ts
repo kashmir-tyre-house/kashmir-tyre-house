@@ -26,7 +26,6 @@ export async function uploadToR2(buffer: Buffer, key: string, contentType: strin
     new PutObjectCommand({ Bucket: bucket, Key: key, Body: buffer, ContentType: contentType })
   );
 
-  // Store the key as the canonical reference; presigned URLs are generated on read
   return key;
 }
 
@@ -50,12 +49,9 @@ export async function deleteFromR2(key: string): Promise<void> {
   await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
 }
 
-// Extract the object key from whatever is stored in the DB (key directly, or legacy full URL)
 export function keyFromStored(stored: string): string {
-  // If it's already a bare key (e.g. "gallery/foo.jpg"), return as-is
   if (!stored.startsWith("http")) return stored;
 
-  // Legacy: full URL was stored — strip any known base prefix
   const accountId = process.env.R2_ACCOUNT_ID ?? "";
   const bucket = process.env.R2_BUCKET_NAME ?? "";
   const accountBase = `https://${accountId}.r2.cloudflarestorage.com`;
@@ -69,6 +65,5 @@ export function keyFromStored(stored: string): string {
     if (stored.startsWith(`${base}/`)) return stored.slice(base.length + 1);
   }
 
-  // Fallback: return as-is
   return stored;
 }

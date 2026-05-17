@@ -2,8 +2,8 @@ import { aboutImages, getDb } from "@kth/db";
 import { asc, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-import { auth } from "../../../auth";
-import { keyFromStored, presignedUrl, uploadToR2 } from "../../../lib/r2";
+import { getAdminRole, requireAdmin } from "../../../../lib/auth";
+import { keyFromStored, presignedUrl, uploadToR2 } from "../../../../lib/r2";
 
 export const runtime = "nodejs";
 
@@ -11,12 +11,7 @@ const MAX_IMAGES = 10;
 const MAX_FILE_SIZE = 3 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-async function getAdminRole() {
-  const session = await auth();
-  return (session?.user as { role?: string } | undefined)?.role ?? null;
-}
-
-// ── GET /api/gallery ──────────────────────────────────────────────────────────
+// ── GET /api/admin/gallery ────────────────────────────────────────────────────
 
 export async function GET() {
   try {
@@ -26,7 +21,6 @@ export async function GET() {
       .from(aboutImages)
       .orderBy(asc(aboutImages.sortOrder), asc(aboutImages.createdAt));
 
-    // Replace each stored URL/key with a 1-hour presigned URL the browser can load
     const data = await Promise.all(
       rows.map(async (row) => {
         try {
@@ -34,7 +28,7 @@ export async function GET() {
           const signedUrl = await presignedUrl(key, 3600);
           return { ...row, url: signedUrl };
         } catch {
-          return row; // fallback to raw stored value if presigning fails
+          return row;
         }
       })
     );
@@ -46,13 +40,12 @@ export async function GET() {
   }
 }
 
-// ── POST /api/gallery ─────────────────────────────────────────────────────────
+// ── POST /api/admin/gallery ───────────────────────────────────────────────────
 
 export async function POST(request: Request) {
-  const role = await getAdminRole();
-  if (role !== "admin") {
-    return NextResponse.json({ ok: false, message: "Forbidden." }, { status: 403 });
-  }
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
 
   try {
     const db = getDb();
@@ -94,7 +87,6 @@ export async function POST(request: Request) {
     const key = `gallery/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    // uploadToR2 now returns the key (not a URL) — stored in DB for later presigning
     const storedKey = await uploadToR2(buffer, key, file.type);
 
     const [created] = await db
@@ -102,7 +94,6 @@ export async function POST(request: Request) {
       .values({ url: storedKey, alt: alt || file.name, sortOrder: count })
       .returning();
 
-    // Return with a fresh presigned URL so the client can render immediately
     const signedUrl = await presignedUrl(storedKey, 3600);
     return NextResponse.json({ ok: true, data: { ...created, url: signedUrl } }, { status: 201 });
   } catch (error) {
@@ -122,13 +113,12 @@ export async function POST(request: Request) {
   }
 }
 
-// ── PATCH /api/gallery ────────────────────────────────────────────────────────
+// ── PATCH /api/admin/gallery (reorder) ───────────────────────────────────────
 
 export async function PATCH(request: Request) {
-  const role = await getAdminRole();
-  if (role !== "admin") {
-    return NextResponse.json({ ok: false, message: "Forbidden." }, { status: 403 });
-  }
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
 
   try {
     const body = await request.json().catch(() => null);

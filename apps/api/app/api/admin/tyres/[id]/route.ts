@@ -3,11 +3,9 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { auth } from "../../../../auth";
+import { getAdminRole, requireAdmin } from "../../../../../lib/auth";
 
 export const runtime = "nodejs";
-
-// ── Schema ────────────────────────────────────────────────────────────────────
 
 const VEHICLE_TYPES = [
   "Earthmover",
@@ -38,28 +36,11 @@ const updateSchema = z.object({
   isActive:     z.boolean().optional(),
 });
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-async function getAdminRole() {
-  const session = await auth();
-  return (session?.user as { role?: string } | undefined)?.role ?? null;
-}
-
-function requireAdmin(role: string | null) {
-  if (role !== "admin") {
-    return NextResponse.json(
-      { ok: false, message: "Forbidden. Admin role required." },
-      { status: 403 }
-    );
-  }
-  return null;
-}
-
 function notFound() {
   return NextResponse.json({ ok: false, message: "Tyre product not found." }, { status: 404 });
 }
 
-// ── GET /api/tyres/[id] ───────────────────────────────────────────────────────
+// ── GET /api/admin/tyres/[id] ─────────────────────────────────────────────────
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -114,10 +95,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   }
 }
 
-// ── PUT /api/tyres/[id] ───────────────────────────────────────────────────────
+// ── PUT /api/admin/tyres/[id] ─────────────────────────────────────────────────
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const role = await getAdminRole();
+  const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
 
@@ -141,7 +122,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     }
 
     const db = getDb();
-
     const [updated] = await db
       .update(tyreProducts)
       .set({ ...parsed.data, updatedAt: new Date() })
@@ -166,10 +146,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-// ── DELETE /api/tyres/[id] ────────────────────────────────────────────────────
+// ── DELETE /api/admin/tyres/[id] ──────────────────────────────────────────────
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const role = await getAdminRole();
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
 

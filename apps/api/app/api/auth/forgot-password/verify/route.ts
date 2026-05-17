@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { verifyPasswordResetCode } from "../../../../lib/password-reset";
-import { checkRateLimit, getRequestIp } from "../../../../lib/rate-limit";
+import { verifyPasswordResetCode } from "../../../../../lib/password-reset";
+import { checkRateLimit, getRequestIp } from "../../../../../lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -31,24 +31,16 @@ export async function POST(request: Request) {
 
   if (!rateLimit.allowed) {
     return NextResponse.json(
-      {
-        ok: false,
-        message: "Too many verification attempts. Please request a new code."
-      },
+      { ok: false, message: "Too many verification attempts. Please request a new code." },
       {
         status: 429,
-        headers: {
-          "Retry-After": String(rateLimit.retryAfterSeconds)
-        }
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) }
       }
     );
   }
 
   try {
-    const result = await verifyPasswordResetCode(
-      parsedBody.data.email,
-      parsedBody.data.code
-    );
+    const result = await verifyPasswordResetCode(parsedBody.data.email, parsedBody.data.code);
 
     if (!result.ok || !result.resetToken) {
       return NextResponse.json(
@@ -57,10 +49,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({
-      ok: true,
-      resetToken: result.resetToken
-    });
+    return NextResponse.json({ ok: true, resetToken: result.resetToken });
   } catch (error) {
     console.error("Password reset code verification failed", error);
     return NextResponse.json(

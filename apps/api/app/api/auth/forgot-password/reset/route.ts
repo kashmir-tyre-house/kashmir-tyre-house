@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { resetAdminPassword } from "../../../../lib/password-reset";
-import { checkRateLimit, getRequestIp } from "../../../../lib/rate-limit";
+import { resetAdminPassword } from "../../../../../lib/password-reset";
+import { checkRateLimit, getRequestIp } from "../../../../../lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -27,8 +27,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        message:
-          parsedBody.error.issues[0]?.message ?? "Check your new password."
+        message: parsedBody.error.issues[0]?.message ?? "Check your new password."
       },
       { status: 400 }
     );
@@ -42,15 +41,10 @@ export async function POST(request: Request) {
 
   if (!rateLimit.allowed) {
     return NextResponse.json(
-      {
-        ok: false,
-        message: "Too many reset attempts. Please request a new code."
-      },
+      { ok: false, message: "Too many reset attempts. Please request a new code." },
       {
         status: 429,
-        headers: {
-          "Retry-After": String(rateLimit.retryAfterSeconds)
-        }
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) }
       }
     );
   }
@@ -65,10 +59,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({
-      ok: true,
-      message: "Password reset successfully."
-    });
+    return NextResponse.json({ ok: true, message: "Password reset successfully." });
   } catch (error) {
     console.error("Admin password reset failed", error);
     return NextResponse.json(

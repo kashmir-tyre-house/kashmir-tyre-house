@@ -163,7 +163,8 @@ export default function NewTyrePage() {
 
     setSaving(true);
     try {
-      const body = {
+      const fd = new FormData();
+      fd.append("data", JSON.stringify({
         brandId:      form.brandId,
         name:         form.name.trim(),
         description:  form.description.trim() || null,
@@ -179,13 +180,13 @@ export default function NewTyrePage() {
         loadIndex:    form.loadIndex.trim() || null,
         tyreFeatures: form.tyreFeatures,
         isActive:     form.isActive,
-      };
+      }));
 
-      const res = await fetch("/api/tyres", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const primaryIdx = Math.max(0, images.findIndex((img) => img.isPrimary));
+      fd.append("primaryIndex", String(primaryIdx));
+      images.forEach((img, i) => fd.append(`image_${i}`, img.file));
+
+      const res = await fetch("/api/tyres", { method: "POST", body: fd });
       const data = await res.json();
 
       if (!data.ok) {

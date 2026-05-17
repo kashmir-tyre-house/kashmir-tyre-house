@@ -3,15 +3,10 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { auth } from "../../../../auth";
-import { deleteFromR2, keyFromStored } from "../../../../lib/r2";
+import { getAdminRole, requireAdmin } from "../../../../../lib/auth";
+import { deleteFromR2, keyFromStored } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
-
-async function getAdminRole() {
-  const session = await auth();
-  return (session?.user as { role?: string } | undefined)?.role ?? null;
-}
 
 const patchSchema = z.object({
   alt:       z.string().min(1).max(180).optional(),
@@ -19,13 +14,12 @@ const patchSchema = z.object({
   sortOrder: z.number().int().optional(),
 });
 
-// ── PATCH /api/gallery/[id] ───────────────────────────────────────────────────
+// ── PATCH /api/admin/gallery/[id] ─────────────────────────────────────────────
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const role = await getAdminRole();
-  if (role !== "admin") {
-    return NextResponse.json({ ok: false, message: "Forbidden." }, { status: 403 });
-  }
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
 
   try {
     const { id } = await params;
@@ -61,13 +55,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 }
 
-// ── DELETE /api/gallery/[id] ──────────────────────────────────────────────────
+// ── DELETE /api/admin/gallery/[id] ────────────────────────────────────────────
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const role = await getAdminRole();
-  if (role !== "admin") {
-    return NextResponse.json({ ok: false, message: "Forbidden." }, { status: 403 });
-  }
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
 
   try {
     const { id } = await params;
@@ -82,7 +75,6 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
       return NextResponse.json({ ok: false, message: "Image not found." }, { status: 404 });
     }
 
-    // Best-effort R2 deletion — don't fail the request if it errors
     try {
       await deleteFromR2(keyFromStored(deleted.url));
     } catch (r2Err) {

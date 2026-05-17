@@ -16,10 +16,8 @@ export type EnquiryEmailProps = {
   companyName?: string;
   message?: string;
   products?: Array<{
+    id: string;
     name: string;
-    brand: string;
-    size: string;
-    category: string;
   }>;
 };
 
@@ -65,27 +63,23 @@ export function EnquiryEmail({
           </Column>
         </Row>
 
-        {email ? (
-          <Row style={fieldRowStyle}>
-            <Column style={fieldLabelColStyle}>
-              <Text style={fieldLabelStyle}>Email</Text>
-            </Column>
-            <Column>
-              <Text style={fieldValueStyle}>{email}</Text>
-            </Column>
-          </Row>
-        ) : null}
+        <Row style={fieldRowStyle}>
+          <Column style={fieldLabelColStyle}>
+            <Text style={fieldLabelStyle}>Email</Text>
+          </Column>
+          <Column>
+            <Text style={fieldValueStyle}>{email ?? "N/A"}</Text>
+          </Column>
+        </Row>
 
-        {companyName ? (
-          <Row style={fieldRowStyle}>
-            <Column style={fieldLabelColStyle}>
-              <Text style={fieldLabelStyle}>Company</Text>
-            </Column>
-            <Column>
-              <Text style={fieldValueStyle}>{companyName}</Text>
-            </Column>
-          </Row>
-        ) : null}
+        <Row style={fieldRowStyle}>
+          <Column style={fieldLabelColStyle}>
+            <Text style={fieldLabelStyle}>Company</Text>
+          </Column>
+          <Column>
+            <Text style={fieldValueStyle}>{companyName ?? "N/A"}</Text>
+          </Column>
+        </Row>
       </Section>
 
       {/* Products */}
@@ -101,9 +95,7 @@ export function EnquiryEmail({
                 </Column>
                 <Column>
                   <Text style={productNameStyle}>{product.name}</Text>
-                  <Text style={productMetaStyle}>
-                    {product.brand} · {product.category} · {product.size}
-                  </Text>
+                  <Text style={productIdStyle}>{product.id}</Text>
                 </Column>
               </Row>
             </Section>
@@ -212,8 +204,9 @@ const productNameStyle = {
   margin: "0 0 2px"
 };
 
-const productMetaStyle = {
+const productIdStyle = {
   color: "#8b7a6c",
+  fontFamily: "monospace",
   fontSize: "11px",
   margin: "0"
 };
