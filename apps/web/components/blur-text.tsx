@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 type BlurTextProps = {
   text: string;
   delay?: number;
+  startDelay?: number;
   animateBy?: "words" | "characters";
   direction?: "top" | "bottom";
   className?: string;
@@ -14,6 +15,7 @@ type BlurTextProps = {
 export function BlurText({
   text,
   delay = 120,
+  startDelay = 0,
   animateBy = "words",
   direction = "bottom",
   className = "",
@@ -60,7 +62,7 @@ export function BlurText({
               : direction === "bottom"
               ? "translateY(8px)"
               : "translateY(-8px)",
-            transition: `filter 0.65s cubic-bezier(0.22,1,0.36,1) ${i * delay}ms, opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${i * delay}ms, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${i * delay}ms`,
+            transition: `filter 0.65s cubic-bezier(0.22,1,0.36,1) ${startDelay + i * delay}ms, opacity 0.65s cubic-bezier(0.22,1,0.36,1) ${startDelay + i * delay}ms, transform 0.65s cubic-bezier(0.22,1,0.36,1) ${startDelay + i * delay}ms`,
             willChange: "filter, opacity, transform",
           } as CSSProperties}
         >
