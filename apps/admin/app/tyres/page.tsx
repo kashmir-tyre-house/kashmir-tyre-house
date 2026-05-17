@@ -202,7 +202,7 @@ export default function TyresPage() {
         {/* Scrollable table area */}
         <div className="flex-1 min-h-0 overflow-x-auto overflow-y-auto">
           <table
-            className="h-full border-collapse text-[13px]"
+            className="border-collapse text-[13px]"
             style={{ width: "max-content", minWidth: "100%" }}
           >
             <thead className="sticky top-0 z-10">
