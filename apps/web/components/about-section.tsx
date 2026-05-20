@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Karla, Raleway } from "next/font/google";
 
 import { BlurText } from "./blur-text";
+import { CountUp } from "./count-up";
 import { Reveal } from "./reveal";
 
 const karla = Karla({
@@ -34,9 +35,9 @@ const galleryImages = [
 ];
 
 const aboutStats = [
-  { num: "25+", label: "Experience" },
-  { num: "250+", label: "SKUs in stock" },
-  { num: "500+", label: "Customers served" },
+  { value: 25, suffix: "+", label: "Experience" },
+  { value: 250, suffix: "+", label: "SKUs in stock" },
+  { value: 500, suffix: "+", label: "Customers served" },
 ];
 
 function GalleryRow({
@@ -109,9 +110,11 @@ export function AboutSection() {
             {aboutStats.map((stat, index) => (
               <div key={stat.label} className="flex items-center gap-8">
                 <div className="flex flex-col gap-1">
-                  <span className={`${raleway.className} text-[30px] font-bold leading-none tracking-[0.02em] text-[#231a12]`}>
-                    {stat.num}
-                  </span>
+                  <CountUp
+                    className={`${raleway.className} text-[30px] font-bold leading-none tracking-[0.02em] text-[#231a12]`}
+                    suffix={stat.suffix}
+                    to={stat.value}
+                  />
                   <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8a5100]/70">
                     {stat.label}
                   </span>
