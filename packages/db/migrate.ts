@@ -8,15 +8,20 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+const shouldRunMigrations =
+  process.env.VERCEL === "1" || process.env.RUN_DB_MIGRATIONS === "true";
+
+if (!shouldRunMigrations) {
+  console.log(
+    "Skipping database migrations outside Vercel. Set RUN_DB_MIGRATIONS=true to run them manually."
+  );
+  process.exit(0);
+}
+
 const url = process.env.DATABASE_URL;
 if (!url) {
-  if (process.env.VERCEL) {
-    console.error("DATABASE_URL is required to run migrations on Vercel.");
-    process.exit(1);
-  }
-
-  console.log("DATABASE_URL not set — skipping migrations.");
-  process.exit(0);
+  console.error("DATABASE_URL is required to run migrations.");
+  process.exit(1);
 }
 
 const migrationsFolder = path.join(
