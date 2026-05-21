@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "drizzle.config.ts", "seed-tyres.ts", "migrate.ts"],
+  "include": ["src/**/*.ts", "drizzle.config.ts", "seed-tyres.ts"],
   "exclude": ["node_modules"]
 }

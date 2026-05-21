@@ -3,10 +3,10 @@ import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
 import { migrate as migrateNeon } from "drizzle-orm/neon-http/migrator";
 import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js";
 import { migrate as migratePostgres } from "drizzle-orm/postgres-js/migrator";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import postgres from "postgres";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const shouldRunMigrations =
   process.env.VERCEL === "1" || process.env.RUN_DB_MIGRATIONS === "true";
@@ -50,14 +50,29 @@ console.log(`Migrations folder: ${migrationsFolder}`);
 console.log(`Migration files found: ${migrationFiles.length}`);
 console.log(`Database host: ${new URL(url).host}`);
 
-if (url.includes("neon.tech")) {
-  const db = drizzleNeon(neon(url));
-  await migrateNeon(db, { migrationsFolder });
-} else {
-  const client = postgres(url, { max: 1 });
-  const db = drizzlePostgres(client);
-  await migratePostgres(db, { migrationsFolder });
-  await client.end();
-}
+try {
+  if (url.includes("neon.tech")) {
+    console.log("Using Neon HTTP migrator.");
+    const db = drizzleNeon(neon(url));
+    await migrateNeon(db, { migrationsFolder });
+  } else {
+    console.log("Using postgres-js migrator.");
+    const client = postgres(url, { max: 1 });
+    try {
+      const db = drizzlePostgres(client);
+      await migratePostgres(db, { migrationsFolder });
+    } finally {
+      await client.end();
+    }
+  }
 
-console.log("Migrations complete.");
+  console.log("Migrations complete.");
+} catch (error) {
+  console.error("Database migration failed.");
+  if (error instanceof Error) {
+    console.error(error.stack ?? error.message);
+  } else {
+    console.error(error);
+  }
+  process.exit(1);
+}
