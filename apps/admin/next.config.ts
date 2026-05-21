@@ -1,4 +1,8 @@
+import { loadEnvConfig } from "@next/env";
+import path from "path";
 import type { NextConfig } from "next";
+
+loadEnvConfig(path.resolve(process.cwd(), "../.."), undefined, undefined, true);
 
 const API_URL = process.env.API_URL ?? "http://localhost:3002";
 

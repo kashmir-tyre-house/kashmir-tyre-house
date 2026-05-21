@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3002",
-    "build": "tsx ../../packages/db/migrate.ts && next build",
+    "build": "node --env-file-if-exists=../../.env.local --import tsx/esm ../../packages/db/migrate.ts && next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
