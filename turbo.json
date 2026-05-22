@@ -3,6 +3,13 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "DATABASE_URL",
+        "RUN_DB_MIGRATIONS",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_API_URL",
+        "API_URL"
+      ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "dev": {
