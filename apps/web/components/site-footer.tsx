@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Karla } from "next/font/google";
 
 const karla = Karla({
@@ -9,10 +10,10 @@ const karla = Karla({
 });
 
 const footerLinks = [
-  { label: "All Products", href: "#tyres" },
-  { label: "Services", href: "#services" },
-  { label: "About Us", href: "#about" },
-  { label: "Send Enquiry", href: "#contact" }
+  { label: "Tyres", href: "/#tyres" },
+  { label: "Services", href: "/#services" },
+  { label: "Saved", href: "/bookmarks" },
+  { label: "Send Enquiry", href: "/contact" }
 ];
 
 export function SiteFooter() {
@@ -28,8 +29,8 @@ export function SiteFooter() {
         <div className="relative">
           <div className="grid gap-10 border-b border-[#fff8f5]/10 pb-10 lg:grid-cols-[1.2fr_220px_360px] lg:gap-12">
             <div>
-              <a
-                href="#home"
+              <Link
+                href="/"
                 className="inline-flex items-center text-white no-underline"
               >
                 <div className="relative mb-5 ml-[-2px] h-[42px] w-28 overflow-hidden rounded-full border border-[#f8ab59]/30 bg-[#fff8f5] px-3 shadow-[0_8px_22px_rgba(35,26,18,0.16)]">
@@ -41,7 +42,7 @@ export function SiteFooter() {
                     src="/logo/kthpl-tyre-logo-2.png"
                   />
                 </div>
-              </a>
+              </Link>
 
               <p className="max-w-2xl text-[15px] leading-[1.75] text-[#ffeee0]/58 sm:text-[16px] italic">
                 Premium tyres for industrial vehicles, and heavy-duty
@@ -57,13 +58,13 @@ export function SiteFooter() {
 
               <div className="mt-5 flex flex-col gap-3">
                 {footerLinks.map((link) => (
-                  <a
+                  <Link
                     className="text-[15px] font-medium leading-none text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"
                     href={link.href}
                     key={link.label}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -74,9 +75,9 @@ export function SiteFooter() {
               </p>
 
               <div className="mt-5 flex flex-col gap-4">
-                <a
+                <Link
                   className="flex items-center gap-3 text-[15px] leading-snug text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"
-                  href="#contact"
+                  href="/contact"
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center text-[#f69300]">
                     <svg
@@ -92,11 +93,11 @@ export function SiteFooter() {
                     </svg>
                   </span>
                   Raipur, Chhattisgarh, India
-                </a>
+                </Link>
 
                 <a
                   className="flex items-center gap-3 text-[15px] leading-snug text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"
-                  href="tel:+910000000000"
+                  href="tel:+919977249965"
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center text-[#f69300]">
                     <svg
@@ -112,12 +113,12 @@ export function SiteFooter() {
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.12.91.33 1.79.63 2.63a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.45-1.15a2 2 0 0 1 2.11-.45c.84.3 1.72.51 2.63.63A2 2 0 0 1 22 16.92Z" />
                     </svg>
                   </span>
-                  +91 00000 00000
+                  +91 99772 49965
                 </a>
 
                 <a
                   className="flex items-center gap-3 break-all text-[15px] leading-snug text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"
-                  href="mailto:info@kashmirtyrehouse.com"
+                  href="mailto:rishi@kashmirtyrehouse.com"
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center text-[#f69300]">
                     <svg
@@ -134,7 +135,7 @@ export function SiteFooter() {
                       <path d="m3 7 9 6 9-6" />
                     </svg>
                   </span>
-                  info@kashmirtyrehouse.com
+                  rishi@kashmirtyrehouse.com
                 </a>
               </div>
             </div>

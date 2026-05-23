@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight, ArrowBigDown } from "lucide-react";
+import { ArrowBigDown, ArrowRight } from "lucide-react";
 import { Raleway } from "next/font/google";
 
 import { featuredProducts } from "../lib/products";
@@ -23,7 +23,7 @@ export function FeaturedSection() {
       <div className="mx-auto max-w-3xl text-center">
         <h2
           className={`${raleway.className} mb-10 mt-3 place-self-center font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
-          id="services-heading"
+          id="featured-heading"
         >
           <BlurText text="Featured Products" delay={150} />
         </h2>
