@@ -5,9 +5,11 @@ import { Button } from "@kth/ui";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Bookmark } from "lucide-react";
 import { Inter } from "next/font/google";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { getBookmarkKey, useBookmarks } from "../lib/bookmarks";
+import { addToEnquiry } from "../lib/enquiry";
 import type { Product } from "../lib/products";
 
 const inter = Inter({
@@ -52,13 +54,19 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function ProductCard({ product, className = "" }: ProductCardProps) {
+  const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const { isBookmarked, toggle, hydrated } = useBookmarks();
   const saved = hydrated && isBookmarked(getBookmarkKey(product));
 
+  const handleEnquire = () => {
+    addToEnquiry(product);
+    router.push("/contact");
+  };
+
   return (
     <article
-      className={`${inter.className} group h-fit min-w-[312px] w-fit flex-none snap-start overflow-hidden rounded-[22px] border border-[#ead9c9] bg-white shadow-[0_14px_44px_rgba(35,26,18,0.07)] transition-[border-color,box-shadow] duration-300 hover:border-[#d8b997] ${className}`}
+      className={`${inter.className} group h-fit min-w-[312px] max-w-[372px] w-fit flex-none snap-start overflow-hidden rounded-[22px] border border-[#ead9c9] bg-white shadow-[0_14px_44px_rgba(35,26,18,0.07)] transition-[border-color,box-shadow] duration-300 hover:border-[#d8b997] ${className}`}
     >
       <div className="relative rounded-[20px] bg-[#c0b3a6] p-2">
         <div className="relative flex h-[160px] overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.14),transparent_38%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
@@ -143,7 +151,8 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
 
         <div className="mt-5 flex gap-2">
           <Button
-            className="h-9 flex-1 rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
+            className="h-9 flex-1 rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
+            onClick={handleEnquire}
             size="sm"
           >
             Enquire

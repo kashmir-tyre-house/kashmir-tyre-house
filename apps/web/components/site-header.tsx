@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const navItems = ["Home", "Tyres", "Services", "About", "Brand"];
+const navItems = ["Home", "Brand", "Tyres", "Services", "About"];
 
 export function SiteHeader() {
   const pathname = usePathname();

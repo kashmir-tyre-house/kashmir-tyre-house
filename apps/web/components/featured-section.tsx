@@ -159,7 +159,7 @@ export function FeaturedSection() {
               No products available yet.
             </div>
           ) : (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 justify-between">
               {products.map((product, index) => (
                 <Reveal
                   className="h-full"
