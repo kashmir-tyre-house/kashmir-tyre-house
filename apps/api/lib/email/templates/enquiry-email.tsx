@@ -1,13 +1,23 @@
 import {
+  Body,
   Column,
-  Hr,
-  Img,
+  Container,
+  Font,
+  Head,
+  Html,
+  Preview,
   Row,
   Section,
-  Text
+  Text,
 } from "@react-email/components";
 
-import { BaseEmail } from "./base-email";
+export type EnquiryEmailProduct = {
+  id: string;
+  name: string;
+  tyreSize?: string | null;
+  category?: string | null;
+  pattern?: string | null;
+};
 
 export type EnquiryEmailProps = {
   customerName: string;
@@ -15,11 +25,35 @@ export type EnquiryEmailProps = {
   email?: string;
   companyName?: string;
   message?: string;
-  products?: Array<{
-    id: string;
-    name: string;
-  }>;
+  products?: EnquiryEmailProduct[];
+  enquiryId?: string;
+  createdAt?: Date | string;
 };
+
+const DATE_FORMATTER = new Intl.DateTimeFormat("en-IN", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+});
+
+function formatRef(enquiryId?: string) {
+  if (!enquiryId) return null;
+  return `ENQ-${enquiryId.slice(0, 8).toUpperCase()}`;
+}
+
+function formatDate(createdAt?: Date | string) {
+  if (!createdAt) return null;
+  const date = createdAt instanceof Date ? createdAt : new Date(createdAt);
+  if (Number.isNaN(date.getTime())) return null;
+  return DATE_FORMATTER.format(date);
+}
+
+function productSpec(p: EnquiryEmailProduct) {
+  return [p.tyreSize, p.category, p.pattern].filter(Boolean).join(" · ");
+}
 
 export function EnquiryEmail({
   customerName,
@@ -27,216 +61,442 @@ export function EnquiryEmail({
   email,
   companyName,
   message,
-  products = []
+  products = [],
+  enquiryId,
+  createdAt,
 }: EnquiryEmailProps) {
+  const ref = formatRef(enquiryId);
+  const dateLabel = formatDate(createdAt);
+  const meta = [ref, dateLabel].filter(Boolean).join("  ·  ");
+
   return (
-    <BaseEmail
-      preview={`New enquiry from ${customerName}${companyName ? ` · ${companyName}` : ""}`}
-      title="New Enquiry Received"
-    >
-      {/* Intro */}
-      <Text style={introStyle}>
-        A new product enquiry has been submitted through the Kashmir Tyre House
-        website. Review the details below and follow up promptly.
-      </Text>
+    <Html>
+      <Head>
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily={["Helvetica", "Arial", "sans-serif"]}
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriCZOIHTWEBlw.woff2",
+            format: "woff2",
+          }}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily={["Helvetica", "Arial", "sans-serif"]}
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v15/rP2Cp2ywxg089UriAWCrCBimC2QU.woff2",
+            format: "woff2",
+          }}
+          fontWeight={300}
+          fontStyle="normal"
+        />
+        <Font
+          fontFamily="DM Sans"
+          fallbackFontFamily={["Helvetica", "Arial", "sans-serif"]}
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriCZ2IHTWEBlw.woff2",
+            format: "woff2",
+          }}
+          fontWeight={500}
+          fontStyle="normal"
+        />
+        <Font
+          fontFamily="DM Mono"
+          fallbackFontFamily={["Menlo", "Consolas", "Courier New", "monospace"]}
+          webFont={{
+            url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYhh2aBYyMcKw.woff2",
+            format: "woff2",
+          }}
+          fontWeight={400}
+          fontStyle="normal"
+        />
+      </Head>
+      <Preview>{`New enquiry from ${customerName}${companyName ? ` · ${companyName}` : ""}`}</Preview>
+      <Body style={bodyStyle}>
+        <Container style={cardStyle}>
+          {/* ── Hero ─────────────────────────────────────────── */}
+          <Section style={heroStyle}>
+            {/* Diagonal accent stripe — uses table cell with linear gradient */}
+            <div style={heroStripeStyle} />
+            {/* Dot pattern */}
+            <div style={heroDotsStyle} />
 
-      {/* Customer details card */}
-      <Section style={cardStyle}>
-        <Text style={cardLabelStyle}>CUSTOMER DETAILS</Text>
-        <Hr style={cardDividerStyle} />
+            <div style={heroContentStyle}>
+              <Text style={heroEyebrowStyle}>NEW PRODUCT ENQUIRY</Text>
+              <Text style={heroTitleStyle}>
+                A customer wants to{" "}
+                <span style={heroTitleStrongStyle}>know more about your tyres</span>
+              </Text>
+              {meta ? <Text style={heroMetaStyle}>{meta}</Text> : null}
+            </div>
+          </Section>
 
-        <Row style={fieldRowStyle}>
-          <Column style={fieldLabelColStyle}>
-            <Text style={fieldLabelStyle}>Name</Text>
-          </Column>
-          <Column>
-            <Text style={fieldValueStyle}>{customerName}</Text>
-          </Column>
-        </Row>
+          {/* ── Body ─────────────────────────────────────────── */}
+          <Section style={cardBodyStyle}>
+            {/* Customer Details */}
+            <SectionLabel>CUSTOMER DETAILS</SectionLabel>
 
-        <Row style={fieldRowStyle}>
-          <Column style={fieldLabelColStyle}>
-            <Text style={fieldLabelStyle}>Phone</Text>
-          </Column>
-          <Column>
-            <Text style={fieldValueStyle}>{phone}</Text>
-          </Column>
-        </Row>
-
-        <Row style={fieldRowStyle}>
-          <Column style={fieldLabelColStyle}>
-            <Text style={fieldLabelStyle}>Email</Text>
-          </Column>
-          <Column>
-            <Text style={fieldValueStyle}>{email ?? "N/A"}</Text>
-          </Column>
-        </Row>
-
-        <Row style={fieldRowStyle}>
-          <Column style={fieldLabelColStyle}>
-            <Text style={fieldLabelStyle}>Company</Text>
-          </Column>
-          <Column>
-            <Text style={fieldValueStyle}>{companyName ?? "N/A"}</Text>
-          </Column>
-        </Row>
-      </Section>
-
-      {/* Products */}
-      {products.length > 0 ? (
-        <Section style={{ marginTop: "20px" }}>
-          <Text style={cardLabelStyle}>ENQUIRED PRODUCTS</Text>
-          <Hr style={cardDividerStyle} />
-          {products.map((product, index) => (
-            <Section key={index} style={productRowStyle}>
+            <Section style={detailGridStyle}>
               <Row>
-                <Column style={productIndexColStyle}>
-                  <Text style={productIndexStyle}>{index + 1}</Text>
+                <Column
+                  style={{
+                    ...detailCellStyle,
+                    ...detailCellRightStyle,
+                    ...detailCellBottomStyle,
+                  }}
+                >
+                  <Text style={cellKeyStyle}>FULL NAME</Text>
+                  <Text style={cellValStyle}>{customerName}</Text>
                 </Column>
-                <Column>
-                  <Text style={productNameStyle}>{product.name}</Text>
-                  <Text style={productIdStyle}>{product.id}</Text>
+                <Column style={{ ...detailCellStyle, ...detailCellBottomStyle }}>
+                  <Text style={cellKeyStyle}>EMAIL ADDRESS</Text>
+                  <Text style={cellValStyle}>{email ?? "—"}</Text>
+                </Column>
+              </Row>
+              <Row>
+                <Column style={{ ...detailCellStyle, ...detailCellRightStyle }}>
+                  <Text style={cellKeyStyle}>PHONE NUMBER</Text>
+                  <Text style={cellValStyle}>{phone}</Text>
+                </Column>
+                <Column style={detailCellStyle}>
+                  <Text style={cellKeyStyle}>COMPANY NAME</Text>
+                  <Text style={cellValStyle}>{companyName ?? "—"}</Text>
                 </Column>
               </Row>
             </Section>
-          ))}
-        </Section>
-      ) : null}
 
-      {/* Message */}
-      {message ? (
-        <Section style={{ marginTop: "20px" }}>
-          <Text style={cardLabelStyle}>MESSAGE</Text>
-          <Hr style={cardDividerStyle} />
-          <Section style={messageBoxStyle}>
-            <Text style={messageTextStyle}>{message}</Text>
+            {/* Message */}
+            {message ? (
+              <Section style={blockSpacerStyle}>
+                <SectionLabel>MESSAGE FROM CUSTOMER</SectionLabel>
+                <Section style={messageBoxStyle}>
+                  <Text style={messageTextStyle}>{message}</Text>
+                </Section>
+              </Section>
+            ) : null}
+
+            {/* Products */}
+            {products.length > 0 ? (
+              <Section style={blockSpacerStyle}>
+                <SectionLabel>ENQUIRED PRODUCTS</SectionLabel>
+
+                <Section style={productsTableStyle}>
+                  <Row style={productsHeaderRowStyle}>
+                    <Column style={{ ...productsHeaderCellStyle, width: "40%" }}>
+                      PRODUCT ID
+                    </Column>
+                    <Column style={productsHeaderCellStyle}>
+                      PRODUCT NAME &amp; SPEC
+                    </Column>
+                  </Row>
+                  {products.map((p, index) => {
+                    const spec = productSpec(p);
+                    const isAlt = index % 2 === 1;
+                    return (
+                      <Row
+                        key={p.id}
+                        style={isAlt ? productsRowAltStyle : productsRowStyle}
+                      >
+                        <Column
+                          style={{
+                            ...productsCellStyle,
+                            ...productsIdCellStyle,
+                            width: "40%",
+                          }}
+                        >
+                          {`KTHPL-${p.id.slice(0, 8).toUpperCase()}`}
+                        </Column>
+                        <Column style={productsCellStyle}>
+                          <Text style={productNameStyle}>{p.name}</Text>
+                          {spec ? <Text style={productSpecStyle}>{spec}</Text> : null}
+                        </Column>
+                      </Row>
+                    );
+                  })}
+                </Section>
+              </Section>
+            ) : null}
           </Section>
-        </Section>
-      ) : null}
-
-      {/* CTA note */}
-      <Section style={ctaBoxStyle}>
-        <Text style={ctaTextStyle}>
-          Log in to the admin portal to update the enquiry status and track
-          follow-up actions.
-        </Text>
-      </Section>
-    </BaseEmail>
+        </Container>
+      </Body>
+    </Html>
   );
 }
 
-const introStyle = {
-  color: "#6f6258",
-  fontSize: "14px",
-  lineHeight: "1.75",
-  margin: "0 0 20px"
+// ── Section label component (label + divider line on the same row) ─────────
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <table
+      role="presentation"
+      cellPadding={0}
+      cellSpacing={0}
+      border={0}
+      width="100%"
+      style={sectionLabelTableStyle}
+    >
+      <tbody>
+        <tr>
+          <td style={sectionLabelTextStyle}>{children}</td>
+          <td style={sectionLabelLineCellStyle}>
+            <div style={sectionLabelLineStyle} />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+// ── Styles ──────────────────────────────────────────────────────────────────
+
+const FONT_SANS =
+  "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
+const FONT_MONO =
+  "'DM Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace";
+
+const bodyStyle = {
+  backgroundColor: "#EDEAE4",
+  color: "#1A1A1A",
+  fontFamily: FONT_SANS,
+  margin: "0",
+  padding: "44px 16px",
 };
 
 const cardStyle = {
-  backgroundColor: "#fffaf6",
-  border: "1px solid #ead9c9",
-  borderRadius: "12px",
-  padding: "18px 20px"
+  backgroundColor: "#FFFFFF",
+  borderRadius: "2px",
+  boxShadow: "0 1px 4px rgba(0,0,0,0.07), 0 10px 48px rgba(0,0,0,0.06)",
+  margin: "0 auto",
+  maxWidth: "620px",
+  overflow: "hidden",
+  padding: "0",
 };
 
-const cardLabelStyle = {
-  color: "#8b7a6c",
-  fontSize: "10px",
-  fontWeight: "700",
-  letterSpacing: "0.12em",
-  margin: "0 0 10px"
+// ── Hero ───────────────────────────────────────────────────────────────────
+const heroStyle = {
+  backgroundColor: "#111111",
+  position: "relative" as const,
+  overflow: "hidden" as const,
+  padding: "0",
 };
 
-const cardDividerStyle = {
-  borderColor: "#ead9c9",
-  margin: "0 0 14px"
+const heroStripeStyle = {
+  position: "absolute" as const,
+  top: 0,
+  right: 0,
+  bottom: 0,
+  width: "38%",
+  background:
+    "linear-gradient(135deg, transparent 30%, rgba(200,169,110,0.09) 100%)",
+  pointerEvents: "none" as const,
 };
 
-const fieldRowStyle = {
-  marginBottom: "10px"
+const heroDotsStyle = {
+  position: "absolute" as const,
+  right: "24px",
+  bottom: "16px",
+  width: "80px",
+  height: "80px",
+  backgroundImage:
+    "radial-gradient(circle, rgba(200,169,110,0.18) 1.5px, transparent 1.5px)",
+  backgroundSize: "10px 10px",
+  pointerEvents: "none" as const,
 };
 
-const fieldLabelColStyle = {
-  width: "100px"
+const heroContentStyle = {
+  padding: "34px 44px",
+  position: "relative" as const,
+  zIndex: 1,
 };
 
-const fieldLabelStyle = {
-  color: "#8b7a6c",
-  fontSize: "12px",
-  fontWeight: "600",
-  margin: "0"
-};
-
-const fieldValueStyle = {
-  color: "#231a12",
-  fontSize: "14px",
-  fontWeight: "500",
-  margin: "0"
-};
-
-const productRowStyle = {
-  backgroundColor: "#fffaf6",
-  border: "1px solid #ead9c9",
-  borderRadius: "10px",
-  marginBottom: "8px",
-  padding: "12px 16px"
-};
-
-const productIndexColStyle = {
-  width: "32px"
-};
-
-const productIndexStyle = {
-  backgroundColor: "#f69300",
-  borderRadius: "6px",
-  color: "#ffffff",
-  fontSize: "11px",
-  fontWeight: "700",
+const heroEyebrowStyle = {
+  color: "#C8A96E",
+  fontFamily: FONT_MONO,
+  fontSize: "9px",
+  fontWeight: 400,
+  letterSpacing: "0.28em",
   margin: "0",
-  padding: "2px 7px",
-  textAlign: "center" as const
+  textTransform: "uppercase" as const,
 };
 
-const productNameStyle = {
-  color: "#231a12",
+const heroTitleStyle = {
+  color: "#FFFFFF",
+  fontFamily: FONT_SANS,
+  fontSize: "22px",
+  fontWeight: 300,
+  letterSpacing: "-0.01em",
+  lineHeight: "1.35",
+  margin: "10px 0 0",
+};
+
+const heroTitleStrongStyle = {
+  fontWeight: 500,
+};
+
+const heroMetaStyle = {
+  color: "#555555",
+  fontFamily: FONT_MONO,
+  fontSize: "10px",
+  letterSpacing: "0.1em",
+  margin: "10px 0 0",
+};
+
+// ── Body ───────────────────────────────────────────────────────────────────
+const cardBodyStyle = {
+  padding: "36px 44px",
+};
+
+// ── Section label (label + line) ──────────────────────────────────────────
+const sectionLabelTableStyle = {
+  borderCollapse: "collapse" as const,
+  margin: "0 0 14px",
+  width: "100%",
+};
+
+const sectionLabelTextStyle = {
+  color: "#C8A96E",
+  fontFamily: FONT_MONO,
+  fontSize: "9px",
+  fontWeight: 400,
+  letterSpacing: "0.28em",
+  paddingRight: "10px",
+  textTransform: "uppercase" as const,
+  whiteSpace: "nowrap" as const,
+  width: "1%",
+  verticalAlign: "middle" as const,
+};
+
+const sectionLabelLineCellStyle = {
+  verticalAlign: "middle" as const,
+  width: "auto",
+};
+
+const sectionLabelLineStyle = {
+  backgroundColor: "#F0ECE4",
+  height: "1px",
+  width: "100%",
+  fontSize: "1px",
+  lineHeight: "1px",
+};
+
+const blockSpacerStyle = {
+  marginTop: "30px",
+};
+
+// ── Detail grid ───────────────────────────────────────────────────────────
+const detailGridStyle = {
+  border: "1px solid #EDEAE4",
+  borderRadius: "2px",
+  borderCollapse: "collapse" as const,
+};
+
+const detailCellStyle = {
+  padding: "14px 18px",
+  verticalAlign: "top" as const,
+  width: "50%",
+};
+
+const detailCellRightStyle = {
+  borderRight: "1px solid #EDEAE4",
+};
+
+const detailCellBottomStyle = {
+  borderBottom: "1px solid #EDEAE4",
+};
+
+const cellKeyStyle = {
+  color: "#BBAA99",
+  fontFamily: FONT_MONO,
+  fontSize: "9px",
+  fontWeight: 400,
+  letterSpacing: "0.22em",
+  margin: "0 0 5px",
+  textTransform: "uppercase" as const,
+};
+
+const cellValStyle = {
+  color: "#1A1A1A",
+  fontFamily: FONT_SANS,
   fontSize: "13px",
-  fontWeight: "600",
-  margin: "0 0 2px"
+  lineHeight: "1.5",
+  margin: "0",
 };
 
-const productIdStyle = {
-  color: "#8b7a6c",
-  fontFamily: "monospace",
-  fontSize: "11px",
-  margin: "0"
-};
-
+// ── Message box ───────────────────────────────────────────────────────────
 const messageBoxStyle = {
-  backgroundColor: "#fffaf6",
-  border: "1px solid #ead9c9",
-  borderLeft: "3px solid #f69300",
-  borderRadius: "10px",
-  padding: "14px 16px"
+  backgroundColor: "#F8F6F2",
+  border: "1px solid #EDEAE4",
+  borderLeft: "3px solid #C8A96E",
+  padding: "16px 20px",
 };
 
 const messageTextStyle = {
-  color: "#544434",
-  fontSize: "14px",
-  lineHeight: "1.75",
+  color: "#444444",
+  fontFamily: FONT_SANS,
+  fontSize: "13px",
+  fontWeight: 300,
+  lineHeight: "1.8",
   margin: "0",
-  whiteSpace: "pre-line" as const
 };
 
-const ctaBoxStyle = {
-  backgroundColor: "#f3f2f6",
-  borderRadius: "10px",
-  marginTop: "20px",
-  padding: "14px 18px"
+// ── Products table ────────────────────────────────────────────────────────
+const productsTableStyle = {
+  borderCollapse: "collapse" as const,
 };
 
-const ctaTextStyle = {
-  color: "#6e6d78",
-  fontSize: "12px",
-  lineHeight: "1.6",
-  margin: "0"
+const productsHeaderRowStyle = {
+  backgroundColor: "#111111",
+};
+
+const productsHeaderCellStyle = {
+  color: "#C8A96E",
+  fontFamily: FONT_MONO,
+  fontSize: "9px",
+  fontWeight: 400,
+  letterSpacing: "0.22em",
+  padding: "10px 14px",
+  textAlign: "left" as const,
+  textTransform: "uppercase" as const,
+};
+
+const productsRowStyle = {
+  backgroundColor: "#FFFFFF",
+  borderBottom: "1px solid #F0EDE7",
+};
+
+const productsRowAltStyle = {
+  backgroundColor: "#FAFAF8",
+  borderBottom: "1px solid #F0EDE7",
+};
+
+const productsCellStyle = {
+  color: "#1A1A1A",
+  fontFamily: FONT_SANS,
+  fontSize: "13px",
+  padding: "13px 14px",
+  verticalAlign: "middle" as const,
+};
+
+const productsIdCellStyle = {
+  color: "#888888",
+  fontFamily: FONT_MONO,
+  fontSize: "11px",
+  letterSpacing: "0.08em",
+};
+
+const productNameStyle = {
+  color: "#1A1A1A",
+  fontFamily: FONT_SANS,
+  fontSize: "13px",
+  margin: "0",
+};
+
+const productSpecStyle = {
+  color: "#AAAAAA",
+  fontFamily: FONT_SANS,
+  fontSize: "11px",
+  fontWeight: 300,
+  margin: "2px 0 0",
 };

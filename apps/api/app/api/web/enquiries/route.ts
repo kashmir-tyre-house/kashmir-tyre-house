@@ -75,7 +75,13 @@ export async function POST(request: Request) {
     // than letting the FK violation bubble up.
     const resolvedProducts = productIds.length > 0
       ? await db
-          .select({ id: tyreProducts.id, name: tyreProducts.name })
+          .select({
+            id: tyreProducts.id,
+            name: tyreProducts.name,
+            tyreSize: tyreProducts.tyreSize,
+            category: tyreProducts.category,
+            pattern: tyreProducts.pattern,
+          })
           .from(tyreProducts)
           .where(and(inArray(tyreProducts.id, productIds), eq(tyreProducts.isActive, true)))
       : [];
@@ -108,7 +114,16 @@ export async function POST(request: Request) {
           subject: `New enquiry from ${customerName}${companyName ? ` · ${companyName}` : ""}`,
           replyTo: email,
           template: EnquiryEmail,
-          templateProps: { customerName, phone, email, companyName, message, products: resolvedProducts },
+          templateProps: {
+            enquiryId: created.id,
+            createdAt: created.createdAt,
+            customerName,
+            phone,
+            email,
+            companyName,
+            message,
+            products: resolvedProducts,
+          },
         });
       } catch (emailError) {
         console.error("[web/enquiries] email send failed", emailError);
