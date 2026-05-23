@@ -67,8 +67,6 @@ Admin login also needs Google OAuth and Auth.js values in `apps/admin/.env.local
 AUTH_SECRET=your-random-secret
 AUTH_TRUST_HOST=true
 AUTH_URL=http://localhost:3001
-AUTH_GOOGLE_ID=your-google-client-id
-AUTH_GOOGLE_SECRET=your-google-client-secret
 ```
 
 ## Local Database
