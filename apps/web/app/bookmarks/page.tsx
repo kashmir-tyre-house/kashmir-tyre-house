@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Raleway } from "next/font/google";
@@ -5,7 +7,7 @@ import { Raleway } from "next/font/google";
 import { ProductCard } from "../../components/product-card";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteHeader } from "../../components/site-header";
-import { bookmarkedProducts } from "../../lib/products";
+import { useBookmarks, getBookmarkKey } from "../../lib/bookmarks";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -14,7 +16,7 @@ const raleway = Raleway({
   display: "swap",
 });
 
-const EmptyView = () => {
+function EmptyView() {
   return (
     <div className="mt-20 h-[90vh] flex flex-col items-center justify-center text-center">
       <Image
@@ -35,7 +37,7 @@ const EmptyView = () => {
       </p>
       <Link
         className="mt-8 inline-flex items-center gap-2 rounded-[10px] bg-[#231a12] px-6 py-3 text-[13px] font-semibold text-white transition hover:bg-[#3a2f25]"
-        href="/#brand"
+        href="/#tyres"
       >
         Browse products
         <svg
@@ -54,16 +56,22 @@ const EmptyView = () => {
       </Link>
     </div>
   );
-};
+}
 
 export default function BookmarksPage() {
+  const { bookmarks, hydrated } = useBookmarks();
+
+  // Avoid flashing the empty state before localStorage has been read.
+  const showEmpty = hydrated && bookmarks.length === 0;
+  const showList = hydrated && bookmarks.length > 0;
+
   return (
     <main className="min-h-screen text-[#231a12]">
       <SiteHeader />
 
-      {bookmarkedProducts.length !== 0 ? (
+      {showEmpty ? (
         <EmptyView />
-      ) : (
+      ) : showList ? (
         <section className="px-4 pb-20 pt-32 sm:px-6 lg:px-8 max-w-330 mx-auto">
           <div className="mx-auto max-w-[1480px]">
             <div className="max-w-3xl">
@@ -81,16 +89,18 @@ export default function BookmarksPage() {
             </div>
 
             <div className="mt-14 flex flex-wrap items-start gap-5">
-              {bookmarkedProducts.map((product) => (
+              {bookmarks.map((product) => (
                 <ProductCard
-                  className="!min-w-[290px] !max-w-[340px] !w-full !flex-[1_1_290px] !snap-none"
-                  key={product.productName}
+                  className="!min-w-[290px] !max-w-[290px] !w-full !flex-[1_1_290px] !snap-none"
+                  key={getBookmarkKey(product)}
                   product={product}
                 />
               ))}
             </div>
           </div>
         </section>
+      ) : (
+        <div className="min-h-[60vh]" />
       )}
 
       <SiteFooter />

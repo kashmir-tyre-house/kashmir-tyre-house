@@ -1,8 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@kth/ui";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Bookmark } from "lucide-react";
 import { Inter } from "next/font/google";
+import { useState } from "react";
 
+import { getBookmarkKey, useBookmarks } from "../lib/bookmarks";
 import type { Product } from "../lib/products";
 
 const inter = Inter({
@@ -47,16 +52,29 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function ProductCard({ product, className = "" }: ProductCardProps) {
+  const [loaded, setLoaded] = useState(false);
+  const { isBookmarked, toggle, hydrated } = useBookmarks();
+  const saved = hydrated && isBookmarked(getBookmarkKey(product));
+
   return (
     <article
       className={`${inter.className} group h-fit min-w-[312px] w-fit flex-none snap-start overflow-hidden rounded-[22px] border border-[#ead9c9] bg-white shadow-[0_14px_44px_rgba(35,26,18,0.07)] transition-[border-color,box-shadow] duration-300 hover:border-[#d8b997] ${className}`}
     >
       <div className="relative rounded-[20px] bg-[#c0b3a6] p-2">
         <div className="relative flex h-[160px] overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.14),transparent_38%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
+          {!loaded ? (
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
+              <div className="w-20">
+                <DotLottieReact autoplay loop src="/lottie/loading-animation.lottie" />
+              </div>
+            </div>
+          ) : null}
           <Image
             alt={`${product.brand} ${product.productName}`}
             className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
             fill
+            onError={() => setLoaded(true)}
+            onLoad={() => setLoaded(true)}
             sizes="(min-width: 1280px) 260px, (min-width: 768px) 45vw, 92vw"
             src={product.image}
           />
@@ -76,11 +94,18 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
           </h3>
 
           <button
-            aria-label={`Save ${product.productName}`}
-            className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#F3E7DB] text-[#231a12] shadow-[0_8px_20px_rgba(35,26,18,0.08)] transition-colors duration-300 hover:text-[#f69300]"
+            aria-label={saved ? `Remove ${product.productName} from saved` : `Save ${product.productName}`}
+            aria-pressed={saved}
+            className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#F3E7DB] shadow-[0_8px_20px_rgba(35,26,18,0.08)] transition-colors duration-300 hover:text-[#f69300] ${saved ? "text-[#f69300]" : "text-[#231a12]"}`}
+            onClick={() => toggle(product)}
             type="button"
           >
-            <Bookmark aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+            <Bookmark
+              aria-hidden="true"
+              className="h-3.5 w-3.5"
+              fill={saved ? "currentColor" : "none"}
+              strokeWidth={2}
+            />
           </button>
         </div>
 

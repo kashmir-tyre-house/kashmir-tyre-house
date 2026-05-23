@@ -189,7 +189,7 @@ export default function Home() {
 
       {/* <CustomersSection /> */}
 
-      {/* <FeaturedSection /> */}
+      <FeaturedSection />
 
       <ServicesSection />
 
