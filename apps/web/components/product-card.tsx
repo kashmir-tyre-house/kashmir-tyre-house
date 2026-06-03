@@ -64,6 +64,11 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
     router.push("/contact");
   };
 
+  const handleDetails = () => {
+    if (!product.id) return;
+    router.push(`/products/${product.id}`);
+  };
+
   return (
     <article
       className={`${inter.className} group h-fit min-w-[312px] max-w-[372px] w-fit flex-none snap-start overflow-hidden rounded-[22px] border border-[#ead9c9] bg-white shadow-[0_14px_44px_rgba(35,26,18,0.07)] transition-[border-color,box-shadow] duration-300 hover:border-[#d8b997] ${className}`}
@@ -97,7 +102,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
 
       <div className="p-4 hover:cursor-pointer">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="whitespace-nowrap text-[19px] font-extrabold leading-[1.12] tracking-[-0.035em] text-[#231a12]">
+          <h3 className="whitespace-nowrap text-[16px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12]">
             {product.productName}
           </h3>
 
@@ -159,7 +164,9 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
           </Button>
 
           <Button
-            className="h-9 rounded-md border border-[#231a12]/20 bg-transparent px-3 text-[12px] font-bold text-[#231a12] transition-colors duration-300 hover:bg-[white]"
+            className="h-9 rounded-md border border-[#231a12]/20 bg-transparent px-3 text-[12px] font-bold text-[#231a12] transition-colors duration-300 hover:bg-[white] disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!product.id}
+            onClick={handleDetails}
             size="sm"
             variant="secondary"
           >
