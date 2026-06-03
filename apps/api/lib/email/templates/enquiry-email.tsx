@@ -104,7 +104,7 @@ export function EnquiryEmail({
         />
         <Font
           fontFamily="DM Mono"
-          fallbackFontFamily={["Menlo", "Consolas", "Courier New", "monospace"]}
+          fallbackFontFamily="monospace"
           webFont={{
             url: "https://fonts.gstatic.com/s/dmmono/v14/aFTU7PB1QTsUX8KYhh2aBYyMcKw.woff2",
             format: "woff2",
