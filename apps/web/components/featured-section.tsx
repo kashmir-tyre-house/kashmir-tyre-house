@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import type { Product } from "../lib/products";
 import { BlurText } from "./blur-text";
 import { ProductCard } from "./product-card";
+import { ProductCardSkeleton } from "./product-card-skeleton";
 import { Reveal } from "./reveal";
 
 const raleway = Raleway({
@@ -147,8 +148,13 @@ export function FeaturedSection() {
       <div className="mx-auto mt-10 max-w-330">
         <div className="relative pb-15">
           {isInitialLoad ? (
-            <div className="flex min-h-80 items-center justify-center">
-              <Loader2 aria-hidden="true" className="h-8 w-8 animate-spin text-[#8a5100]" />
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 justify-between">
+              {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+                <ProductCardSkeleton
+                  className="!min-w-0 !w-full !flex-auto !snap-none"
+                  key={index}
+                />
+              ))}
             </div>
           ) : error && products.length === 0 ? (
             <div className="flex min-h-80 items-center justify-center text-[14px] font-medium text-[#8b7a6c]">
