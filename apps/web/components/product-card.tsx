@@ -69,9 +69,25 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
     router.push(`/products/${product.id}`);
   };
 
+  const stop = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleCardKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleDetails();
+    }
+  };
+
   return (
     <article
-      className={`${inter.className} group h-fit min-w-[312px] max-w-[372px] w-fit flex-none snap-start overflow-hidden rounded-[22px] border border-[#ead9c9] bg-white shadow-[0_14px_44px_rgba(35,26,18,0.07)] transition-[border-color,box-shadow] duration-300 hover:border-[#d8b997] ${className}`}
+      aria-label={product.id ? `View ${product.brand} ${product.productName} details` : undefined}
+      className={`${inter.className} group h-fit min-w-[312px] max-w-[372px] w-fit flex-none snap-start overflow-hidden rounded-[22px] border border-[#ead9c9] bg-white shadow-[0_14px_44px_rgba(35,26,18,0.07)] transition-[border-color,box-shadow] duration-300 hover:border-[#d8b997] focus-visible:border-[#a85d00] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a85d00]/20 ${product.id ? "cursor-pointer" : ""} ${className}`}
+      onClick={product.id ? handleDetails : undefined}
+      onKeyDown={product.id ? handleCardKeyDown : undefined}
+      role={product.id ? "link" : undefined}
+      tabIndex={product.id ? 0 : undefined}
     >
       <div className="relative rounded-[20px] bg-[#c0b3a6] p-2">
         <div className="relative flex h-[160px] overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.14),transparent_38%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
@@ -110,7 +126,10 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
             aria-label={saved ? `Remove ${product.productName} from saved` : `Save ${product.productName}`}
             aria-pressed={saved}
             className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#F3E7DB] shadow-[0_8px_20px_rgba(35,26,18,0.08)] transition-colors duration-300 hover:text-[#f69300] ${saved ? "text-[#f69300]" : "text-[#231a12]"}`}
-            onClick={() => toggle(product)}
+            onClick={(e) => {
+              stop(e);
+              toggle(product);
+            }}
             type="button"
           >
             <Bookmark
@@ -157,7 +176,10 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
         <div className="mt-5 flex gap-2">
           <Button
             className="h-9 flex-1 rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
-            onClick={handleEnquire}
+            onClick={(e) => {
+              stop(e);
+              handleEnquire();
+            }}
             size="sm"
           >
             Enquire
@@ -166,7 +188,10 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
           <Button
             className="h-9 rounded-md border border-[#231a12]/20 bg-transparent px-3 text-[12px] font-bold text-[#231a12] transition-colors duration-300 hover:bg-[white] disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!product.id}
-            onClick={handleDetails}
+            onClick={(e) => {
+              stop(e);
+              handleDetails();
+            }}
             size="sm"
             variant="secondary"
           >
