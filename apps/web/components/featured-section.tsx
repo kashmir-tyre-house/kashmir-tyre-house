@@ -2,6 +2,7 @@
 
 import { ArrowBigDown, ArrowRight, Loader2 } from "lucide-react";
 import { Raleway } from "next/font/google";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import type { Product } from "../lib/products";
@@ -136,13 +137,13 @@ export function FeaturedSection() {
       </div>
 
       <Reveal className="mt-3 flex flex-col items-center gap-6 text-center" delayMs={70}>
-        <button
+        <Link
           className="inline-flex h-10 items-center gap-2 rounded-md border border-[#231a12]/25 bg-transparent px-5 text-[13px] font-bold text-[#231a12] transition-all duration-300 hover:border-[#231a12] hover:bg-[#231a12] hover:text-[#fff8f5]"
-          type="button"
+          href="/products"
         >
           View all products
           <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
-        </button>
+        </Link>
       </Reveal>
 
       <div className="mx-auto mt-10 max-w-330">

@@ -8,6 +8,7 @@
     "./button": "./src/button.tsx",
     "./card": "./src/card.tsx",
     "./badge": "./src/badge.tsx",
+    "./select": "./src/select.tsx",
     "./utils": "./src/utils.ts"
   },
   "scripts": {
@@ -16,6 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^2.2.6",
     "react": "^19.2.5"
   },
   "devDependencies": {
