@@ -128,8 +128,13 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
 
       <div className="p-4 hover:cursor-pointer">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="whitespace-nowrap text-[16px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12]">
-            {product.productName}
+          <h3
+            className="whitespace-nowrap text-[16px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12]"
+            title={product.productName}
+          >
+            {product.productName.length > 24
+              ? `${product.productName.slice(0, 22)}…`
+              : product.productName}
           </h3>
 
           <button
