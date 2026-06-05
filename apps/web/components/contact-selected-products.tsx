@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, PackageOpen, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Raleway } from "next/font/google";
 
@@ -43,111 +43,124 @@ export function ContactSelectedProducts() {
   }, []);
 
   return (
-    <aside className="flex flex-col gap-5 self-start lg:sticky lg:top-22">
-      <div className="rounded-[24px] border border-[#ead9c9] bg-white p-6 shadow-[0_18px_46px_rgba(35,26,18,0.06)]">
-        <div className="flex items-center justify-between">
-          <h2
-            className={`${raleway.className} text-[17px] font-semibold tracking-[-0.03em] text-[#231a12]`}
-          >
-            Selected Products
-          </h2>
-          <span className="rounded-full bg-[#fff1de] px-2.5 py-1 text-[11px] font-semibold text-[#a06000]">
-            {items.length} items
+    <aside className="flex flex-col gap-4 self-start lg:sticky lg:top-22">
+      <div className="overflow-hidden rounded-[20px] border border-[#ead9c9] bg-white shadow-[0_10px_32px_rgba(35,26,18,0.05)]">
+        {/* Header strip */}
+        <div className="flex items-center justify-between gap-3 border-b border-[#ead9c9]/70 bg-[linear-gradient(180deg,#fff8f5_0%,#ffffff_100%)] px-5 py-3.5">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fff1e3] text-[#a85d00]">
+              <PackageOpen aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.25} />
+            </span>
+            <h2
+              className={`${raleway.className} text-[14px] font-bold tracking-[-0.01em] text-[#231a12]`}
+            >
+              Selected Products
+            </h2>
+          </div>
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#231a12] px-1.5 text-[10px] font-bold text-[#fff8f5]">
+            {hydrated ? items.length : 0}
           </span>
         </div>
 
-        {!hydrated ? (
-          <div className="mt-5 h-20" />
-        ) : items.length > 0 ? (
-          <ul className="mt-5 flex flex-col">
-            {items.map((product) => {
-              const key = getBookmarkKey(product);
-              const removing = removingKeys.includes(key);
-              return (
-                <li
-                  className={[
-                    "overflow-hidden transition-[max-height,opacity,margin] duration-300 ease-in-out motion-reduce:transition-none",
-                    removing
-                      ? "mb-0 max-h-0 opacity-0"
-                      : "mb-3 max-h-32 opacity-100 last:mb-0",
-                  ].join(" ")}
-                  key={key}
-                >
-                  <div
+        {/* Body */}
+        <div className="p-3">
+          {!hydrated ? (
+            <div className="h-20" />
+          ) : items.length > 0 ? (
+            <ul className="flex flex-col gap-2">
+              {items.map((product) => {
+                const key = getBookmarkKey(product);
+                const removing = removingKeys.includes(key);
+                return (
+                  <li
                     className={[
-                      "group relative flex gap-3.5 rounded-[16px] border border-[#f0dfd1] bg-[#fffcfa] p-2 pr-13",
-                      "transition-[transform,opacity,box-shadow] duration-300 ease-in-out motion-reduce:transition-none",
-                      removing ? "translate-x-5 opacity-0" : "translate-x-0 opacity-100",
+                      "overflow-hidden transition-[max-height,opacity,margin] duration-300 ease-in-out motion-reduce:transition-none",
+                      removing ? "mb-0 max-h-0 opacity-0" : "max-h-32 opacity-100",
                     ].join(" ")}
+                    key={key}
                   >
-                    <div className="relative h-[72px] w-[80px] shrink-0 overflow-hidden rounded-[10px] bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.14),transparent_38%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
-                      <Image
-                        alt={`${product.brand} ${product.productName}`}
-                        className="object-cover"
-                        fill
-                        sizes="80px"
-                        src={product.image}
-                      />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-extrabold tracking-[0.18em] text-[#8a5100]">
-                        {product.brand.toUpperCase()}
-                      </p>
-                      <h3 className="mt-0.5 text-[14px] font-bold leading-[1.2] tracking-[-0.025em] text-[#231a12]">
-                        {product.productName}
-                      </h3>
-                      <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                        <span className="text-[11px] font-semibold text-[#8b7a6c]">
-                          {product.primarySize}
-                        </span>
-                        <span className="text-[11px] text-[#c0ac9e]">·</span>
-                        <span className="text-[11px] font-semibold text-[#8b7a6c]">
-                          {product.vehicleType}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      aria-label={`Remove ${product.productName} from enquiry`}
-                      className="absolute right-3 top-3 inline-flex items-center justify-center text-[#8b7a6c] transition-colors duration-300 hover:border-[#d8b997] hover:text-[#231a12] disabled:pointer-events-none"
-                      disabled={removing}
-                      onClick={() => handleRemove(key)}
-                      type="button"
+                    <div
+                      className={[
+                        "group relative flex gap-3 rounded-[12px] border border-transparent bg-white p-2 pr-9",
+                        "transition-[transform,opacity,border-color,background-color] duration-300 ease-in-out motion-reduce:transition-none",
+                        "hover:border-[#ead9c9] hover:bg-[#fffbf7]",
+                        removing ? "translate-x-4 opacity-0" : "translate-x-0 opacity-100",
+                      ].join(" ")}
                     >
-                      <X
-                        aria-hidden="true"
-                        className="h-3.5 w-3.5"
-                        strokeWidth={2.2}
-                      />
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className="mt-5 rounded-[12px] border border-dashed border-[#e2cfbf] bg-[#fbf1e6] p-5 text-center">
-            <p className="text-[13px] leading-[1.75] text-[#6f6258]">
-              No products selected in your enquiry list yet.
+                      <div className="relative h-[64px] w-[72px] shrink-0 overflow-hidden rounded-[10px] border border-[#ead9c9]/60 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.12),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
+                        <Image
+                          alt={`${product.brand} ${product.productName}`}
+                          className="object-contain p-1.5"
+                          fill
+                          sizes="72px"
+                          src={product.image}
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#c07000]">
+                          {product.brand}
+                        </p>
+                        <h3 className="mt-0.5 line-clamp-1 text-[13px] font-bold leading-tight tracking-[-0.02em] text-[#231a12]">
+                          {product.productName}
+                        </h3>
+                        <div className="mt-1.5 flex items-center gap-1.5">
+                          <span className="text-[11px] font-semibold text-[#8b7a6c]">
+                            {product.primarySize}
+                          </span>
+                          <span className="inline-block h-1 w-1 rounded-full bg-[#d8c4b3]" />
+                          <span className="line-clamp-1 text-[11px] font-medium text-[#8b7a6c]">
+                            {product.vehicleType}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        aria-label={`Remove ${product.productName} from enquiry`}
+                        className="absolute right-2 top-2 inline-flex h-6 w-6 items-center justify-center rounded-full border border-transparent text-[#8b7a6c] opacity-0 transition-all duration-200 hover:border-[#ead9c9] hover:bg-white hover:text-[#a85d00] focus-visible:opacity-100 group-hover:opacity-100 disabled:pointer-events-none"
+                        disabled={removing}
+                        onClick={() => handleRemove(key)}
+                        type="button"
+                      >
+                        <X aria-hidden="true" className="h-3 w-3" strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <div className="flex flex-col items-center rounded-[12px] border border-dashed border-[#ead9c9] bg-[#fffbf7] px-5 py-8 text-center">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#ead9c9] bg-white text-[#a85d00]">
+                <PackageOpen aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+              </span>
+              <p className="mt-3 text-[12.5px] font-semibold text-[#231a12]">
+                No products selected yet
+              </p>
+              <p className="mt-1 max-w-xs text-[11.5px] leading-[1.65] text-[#8b7a6c]">
+                Add tyres from the catalogue to include them with your enquiry.
+              </p>
+              <Link
+                className="mt-4 inline-flex h-8 items-center gap-1.5 rounded-full border border-[#231a12]/15 bg-white px-3 text-[11px] font-bold text-[#231a12] transition-colors duration-200 hover:border-[#a85d00] hover:bg-[#fff1e3] hover:text-[#a85d00]"
+                href="/products"
+              >
+                Browse products
+                <ArrowRight aria-hidden="true" className="h-3 w-3" strokeWidth={2.5} />
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Footer hint — only when products are present */}
+        {hydrated && items.length > 0 ? (
+          <div className="border-t border-[#ead9c9]/60 bg-[#fffbf7] px-5 py-3">
+            <p className="text-[11px] leading-[1.6] text-[#8b7a6c]">
+              These products will be attached to your enquiry. Remove any you
+              don&apos;t want included.
             </p>
           </div>
-        )}
+        ) : null}
       </div>
-
-      {/* <div className="rounded-[24px] border border-dashed border-[#d9c4ae] bg-[#fdf5ec] p-5">
-        <p className="text-[13px] leading-[1.75] text-[#6f6258]">
-          Need more options? Browse and shortlist additional tyres before
-          submitting.
-        </p>
-        <Link
-          className="mt-4 inline-flex h-9 items-center gap-2 rounded-full border border-[#231a12]/18 bg-white px-4 text-[12px] font-bold text-[#231a12] shadow-[0_2px_8px_rgba(35,26,18,0.06)] transition-all duration-300 hover:border-[#231a12] hover:bg-[#231a12] hover:text-[#fff8f5]"
-          href="/#tyres"
-        >
-          Browse products
-          <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
-        </Link>
-      </div> */}
     </aside>
   );
 }

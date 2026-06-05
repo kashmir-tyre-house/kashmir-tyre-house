@@ -66,7 +66,7 @@ export default function BookmarksPage() {
   const showList = hydrated && bookmarks.length > 0;
 
   return (
-    <main className="min-h-screen text-[#231a12]">
+    <main className="min-h-screen text-[#231a12] bg-[#f9eee4]">
       <SiteHeader />
 
       {showEmpty ? (
