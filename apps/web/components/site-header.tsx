@@ -1,16 +1,20 @@
 "use client";
 
-import { Bookmark } from "lucide-react";
+import { Bookmark, Scale } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+
+import { useCompare } from "../lib/compare";
 
 const navItems = ["Home", "Brand", "Tyres", "Services", "About"];
 
 export function SiteHeader() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const { compare, hydrated: compareHydrated } = useCompare();
+  const compareCount = compareHydrated ? compare.length : 0;
   const [activeTarget, setActiveTarget] = useState(
     pathname === "/bookmarks"
       ? "bookmarks"
@@ -168,6 +172,27 @@ export function SiteHeader() {
         </ul>
 
         <div className="flex items-center gap-4">
+          <Link
+            href="/compare"
+            className={[
+              "relative inline-flex h-9 items-center gap-2 rounded-full px-2 text-[14px] no-underline transition-colors duration-300",
+              pathname === "/compare"
+                ? "text-[#f8ab59]"
+                : "text-white/55 hover:text-white",
+            ].join(" ")}
+          >
+            <Scale aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+            Compare
+            {compareCount > 0 ? (
+              <span
+                aria-label={`${compareCount} in compare`}
+                className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#f8ab59] px-1 text-[10px] font-bold text-[#231a12]"
+              >
+                {compareCount}
+              </span>
+            ) : null}
+          </Link>
+
           <Link
             href="/bookmarks"
             className={[

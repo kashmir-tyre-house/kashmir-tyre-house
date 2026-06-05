@@ -3,12 +3,13 @@
 import Image from "next/image";
 import { Button } from "@kth/ui";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Check, Plus } from "lucide-react";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { getBookmarkKey, useBookmarks } from "../lib/bookmarks";
+import { getCompareKey, useCompare } from "../lib/compare";
 import { addToEnquiry } from "../lib/enquiry";
 import type { Product } from "../lib/products";
 
@@ -58,6 +59,15 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
   const { isBookmarked, toggle, hydrated } = useBookmarks();
   const saved = hydrated && isBookmarked(getBookmarkKey(product));
+
+  const {
+    isInCompare,
+    isFull: isCompareFull,
+    toggle: toggleCompare,
+    hydrated: compareHydrated,
+  } = useCompare();
+  const comparing = compareHydrated && isInCompare(getCompareKey(product));
+  const compareDisabled = !product.id || (!comparing && isCompareFull);
 
   const handleEnquire = () => {
     addToEnquiry(product);
@@ -186,16 +196,39 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
           </Button>
 
           <Button
-            className="h-9 rounded-md border border-[#231a12]/20 bg-transparent px-3 text-[12px] font-bold text-[#231a12] transition-colors duration-300 hover:bg-[white] disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={!product.id}
+            aria-label={
+              comparing
+                ? `Remove ${product.productName} from compare`
+                : isCompareFull
+                  ? "Compare list is full (3 max)"
+                  : `Add ${product.productName} to compare`
+            }
+            aria-pressed={comparing}
+            className={`h-9 rounded-md px-3 text-[12px] font-bold transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${
+              comparing
+                ? "border border-[#a85d00] bg-[#fff1e3] text-[#a85d00] hover:bg-[#ffe6d0]"
+                : "border border-[#231a12]/20 bg-transparent text-[#231a12] hover:bg-white"
+            }`}
+            disabled={compareDisabled}
             onClick={(e) => {
               stop(e);
-              handleDetails();
+              toggleCompare(product);
             }}
             size="sm"
+            title={!comparing && isCompareFull ? "Compare list is full (3 max)" : undefined}
             variant="secondary"
           >
-            Details
+            {comparing ? (
+              <>
+                <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Comparing
+              </>
+            ) : (
+              <>
+                <Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Compare
+              </>
+            )}
           </Button>
         </div>
       </div>
