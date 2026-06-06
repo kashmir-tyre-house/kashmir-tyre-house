@@ -6,7 +6,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Bookmark, Check, Plus } from "lucide-react";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 
 import { getBookmarkKey, useBookmarks } from "../lib/bookmarks";
 import { getCompareKey, useCompare } from "../lib/compare";
@@ -24,6 +24,8 @@ type ProductCardProps = {
   product: Product;
   className?: string;
 };
+
+type BadgeTheme = "light" | "dark";
 
 function StarRating({ rating }: { rating: number }) {
   const filledStars = Math.round(rating);
@@ -54,9 +56,51 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
+/** Sample the average brightness of a small region at the bottom-left of the image */
+function sampleRegionBrightness(
+  img: HTMLImageElement,
+  regionWidthPx = 120,
+  regionHeightPx = 40
+): number {
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = regionWidthPx;
+    canvas.height = regionHeightPx;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return 128;
+
+    // Draw only the bottom-left slice of the image
+    const scaleX = img.naturalWidth / img.width;
+    const scaleY = img.naturalHeight / img.height;
+
+    const srcX = 0;
+    const srcY = (img.height - regionHeightPx) * scaleY;
+    const srcW = regionWidthPx * scaleX;
+    const srcH = regionHeightPx * scaleY;
+
+    ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, regionWidthPx, regionHeightPx);
+
+    const { data } = ctx.getImageData(0, 0, regionWidthPx, regionHeightPx);
+    let total = 0;
+    let count = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      // Perceived luminance weights
+      total += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      count++;
+    }
+    return count > 0 ? total / count : 128;
+  } catch {
+    // Cross-origin images will throw — fall back to default
+    return 128;
+  }
+}
+
 export function ProductCard({ product, className = "" }: ProductCardProps) {
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
+  const [badgeTheme, setBadgeTheme] = useState<BadgeTheme>("light");
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
   const { isBookmarked, toggle, hydrated } = useBookmarks();
   const saved = hydrated && isBookmarked(getBookmarkKey(product));
 
@@ -68,6 +112,15 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
   } = useCompare();
   const comparing = compareHydrated && isInCompare(getCompareKey(product));
   const compareDisabled = !product.id || (!comparing && isCompareFull);
+
+  const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    setLoaded(true);
+    const img = e.currentTarget;
+    imgRef.current = img;
+    const brightness = sampleRegionBrightness(img);
+    // Threshold: >140 = light background → use dark badge; ≤140 = dark → use light badge
+    setBadgeTheme(brightness > 140 ? "dark" : "light");
+  }, []);
 
   const handleEnquire = () => {
     addToEnquiry(product);
@@ -90,6 +143,14 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
     }
   };
 
+  // Badge styles based on detected background brightness
+  const badgeStyles =
+    badgeTheme === "light"
+      ? // Dark background under badge → light text, light-frosted bg
+        "border-white/20 bg-white/20 backdrop-blur-md text-white"
+      : // Light background under badge → dark text, dark-frosted bg
+        "border-[#231a12]/15 bg-[#231a12]/60 backdrop-blur-md text-[#f9eee4]";
+
   return (
     <article
       aria-label={product.id ? `View ${product.brand} ${product.productName} details` : undefined}
@@ -110,22 +171,26 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
           ) : null}
           <Image
             alt={`${product.brand} ${product.productName}`}
-            className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
             fill
             onError={() => setLoaded(true)}
-            onLoad={() => setLoaded(true)}
+            onLoad={handleImageLoad}
             sizes="(min-width: 1280px) 260px, (min-width: 768px) 45vw, 92vw"
             src={product.image}
           />
 
-          <span className="absolute bottom-2.5 left-2.5 z-20 inline-flex items-center rounded-[6px] border border-[#F3E7DB]/40 bg-white/30 px-2.5 py-0.5 backdrop-blur-md">
-            <span className="text-[9px] font-medium tracking-[0.1em] text-[#f9eee4]">
+          {/* Brand badge — adapts to image brightness */}
+          <span
+            className={`absolute bottom-2.5 left-2.5 z-20 inline-flex items-center rounded-[6px] border px-2.5 py-0.5 transition-colors duration-300 ${badgeStyles}`}
+          >
+            <span className="text-[9px] font-medium tracking-[0.1em]">
               {product.brand}
             </span>
           </span>
         </div>
       </div>
 
+      {/* Rest of card unchanged */}
       <div className="p-4 hover:cursor-pointer">
         <div className="flex items-center justify-between gap-3">
           <h3
@@ -165,21 +230,18 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
               {product.primarySize}
             </p>
           </div>
-
           <div>
             <p className="text-[10px] font-semibold text-[#8b7a6c]">Vehicle Type</p>
             <p className="mt-1 whitespace-nowrap text-[13px] font-semibold leading-tight text-[#231a12]">
               {product.vehicleType}
             </p>
           </div>
-
           <div>
             <p className="text-[10px] font-semibold text-[#8b7a6c]">Load Index</p>
             <p className="mt-1 whitespace-nowrap text-[13px] font-bold leading-tight text-[#231a12]">
               {product.loadIndex}
             </p>
           </div>
-
           <div>
             <p className="text-[10px] font-semibold text-[#8b7a6c]">Ply Rating</p>
             <p className="mt-1 whitespace-nowrap text-[13px] font-semibold leading-tight text-[#231a12]">
@@ -191,10 +253,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
         <div className="mt-5 flex gap-2">
           <Button
             className="h-9 flex-1 rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
-            onClick={(e) => {
-              stop(e);
-              handleEnquire();
-            }}
+            onClick={(e) => { stop(e); handleEnquire(); }}
             size="sm"
           >
             Enquire
@@ -215,24 +274,15 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
                 : "border border-[#231a12]/20 bg-transparent text-[#231a12] hover:bg-white"
             }`}
             disabled={compareDisabled}
-            onClick={(e) => {
-              stop(e);
-              toggleCompare(product);
-            }}
+            onClick={(e) => { stop(e); toggleCompare(product); }}
             size="sm"
             title={!comparing && isCompareFull ? "Compare list is full (3 max)" : undefined}
             variant="secondary"
           >
             {comparing ? (
-              <>
-                <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />
-                Comparing
-              </>
+              <><Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />Comparing</>
             ) : (
-              <>
-                <Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />
-                Compare
-              </>
+              <><Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />Compare</>
             )}
           </Button>
         </div>

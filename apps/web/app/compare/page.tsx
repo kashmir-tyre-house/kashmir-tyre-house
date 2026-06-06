@@ -194,7 +194,7 @@ function ProductHeaderCell({
       <div className="relative aspect-square w-full max-w-[180px] overflow-hidden rounded-[14px] border border-[#ead9c9]/70 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)]">
         <Image
           alt={`${product.brand?.name ?? ""} ${product.name}`}
-          className="object-contain p-3"
+          className="object-contain p-3 rounded-[20px]"
           fill
           sizes="180px"
           src={primary?.url ?? FALLBACK_IMAGE}
