@@ -7,7 +7,7 @@ import { presignedUrl, uploadToR2 } from "../../../../../../lib/r2";
 
 export const runtime = "nodejs";
 
-const MAX_TYRE_IMAGES  = 5;
+const MAX_TYRE_IMAGES  = 10;
 const MAX_IMAGE_SIZE   = 3 * 1024 * 1024;
 const ALLOWED_TYPES    = ["image/jpeg", "image/png", "image/webp"];
 

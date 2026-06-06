@@ -29,7 +29,7 @@ const VEHICLE_TYPES = [
   "Mining and Logging",
   "Industrial",
 ] as const;
-const MAX_IMAGES = 5;
+const MAX_IMAGES = 10;
 
 type ImageEntry = {
   id: string;

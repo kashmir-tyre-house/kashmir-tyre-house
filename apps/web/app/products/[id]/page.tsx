@@ -226,10 +226,10 @@ export default function ProductDetailsPage() {
           <span className="truncate text-[#231a12]">{product.name}</span>
         </nav>
 
-        <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+        <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-8">
           {/* ── Left: Image gallery ───────────────────────────── */}
           <div>
-            <div className="relative aspect-square w-full overflow-hidden rounded-[20px] border border-[#ead9c9] bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)] shadow-[0_18px_46px_rgba(35,26,18,0.06)]">
+            <div className="relative aspect-square w-[85%] overflow-hidden rounded-[20px] border border-[#ead9c9] bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)] shadow-[0_18px_46px_rgba(35,26,18,0.06)]">
               {!imageLoaded ? (
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
                   <div className="w-32">
@@ -239,20 +239,20 @@ export default function ProductDetailsPage() {
               ) : null}
               <Image
                 alt={`${product.brand?.name ?? ""} ${product.name}`}
-                className="object-contain p-8 rounded-3xl"
+                className="object-contain p-4 rounded-3xl"
                 fill
                 key={activeImage?.id ?? "fallback"}
                 onError={() => setImageLoaded(true)}
                 onLoad={() => setImageLoaded(true)}
                 priority
-                sizes="(min-width: 1024px) 600px, 100vw"
+                quality={50}
+                sizes="(min-width: 1024px) 420px, 100vw"
                 src={activeImage?.url ?? FALLBACK_IMAGE}
-                unoptimized
               />
             </div>
 
             {product.images.length > 1 ? (
-              <div className="mt-4 grid grid-cols-4 gap-3 sm:gap-4">
+              <div className="mt-4 grid grid-cols-4 gap-3 sm:gap-4 w-[85%]">
                 {product.images.slice(0, 4).map((img, i) => {
                   const active = i === activeImageIndex;
                   return (
@@ -272,7 +272,7 @@ export default function ProductDetailsPage() {
                     >
                       <Image
                         alt=""
-                        className="object-contain p-2"
+                        className="object-contain p-1 rounded-[12px]"
                         fill
                         sizes="120px"
                         src={img.url}

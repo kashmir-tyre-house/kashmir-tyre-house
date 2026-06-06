@@ -87,13 +87,15 @@ export function ContactSelectedProducts() {
                         removing ? "translate-x-4 opacity-0" : "translate-x-0 opacity-100",
                       ].join(" ")}
                     >
-                      <div className="relative h-[64px] w-[72px] shrink-0 overflow-hidden rounded-[10px] border border-[#ead9c9]/60 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.12),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
+                      <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[8px] border border-[#ead9c9]/60 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.12),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#ead8c8_100%)]">
                         <Image
                           alt={`${product.brand} ${product.productName}`}
-                          className="object-contain p-1.5"
+                          className="object-contain p-1.5 rounded-[10px]"
                           fill
                           sizes="72px"
                           src={product.image}
+                          priority
+                          quality={50}
                         />
                       </div>
 
