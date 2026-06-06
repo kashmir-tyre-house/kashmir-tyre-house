@@ -189,6 +189,35 @@ export default function EditTyrePage() {
     setRemovedImageIds((prev) => [...prev, imageId]);
   }
 
+  async function setExistingPrimary(imageId: string) {
+    // Snapshot current flags so we can revert if the API call fails.
+    const prevExisting = existingImages;
+    const prevNew      = images;
+
+    // Optimistic: flip flags locally so the UI updates instantly.
+    setExistingImages((curr) =>
+      curr.map((img) => ({ ...img, isPrimaryImage: img.id === imageId }))
+    );
+    // Newly-uploaded images can't also be primary if an existing one is chosen.
+    setImages((curr) => curr.map((img) => ({ ...img, isPrimary: false })));
+
+    try {
+      const res = await fetch(`/api/tyres/${id}/images/${imageId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPrimaryImage: true }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.message ?? "Failed to set primary image.");
+      }
+    } catch (e) {
+      setExistingImages(prevExisting);
+      setImages(prevNew);
+      setSaveError(e instanceof Error ? e.message : "Failed to set primary image.");
+    }
+  }
+
   // ── Feature tag handlers ──────────────────────────────────────────────────────
 
   function addFeature() {
@@ -625,6 +654,16 @@ export default function EditTyrePage() {
                         </span>
                       ) : null}
                       <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                        {!img.isPrimaryImage ? (
+                          <button
+                            className="flex items-center gap-1 rounded-md bg-white/90 px-2.5 py-1 text-[11px] font-medium text-(--foreground) transition hover:bg-white"
+                            onClick={() => setExistingPrimary(img.id)}
+                            type="button"
+                          >
+                            <Star className="size-3" />
+                            Set primary
+                          </button>
+                        ) : null}
                         <button
                           className="flex items-center gap-1 rounded-md bg-red-500/90 px-2.5 py-1 text-[11px] font-medium text-white transition hover:bg-red-500"
                           onClick={() => removeExistingImage(img.id)}
