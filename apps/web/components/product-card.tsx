@@ -105,6 +105,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
   const saved = hydrated && isBookmarked(getBookmarkKey(product));
 
   const {
+    compare,
     isInCompare,
     isFull: isCompareFull,
     toggle: toggleCompare,
@@ -112,6 +113,18 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
   } = useCompare();
   const comparing = compareHydrated && isInCompare(getCompareKey(product));
   const compareDisabled = !product.id || (!comparing && isCompareFull);
+
+  const handleCompareClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+    stop(e);
+    // Snapshot prior state so we know whether this click is an add (vs. remove)
+    // and whether the resulting list will have 2+ items.
+    const wasComparing = comparing;
+    const previousCount = compare.length;
+    toggleCompare(product);
+    if (!wasComparing && previousCount >= 1) {
+      router.push("/compare");
+    }
+  };
 
   const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     setLoaded(true);
@@ -171,7 +184,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
           ) : null}
           <Image
             alt={`${product.brand} ${product.productName}`}
-            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+            className="object-contain transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
             fill
             onError={() => setLoaded(true)}
             onLoad={handleImageLoad}
@@ -274,7 +287,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
                 : "border border-[#231a12]/20 bg-transparent text-[#231a12] hover:bg-white"
             }`}
             disabled={compareDisabled}
-            onClick={(e) => { stop(e); toggleCompare(product); }}
+            onClick={handleCompareClick}
             size="sm"
             title={!comparing && isCompareFull ? "Compare list is full (3 max)" : undefined}
             variant="secondary"

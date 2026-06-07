@@ -60,7 +60,10 @@ type Slot =
 
 type SpecField = {
   label: string;
+  // `pick` returns a normalized string for diff detection (and as the default cell content).
   pick: (p: ApiProduct) => string | null;
+  // `render` optionally overrides the cell content with custom JSX (e.g. stars).
+  render?: (p: ApiProduct) => React.ReactNode;
 };
 
 const SPEC_SECTIONS: Array<{ title: string; fields: SpecField[] }> = [
@@ -78,6 +81,14 @@ const SPEC_SECTIONS: Array<{ title: string; fields: SpecField[] }> = [
     fields: [
       { label: "Load Index",  pick: (p) => p.loadIndex },
       { label: "Ply Rating",  pick: (p) => p.plyRating },
+      {
+        label: "Star Rating",
+        pick: (p) => p.starRating,
+        render: (p) => {
+          const r = p.starRating ? Number.parseFloat(p.starRating) || 0 : 0;
+          return <StarRow rating={r} />;
+        },
+      },
       { label: "Tyre Type",   pick: (p) => p.tyreType },
       { label: "Application", pick: (p) => p.application },
       { label: "Tyre Weight", pick: (p) => (p.tyreWeight ? `${p.tyreWeight} kg` : null) },
@@ -178,7 +189,6 @@ function ProductHeaderCell({
   onRemove: () => void;
 }) {
   const primary = product.images.find((img) => img.isPrimaryImage) ?? product.images[0];
-  const rating = product.starRating ? Number.parseFloat(product.starRating) || 0 : 0;
 
   return (
     <div className="relative flex h-full flex-col items-start gap-3 px-1">
@@ -211,9 +221,6 @@ function ProductHeaderCell({
         >
           {product.name}
         </h3>
-        <div className="mt-2">
-          <StarRow rating={rating} />
-        </div>
       </div>
     </div>
   );
@@ -245,7 +252,6 @@ function LoadingHeaderCell() {
       <div className="w-full space-y-2">
         <div className="h-2.5 w-16 animate-pulse rounded bg-[#ead9c9]" />
         <div className="h-4 w-3/4 animate-pulse rounded bg-[#ead9c9]" />
-        <div className="h-3 w-20 animate-pulse rounded bg-[#ead9c9]" />
       </div>
     </div>
   );
@@ -330,9 +336,25 @@ export default function ComparePage() {
     router.push("/contact");
   };
 
-  // Renders the value cell for one (slot × spec) pair.
-  const renderValueCell = (slot: Slot, value: string | null, key: string) => {
+  // Renders the value cell for one (slot × spec) pair. Pass `loadedNode` to
+  // override the default string display with custom JSX (e.g. star icons).
+  const renderValueCell = (
+    slot: Slot,
+    value: string | null,
+    key: string,
+    loadedNode?: React.ReactNode
+  ) => {
     if (slot.kind === "loaded") {
+      if (loadedNode !== undefined) {
+        return (
+          <td
+            className="border-b border-[#ead9c9]/50 px-5 py-4 align-top text-[13px] font-semibold text-[#231a12]"
+            key={key}
+          >
+            {loadedNode}
+          </td>
+        );
+      }
       const display = value && value.trim() !== "" ? value : null;
       return (
         <td
@@ -440,10 +462,16 @@ export default function ComparePage() {
         ) : null}
 
         {/* ─── Comparison table card ──────────────────────────────── */}
-        <div className="mt-10 overflow-hidden rounded-[20px] border border-[#ead9c9] bg-white shadow-[0_18px_48px_rgba(35,26,18,0.06)]">
+        <div className="mt-10 overflow-hidden rounded-[20px] border border-[#d8b997] bg-white shadow-[0_2px_0_rgba(255,255,255,0.6)_inset,0_24px_64px_-12px_rgba(35,26,18,0.18),0_8px_24px_-8px_rgba(35,26,18,0.10)] ring-1 ring-[#ead9c9]/30">
+          {/* Top accent stripe — gives the card a clear visual identity */}
+          <div
+            aria-hidden="true"
+            className="h-1 w-full bg-[linear-gradient(90deg,#f69300_0%,#d47d00_42%,#6f3f00_100%)]"
+          />
+
           {/* Differences-highlighted legend */}
           {loadedProducts.length > 1 ? (
-            <div className="flex items-center justify-between gap-3 border-b border-[#ead9c9]/60 bg-[linear-gradient(180deg,#fff8f5_0%,#ffffff_100%)] px-5 py-3 text-[11px] font-semibold text-[#8b7a6c]">
+            <div className="flex items-center justify-between gap-3 border-b border-[#ead9c9]/60 bg-[linear-gradient(180deg,#fff1e3_0%,#fffbf7_100%)] px-5 py-3 text-[11px] font-semibold text-[#8b7a6c]">
               <span>Comparing {loadedProducts.length} tyres</span>
               <span className="inline-flex items-center gap-2">
                 <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#fff1e3] ring-1 ring-[#f8ab59]/40" />
@@ -496,7 +524,7 @@ export default function ComparePage() {
                     {/* Section header row */}
                     <tr>
                       <th
-                        className="sticky left-0 z-10 border-b border-t border-[#ead9c9]/70 bg-[#fff8f5] px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00]"
+                        className="sticky left-0 z-10 border-b border-t border-[#ead9c9]/70 bg-[linear-gradient(180deg,#fdebd9_0%,#fff1e3_100%)] px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00]"
                         colSpan={1 + MAX_COMPARE}
                         scope="colgroup"
                       >
@@ -525,9 +553,18 @@ export default function ComparePage() {
                           >
                             {field.label}
                           </th>
-                          {slots.map((slot, slotIdx) =>
-                            renderValueCell(slot, values[slotIdx], `${field.label}-${slotIdx}`)
-                          )}
+                          {slots.map((slot, slotIdx) => {
+                            const loadedNode =
+                              field.render && slot.kind === "loaded"
+                                ? field.render(slot.product)
+                                : undefined;
+                            return renderValueCell(
+                              slot,
+                              values[slotIdx],
+                              `${field.label}-${slotIdx}`,
+                              loadedNode
+                            );
+                          })}
                         </tr>
                       );
                     })}
@@ -539,7 +576,7 @@ export default function ComparePage() {
                   <>
                     <tr>
                       <th
-                        className="sticky left-0 z-10 border-b border-t border-[#ead9c9]/70 bg-[#fff8f5] px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00]"
+                        className="sticky left-0 z-10 border-b border-t border-[#ead9c9]/70 bg-[linear-gradient(180deg,#fdebd9_0%,#fff1e3_100%)] px-5 py-3 text-left text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00]"
                         colSpan={1 + MAX_COMPARE}
                         scope="colgroup"
                       >
@@ -627,10 +664,10 @@ export default function ComparePage() {
 
                 {/* ─── Action row ────────────────────────────────── */}
                 {loadedProducts.length > 0 ? (
-                  <tr className="bg-[linear-gradient(180deg,#ffffff_0%,#fff8f5_100%)]">
+                  <tr className="bg-[linear-gradient(180deg,#fffbf7_0%,#fdebd9_100%)]">
                     <th
                       aria-hidden="true"
-                      className="sticky left-0 z-10 bg-[#fff8f5] px-5 py-5"
+                      className="sticky left-0 z-10 bg-[#fdebd9] px-5 py-5"
                     />
                     {slots.map((slot, i) => {
                       if (slot.kind === "loaded") {
