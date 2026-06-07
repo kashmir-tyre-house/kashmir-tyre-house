@@ -89,7 +89,7 @@ export const tyreProducts = pgTable(
     index("tyre_products_vehicle_type_idx").on(table.vehicleType),
     check(
       "tyre_products_category_check",
-      sql`${table.category} in ('Radial', 'Bais')`
+      sql`${table.category} in ('Radial', 'Bais', 'Solid')`
     ),
     check(
       "tyre_products_tyre_weight_check",

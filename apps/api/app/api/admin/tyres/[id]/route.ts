@@ -23,7 +23,7 @@ const updateSchema = z.object({
   brandId:      z.string().uuid("Invalid brand ID.").optional(),
   name:         z.string().min(1).max(140).optional(),
   description:  z.string().max(2000).nullable().optional(),
-  category:     z.enum(["Radial", "Bais"]).nullable().optional(),
+  category:     z.enum(["Radial", "Bais", "Solid"]).nullable().optional(),
   pattern:      z.string().min(1).max(80).optional(),
   tyreSize:     z.string().min(1).max(40).optional(),
   tyreWeight:   z.number().positive().nullable().optional(),

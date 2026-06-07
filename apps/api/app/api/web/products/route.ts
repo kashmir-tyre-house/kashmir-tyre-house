@@ -16,7 +16,7 @@ const CORS_HEADERS = {
 const listQuerySchema = z.object({
   search:   z.string().trim().min(1).optional(),
   brandId:  z.string().uuid().optional(),
-  category: z.enum(["Radial", "Bais"]).optional(),
+  category: z.enum(["Radial", "Bais", "Solid"]).optional(),
   page:     z.coerce.number().int().min(1).default(1),
   limit:    z.coerce.number().int().min(1).max(48).default(24),
 });

@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type Brand = { id: string; name: string; logoUrl: string | null };
-const CATEGORIES = ["Radial", "Bais"] as const;
+const CATEGORIES = ["Radial", "Bais", "Solid"] as const;
 const VEHICLE_TYPES = [
   "Earthmover",
   "Grader",
@@ -346,9 +346,9 @@ export default function NewTyrePage() {
               <Field label="Ply Rating">
                 <input
                   className={inputCls}
-                  disabled={form.category !== "Bais"}
+                  disabled={form.category !== "Bais" && form.category !== "Solid"}
                   onChange={(e) => set("plyRating", e.target.value)}
-                  placeholder={form.category === "Radial" ? "Available for Bais only" : "e.g. 16PR"}
+                  placeholder={form.category === "Radial" ? "Available for Bais or Solid" : "e.g. 16PR"}
                   type="text"
                   value={form.plyRating}
                 />
@@ -357,9 +357,9 @@ export default function NewTyrePage() {
               <Field label="Star Rating">
                 <input
                   className={inputCls}
-                  disabled={form.category !== "Radial"}
+                  disabled={form.category !== "Radial" && form.category !== "Solid"}
                   onChange={(e) => set("starRating", e.target.value)}
-                  placeholder={form.category === "Bais" ? "Available for Radial only" : "e.g. 3★"}
+                  placeholder={form.category === "Bais" ? "Available for Radial or Solid" : "e.g. 3★"}
                   type="text"
                   value={form.starRating}
                 />

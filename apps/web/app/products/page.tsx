@@ -29,7 +29,7 @@ const raleway = Raleway({
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 const PAGE_SIZE = 12;
 const FALLBACK_IMAGE = "/images/placeholder-image.jpg";
-const CATEGORIES = ["Radial", "Bais"] as const;
+const CATEGORIES = ["Radial", "Bais", "Solid"] as const;
 
 type ApiProduct = {
   id: string;

@@ -4,7 +4,7 @@ export const tyreImageTypeSchema = z.enum(["hero", "gallery"]);
 
 export const adminRoleSchema = z.enum(["admin", "manager", "viewer"]);
 
-export const tyreCategorySchema = z.enum(["Radial", "Bais"]);
+export const tyreCategorySchema = z.enum(["Radial", "Bais", "Solid"]);
 
 export const tyreVehicleTypeSchema = z.enum([
   "Earthmover",

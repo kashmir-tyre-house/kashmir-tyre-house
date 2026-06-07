@@ -28,7 +28,7 @@ const SORTABLE_COLS = ["name", "category", "tyreSize", "application", "isActive"
 const listQuerySchema = z.object({
   search:      z.string().optional(),
   brandId:     z.string().uuid().optional(),
-  category:    z.enum(["Radial", "Bais"]).optional(),
+  category:    z.enum(["Radial", "Bais", "Solid"]).optional(),
   vehicleType: z.enum(VEHICLE_TYPES).optional(),
   isActive:    z.enum(["true", "false"]).optional(),
   sortBy:      z.enum(SORTABLE_COLS).default("createdAt"),
@@ -41,7 +41,7 @@ const createSchema = z.object({
   brandId:      z.string().uuid("Invalid brand ID."),
   name:         z.string().min(1).max(140),
   description:  z.string().max(2000).nullable().optional(),
-  category:     z.enum(["Radial", "Bais"]).nullable().optional(),
+  category:     z.enum(["Radial", "Bais", "Solid"]).nullable().optional(),
   pattern:      z.string().min(1).max(80),
   tyreSize:     z.string().min(1).max(40),
   tyreWeight:   z.number().positive().nullable().optional(),
