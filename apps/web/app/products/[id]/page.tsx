@@ -58,10 +58,10 @@ function StarRow({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-0.5 text-[#f69300]">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: filledStars }).map((_, i) => (
           <svg
             aria-hidden="true"
-            className={`h-4 w-4 ${i < filledStars ? "fill-current" : "fill-transparent"}`}
+            className="h-4 w-4 fill-current"
             key={i}
             stroke="currentColor"
             strokeWidth="1.8"
@@ -71,9 +71,6 @@ function StarRow({ rating }: { rating: number }) {
           </svg>
         ))}
       </div>
-      <span className="text-[13px] font-semibold text-[#6f6258]">
-        ({rating.toFixed(1)})
-      </span>
     </div>
   );
 }
@@ -299,13 +296,6 @@ export default function ProductDetailsPage() {
               {product.name}
             </h1>
 
-            {/* Star rating */}
-            {reviewsRating > 0 ? (
-              <div className="mt-3">
-                <StarRow rating={reviewsRating} />
-              </div>
-            ) : null}
-
             {/* Specifications */}
             <div className="mt-8 border-t border-[#ead9c9] pt-6">
               <p className={`${raleway.className} text-[14px] font-bold uppercase tracking-[0.14em] text-[#231a12]`}>
@@ -316,13 +306,32 @@ export default function ProductDetailsPage() {
                 <SpecCell label="Vehicle Type" value={product.vehicleType} />
                 <SpecCell label="Category" value={product.category} />
                 <SpecCell label="Load Index" value={product.loadIndex} />
-                {product.category === "Bais" ? (
-                  <SpecCell label="Ply Rating" value={product.plyRating} />
-                ) : null}
                 <SpecCell label="Pattern" value={product.pattern} />
                 <SpecCell label="Application" value={product.application} />
                 <SpecCell label="Tyre Type" value={product.tyreType} />
                 {tyreWeight ? <SpecCell label="Tyre Weight" value={tyreWeight} /> : null}
+              </div>
+            </div>
+
+            {/* Ratings */}
+            <div className="mt-8 border-t border-[#ead9c9] pt-6">
+              <p className={`${raleway.className} text-[14px] font-bold uppercase tracking-[0.14em] text-[#231a12]`}>
+                Ratings
+              </p>
+              <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+                <SpecCell label="Ply Rating" value={product.plyRating} />
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8a5100]/70">
+                    Star Rating
+                  </p>
+                  <div className={`${karla.className} mt-1.5 text-[15px] font-semibold text-[#231a12]`}>
+                    {reviewsRating > 0 ? (
+                      <StarRow rating={reviewsRating} />
+                    ) : (
+                      "—"
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 

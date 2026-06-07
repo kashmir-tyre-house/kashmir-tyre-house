@@ -128,7 +128,7 @@ function StarRow({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-1.5">
       <div className="flex items-center gap-0.5 text-[#f69300]">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: filled }).map((_, i) => (
           <svg
             aria-hidden="true"
             className={`h-3 w-3 ${i < filled ? "fill-current" : "fill-transparent"}`}
@@ -141,9 +141,6 @@ function StarRow({ rating }: { rating: number }) {
           </svg>
         ))}
       </div>
-      <span className="text-[11px] font-semibold text-[#6f6258]">
-        {rating > 0 ? rating.toFixed(1) : "—"}
-      </span>
     </div>
   );
 }
@@ -695,6 +692,11 @@ export default function ComparePage() {
               </tbody>
             </table>
           </div>
+
+          <div
+            aria-hidden="true"
+            className="h-1 w-full bg-[linear-gradient(90deg,#f69300_0%,#d47d00_42%,#6f3f00_100%)]"
+          />
         </div>
       </section>
 
