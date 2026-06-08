@@ -51,6 +51,8 @@ const createSchema = z.object({
   starRating:   z.string().max(20).nullable().optional(),
   plyRating:    z.string().max(40).nullable().optional(),
   loadIndex:    z.string().max(80).nullable().optional(),
+  rim:          z.string().max(80).nullable().optional(),
+  treadDepth:   z.string().max(80).nullable().optional(),
   tyreFeatures: z.array(z.string()).default([]),
   isActive:     z.boolean().default(true),
 });
@@ -114,6 +116,8 @@ export async function GET(request: Request) {
         starRating:   tyreProducts.starRating,
         plyRating:    tyreProducts.plyRating,
         loadIndex:    tyreProducts.loadIndex,
+        rim:          tyreProducts.rim,
+        treadDepth:   tyreProducts.treadDepth,
         tyreFeatures: tyreProducts.tyreFeatures,
         isActive:     tyreProducts.isActive,
         createdAt:    tyreProducts.createdAt,

@@ -57,6 +57,13 @@
       "when": 1781020800000,
       "tag": "0007_add_solid_category",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1781107200000,
+      "tag": "0008_add_rim_tread_depth",
+      "breakpoints": true
     }
   ]
 }

@@ -48,6 +48,8 @@ type FormValues = {
   tyreWeight: string;
   loadIndex: string;
   plyRating: string;
+  rim: string;
+  treadDepth: string;
   starRating: string;
   tyreType: string;
   application: string;
@@ -89,6 +91,8 @@ export default function NewTyrePage() {
     tyreWeight: "",
     loadIndex: "",
     plyRating: "",
+    rim: "",
+    treadDepth: "",
     starRating: "",
     tyreType: "",
     application: "",
@@ -179,6 +183,8 @@ export default function NewTyrePage() {
         starRating:   form.starRating.trim() || null,
         plyRating:    form.plyRating.trim() || null,
         loadIndex:    form.loadIndex.trim() || null,
+        rim:          form.rim.trim() || null,
+        treadDepth:   form.treadDepth.trim() || null,
         tyreFeatures: form.tyreFeatures,
         isActive:     form.isActive,
       }));
@@ -340,6 +346,26 @@ export default function NewTyrePage() {
                   placeholder="e.g. 210A2"
                   type="text"
                   value={form.loadIndex}
+                />
+              </Field>
+
+              <Field label="Rim">
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("rim", e.target.value)}
+                  placeholder="e.g. 22.5 x 9.00"
+                  type="text"
+                  value={form.rim}
+                />
+              </Field>
+
+              <Field label="Tread Depth">
+                <input
+                  className={inputCls}
+                  onChange={(e) => set("treadDepth", e.target.value)}
+                  placeholder="e.g. 24 mm"
+                  type="text"
+                  value={form.treadDepth}
                 />
               </Field>
 

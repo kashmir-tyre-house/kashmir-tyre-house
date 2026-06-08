@@ -33,6 +33,8 @@ const updateSchema = z.object({
   starRating:   z.string().max(20).nullable().optional(),
   plyRating:    z.string().max(40).nullable().optional(),
   loadIndex:    z.string().max(80).nullable().optional(),
+  rim:          z.string().max(80).nullable().optional(),
+  treadDepth:   z.string().max(80).nullable().optional(),
   tyreFeatures: z.array(z.string()).optional(),
   isActive:     z.boolean().optional(),
 });
@@ -63,6 +65,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         starRating:   tyreProducts.starRating,
         plyRating:    tyreProducts.plyRating,
         loadIndex:    tyreProducts.loadIndex,
+        rim:          tyreProducts.rim,
+        treadDepth:   tyreProducts.treadDepth,
         tyreFeatures: tyreProducts.tyreFeatures,
         isActive:     tyreProducts.isActive,
         createdAt:    tyreProducts.createdAt,

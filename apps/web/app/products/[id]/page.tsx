@@ -45,6 +45,8 @@ type ApiProduct = {
   starRating: string | null;
   plyRating: string | null;
   loadIndex: string | null;
+  rim: string | null;
+  treadDepth: string | null;
   tyreFeatures: string[];
   createdAt: string;
   brand: { id: string; name: string; logoUrl: string | null } | null;
@@ -306,6 +308,8 @@ export default function ProductDetailsPage() {
                 <SpecCell label="Vehicle Type" value={product.vehicleType} />
                 <SpecCell label="Category" value={product.category} />
                 <SpecCell label="Load Index" value={product.loadIndex} />
+                <SpecCell label="Rim" value={product.rim} />
+                <SpecCell label="Tread Depth" value={product.treadDepth} />
                 <SpecCell label="Pattern" value={product.pattern} />
                 <SpecCell label="Application" value={product.application} />
                 <SpecCell label="Tyre Type" value={product.tyreType} />

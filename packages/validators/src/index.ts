@@ -43,6 +43,8 @@ export const tyreProductSchema = z.object({
   starRating: z.string().max(20).optional(),
   plyRating: z.string().max(40).optional(),
   loadIndex: z.string().max(80).optional(),
+  rim: z.string().max(80).optional(),
+  treadDepth: z.string().max(80).optional(),
   tyreFeatures: z.array(z.string().min(1).max(160)).default([]),
   isActive: z.boolean().default(true)
 });

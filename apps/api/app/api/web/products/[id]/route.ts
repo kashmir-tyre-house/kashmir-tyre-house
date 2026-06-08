@@ -45,6 +45,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         tyreType:     tyreProducts.tyreType,
         starRating:   tyreProducts.starRating,
         plyRating:    tyreProducts.plyRating,
+        rim:          tyreProducts.rim,
+        treadDepth:   tyreProducts.treadDepth,
         loadIndex:    tyreProducts.loadIndex,
         tyreFeatures: tyreProducts.tyreFeatures,
         createdAt:    tyreProducts.createdAt,

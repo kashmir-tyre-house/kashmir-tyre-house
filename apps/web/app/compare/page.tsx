@@ -44,6 +44,8 @@ type ApiProduct = {
   starRating: string | null;
   plyRating: string | null;
   loadIndex: string | null;
+  rim: string | null;
+  treadDepth: string | null;
   tyreFeatures: string[];
   brand: { id: string; name: string; logoUrl: string | null } | null;
   images: Array<{ id: string; url: string; isPrimaryImage: boolean }>;
@@ -74,6 +76,8 @@ const SPEC_SECTIONS: Array<{ title: string; fields: SpecField[] }> = [
       { label: "Category",     pick: (p) => p.category },
       { label: "Vehicle Type", pick: (p) => p.vehicleType },
       { label: "Pattern",      pick: (p) => p.pattern },
+      { label: "Rim",          pick: (p) => p.rim },
+      { label: "Tread Depth",  pick: (p) => p.treadDepth },
     ],
   },
   {

@@ -69,6 +69,8 @@ export const tyreProducts = pgTable(
     starRating: varchar("star_rating", { length: 20 }),
     plyRating: varchar("ply_rating", { length: 40 }),
     loadIndex: varchar("load_index", { length: 80 }),
+    rim: varchar("rim", { length: 80 }),
+    treadDepth: varchar("tread_depth", { length: 80 }),
     tyreFeatures: jsonb("tyre_features").$type<string[]>().default([]).notNull(),
     isActive: boolean("is_active").default(true).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
