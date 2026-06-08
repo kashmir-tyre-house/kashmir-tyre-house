@@ -202,7 +202,11 @@ function ProductHeaderCell({
         <X aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />
       </button>
 
-      <div className="relative aspect-square w-full max-w-[180px] overflow-hidden rounded-[14px] border border-[#ead9c9]/70 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)]">
+      <Link
+        aria-label={`View ${product.name} details`}
+        className="relative aspect-square w-full max-w-[180px] overflow-hidden rounded-[14px] border border-[#ead9c9]/70 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)] transition-all duration-200 hover:border-[#a85d00] hover:shadow-[0_8px_22px_rgba(168,93,0,0.12)] focus-visible:border-[#a85d00] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a85d00]/30"
+        href={`/products/${product.id}`}
+      >
         <Image
           alt={`${product.brand?.name ?? ""} ${product.name}`}
           className="object-contain p-3 rounded-[20px]"
@@ -211,17 +215,19 @@ function ProductHeaderCell({
           src={primary?.url ?? FALLBACK_IMAGE}
           unoptimized
         />
-      </div>
+      </Link>
 
       <div className="min-w-0">
         <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#c07000]">
           {product.brand?.name ?? "—"}
         </p>
-        <h3
-          className={`${raleway.className} mt-1 line-clamp-2 text-[14px] font-bold uppercase leading-[1.15] tracking-[-0.01em] text-[#231a12]`}
+        <Link
+          aria-label={`View ${product.name} details`}
+          className={`${raleway.className} mt-1 line-clamp-2 block text-[14px] font-bold uppercase leading-[1.15] tracking-[-0.01em] text-[#231a12] transition-colors duration-200 hover:text-[#a85d00] focus-visible:text-[#a85d00] focus-visible:outline-none`}
+          href={`/products/${product.id}`}
         >
           {product.name}
-        </h3>
+        </Link>
       </div>
     </div>
   );
