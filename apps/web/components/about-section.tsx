@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { Karla, Raleway } from "next/font/google";
+import { useEffect, useState } from "react";
 
 import { BlurText } from "./blur-text";
 import { CountUp } from "./count-up";
@@ -19,20 +22,21 @@ const raleway = Raleway({
   display: "swap",
 });
 
-const galleryImages = [
-  {
-    src: "/images/home-image-1.png",
-    alt: "Heavy-duty vehicle tyre at an industrial work site",
-  },
-  {
-    src: "/images/home-image-2.png",
-    alt: "Commercial vehicle tyre service environment",
-  },
-  {
-    src: "/images/home-image-3.png",
-    alt: "Industrial vehicle prepared for heavy-duty site operations",
-  },
-];
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+type GalleryImage = { src: string; alt: string };
+
+type ApiGalleryImage = {
+  id: string;
+  url: string;
+  alt: string | null;
+};
+
+type ApiGalleryResponse = {
+  ok: boolean;
+  data?: ApiGalleryImage[];
+  message?: string;
+};
 
 const aboutStats = [
   { value: 25, suffix: "+", label: "Experience" },
@@ -45,7 +49,7 @@ function GalleryRow({
   images,
 }: {
   direction: "left" | "right";
-  images: typeof galleryImages;
+  images: GalleryImage[];
 }) {
   return (
     <div className="about-marquee h-45 w-full overflow-hidden sm:h-55">
@@ -73,7 +77,40 @@ function GalleryRow({
   );
 }
 
+// Returns null while loading, or when the gallery is empty / the request failed.
+// Returns an array only when we have at least one real image to show.
+function useGalleryImages(): GalleryImage[] | null {
+  const [images, setImages] = useState<GalleryImage[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/web/gallery`);
+        const json = (await res.json()) as ApiGalleryResponse;
+        if (cancelled) return;
+        if (!res.ok || !json.ok || !Array.isArray(json.data) || json.data.length === 0) return;
+
+        const next: GalleryImage[] = json.data
+          .filter((img) => Boolean(img.url))
+          .map((img) => ({ src: img.url, alt: img.alt ?? "Kashmir Tyre House" }));
+
+        if (next.length > 0) setImages(next);
+      } catch {
+        // Stay null on failure — the gallery section will be hidden.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return images;
+}
+
 export function AboutSection() {
+  const galleryImages = useGalleryImages();
+
   return (
     <section
       aria-labelledby="about-heading"
@@ -128,13 +165,15 @@ export function AboutSection() {
         </Reveal>
       </div>
 
-      <Reveal className="relative mt-14 space-y-4 sm:mt-16" delayMs={140}>
-        <div className="pointer-events-none absolute bottom-[-20px] left-0 top-[-20px] z-10 w-24 bg-[linear-gradient(90deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
-        <div className="pointer-events-none absolute bottom-[-20px] right-0 top-[-20px] z-10 w-24 bg-[linear-gradient(270deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
+      {galleryImages && galleryImages.length > 0 ? (
+        <Reveal className="relative mt-14 space-y-4 sm:mt-16" delayMs={140}>
+          <div className="pointer-events-none absolute bottom-[-20px] left-0 top-[-20px] z-10 w-24 bg-[linear-gradient(90deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
+          <div className="pointer-events-none absolute bottom-[-20px] right-0 top-[-20px] z-10 w-24 bg-[linear-gradient(270deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
 
-        <GalleryRow direction="left" images={galleryImages} />
-        <GalleryRow direction="right" images={galleryImages} />
-      </Reveal>
+          <GalleryRow direction="left" images={galleryImages} />
+          <GalleryRow direction="right" images={galleryImages} />
+        </Reveal>
+      ) : null}
     </section>
   );
 }
