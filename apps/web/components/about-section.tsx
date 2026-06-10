@@ -132,8 +132,8 @@ export function AboutSection() {
         <div className="pointer-events-none absolute bottom-[-20px] left-0 top-[-20px] z-10 w-24 bg-[linear-gradient(90deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
         <div className="pointer-events-none absolute bottom-[-20px] right-0 top-[-20px] z-10 w-24 bg-[linear-gradient(270deg,#f9eee4,rgba(249,238,228,0))] sm:w-52" />
 
-        {/* <GalleryRow direction="left" images={galleryImages} />
-        <GalleryRow direction="right" images={galleryImages} /> */}
+        <GalleryRow direction="left" images={galleryImages} />
+        <GalleryRow direction="right" images={galleryImages} />
       </Reveal>
     </section>
   );

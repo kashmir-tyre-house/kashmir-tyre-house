@@ -5,7 +5,7 @@ import { ArrowRight, Bookmark, ChevronLeft, Loader2, ShieldCheck, Truck } from "
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { Karla, Raleway } from "next/font/google";
+import { Inter, Karla, Raleway } from "next/font/google";
 import { useEffect, useMemo, useState } from "react";
 
 import { SiteFooter } from "../../../components/site-footer";
@@ -22,6 +22,13 @@ const karla = Karla({
 });
 
 const raleway = Raleway({
+  subsets: ["latin"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const inter = Inter({
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
@@ -293,7 +300,7 @@ export default function ProductDetailsPage() {
 
             {/* Name */}
             <h1
-              className={`${raleway.className} mt-2 text-[32px] font-bold uppercase leading-[1.05] tracking-[-0.02em] text-[#231a12] sm:text-[40px] lg:text-[44px]`}
+              className={`${inter.className} mt-2 text-[32px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12] sm:text-[40px] lg:text-[44px]`}
             >
               {product.name}
             </h1>

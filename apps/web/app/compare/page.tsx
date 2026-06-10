@@ -4,7 +4,7 @@ import { ArrowRight, Loader2, Plus, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Karla, Raleway } from "next/font/google";
+import { Inter, Karla, Raleway } from "next/font/google";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
 import { SiteFooter } from "../../components/site-footer";
@@ -21,6 +21,13 @@ const karla = Karla({
 });
 
 const raleway = Raleway({
+  subsets: ["latin"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const inter = Inter({
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
@@ -223,7 +230,7 @@ function ProductHeaderCell({
         </p>
         <Link
           aria-label={`View ${product.name} details`}
-          className={`${raleway.className} mt-1 line-clamp-2 block text-[14px] font-bold uppercase leading-[1.15] tracking-[-0.01em] text-[#231a12] transition-colors duration-200 hover:text-[#a85d00] focus-visible:text-[#a85d00] focus-visible:outline-none`}
+          className={`${inter.className} mt-1 line-clamp-2 block text-[14px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12] transition-colors duration-200 hover:text-[#a85d00] focus-visible:text-[#a85d00] focus-visible:outline-none`}
           href={`/products/${product.id}`}
         >
           {product.name}
