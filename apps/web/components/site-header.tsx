@@ -1,12 +1,13 @@
 "use client";
 
-import { Bookmark, Scale } from "lucide-react";
+import { Bookmark, ChevronDown, LayoutGrid, Scale, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useCompare } from "../lib/compare";
+import { StarBorder } from "./StarBorder";
 
 const navItems = ["Home", "Brand", "Tyres", "Services", "About"];
 
@@ -150,49 +151,97 @@ export function SiteHeader() {
         </Link>
 
         <ul className="absolute left-1/2 top-1/2 m-0 hidden -translate-x-1/2 -translate-y-1/2 list-none items-center gap-0 p-0 lg:flex">
-          {navItems.map((item) => (
-            <li key={item}>
-              <Link
-                href={
-                  isHomePage
-                    ? `#${item.toLowerCase()}`
-                    : `/#${item.toLowerCase()}`
-                }
-                className={[
-                  "rounded-full px-5 py-2 text-[14px] no-underline transition-colors duration-300",
-                  currentActiveTarget === item.toLowerCase()
-                    ? "text-[#f8ab59]"
-                    : "text-white/55 hover:text-white",
-                ].join(" ")}
-              >
-                {item}
-              </Link>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = currentActiveTarget === item.toLowerCase();
+
+            if (item === "Tyres") {
+              return (
+                <li key={item} className="group relative">
+                  <button
+                    type="button"
+                    className={[
+                      "inline-flex items-center gap-1 rounded-full px-5 py-2 text-[14px] transition-colors duration-300",
+                      isActive
+                        ? "text-[#f8ab59]"
+                        : "text-white/55 group-hover:text-white",
+                    ].join(" ")}
+                  >
+                    Tyres
+                    <ChevronDown
+                      aria-hidden="true"
+                      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180"
+                      strokeWidth={2}
+                    />
+                  </button>
+
+                  {/* Hover bridge + dropdown */}
+                  <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="relative w-66 overflow-hidden rounded-2xl border border-[#ffeee0]/12 bg-[#2a2017]/95 p-2 shadow-[0_24px_60px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-x-6 top-3 h-px bg-linear-to-r from-transparent via-[#f8ab59]/50 to-transparent"
+                      />
+                      <Link
+                        href={isHomePage ? "#tyres" : "/#tyres"}
+                        className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 no-underline transition-colors duration-200 hover:bg-white/5"
+                      >
+                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#f8ab59]/25 bg-[#f8ab59]/10 text-[#f8ab59]">
+                          <Sparkles aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+                        </span>
+                        <span className="flex flex-col">
+                          <span className="text-[14px] font-semibold text-white">
+                            Featured Products
+                          </span>
+                          <span className="text-[12px] text-white/45">
+                            Our handpicked highlights
+                          </span>
+                        </span>
+                      </Link>
+                      <Link
+                        href="/products"
+                        className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 no-underline transition-colors duration-200 hover:bg-white/5"
+                      >
+                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/12 bg-white/5 text-white/80">
+                          <LayoutGrid aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+                        </span>
+                        <span className="flex flex-col">
+                          <span className="text-[14px] font-semibold text-white">
+                            All Products
+                          </span>
+                          <span className="text-[12px] text-white/45">
+                            Browse the full inventory
+                          </span>
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                </li>
+              );
+            }
+
+            return (
+              <li key={item}>
+                <Link
+                  href={
+                    isHomePage
+                      ? `#${item.toLowerCase()}`
+                      : `/#${item.toLowerCase()}`
+                  }
+                  className={[
+                    "rounded-full px-5 py-2 text-[14px] no-underline transition-colors duration-300",
+                    isActive
+                      ? "text-[#f8ab59]"
+                      : "text-white/55 hover:text-white",
+                  ].join(" ")}
+                >
+                  {item}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
-        <div className="flex items-center gap-4">
-          <Link
-            href="/compare"
-            className={[
-              "relative inline-flex h-9 items-center gap-2 rounded-full px-2 text-[14px] no-underline transition-colors duration-300",
-              pathname === "/compare"
-                ? "text-[#f8ab59]"
-                : "text-white/55 hover:text-white",
-            ].join(" ")}
-          >
-            <Scale aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
-            Compare
-            {compareCount > 0 ? (
-              <span
-                aria-label={`${compareCount} in compare`}
-                className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#f8ab59] px-1 text-[10px] font-bold text-[#231a12]"
-              >
-                {compareCount}
-              </span>
-            ) : null}
-          </Link>
-
+        <div className="flex items-center mr-[-2px]">
           <Link
             href="/bookmarks"
             className={[
@@ -206,15 +255,36 @@ export function SiteHeader() {
             Saved
           </Link>
 
+          <StarBorder
+            as={Link}
+            href="/compare"
+            className="compare-star scale-95"
+            color="#f8ab59"
+            speed="3s"
+            thickness={1.5}
+            aria-label="Compare tyres"
+          >
+            <Scale aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+            Compare
+            {compareCount > 0 ? (
+              <span
+                aria-label={`${compareCount} in compare`}
+                className="compare-count"
+              >
+                {compareCount}
+              </span>
+            ) : null}
+          </StarBorder>
+
           <Link
             href="/contact"
             className={[
-              "relative inline-flex h-9 items-center overflow-hidden rounded-full px-6 text-[13px] font-bold text-[#231a12] no-underline",
+              "relative inline-flex h-9 items-center overflow-hidden rounded-full px-4 text-[13px] font-bold text-[#231a12] no-underline scale-95",
               "transition-[filter,box-shadow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
               "hover:brightness-110",
               isDarkGlass
-                ? "border border-[#ead9c9]/70 shadow-[0_10px_28px_rgba(138,81,0,0.16)] hover:shadow-[0_14px_34px_rgba(138,81,0,0.2)]"
-                : "border border-transparent shadow-[0_10px_28px_rgba(246,147,0,0.24)] hover:shadow-[0_14px_34px_rgba(218,198,168,0.32),inset_0_1px_0_rgba(255,255,255,0.36)]",
+                ? "shadow-[0_10px_28px_rgba(138,81,0,0.16)] hover:shadow-[0_14px_34px_rgba(138,81,0,0.2)]"
+                : "shadow-[0_10px_28px_rgba(246,147,0,0.24)] hover:shadow-[0_14px_34px_rgba(218,198,168,0.32),inset_0_1px_0_rgba(255,255,255,0.36)]",
             ].join(" ")}
           >
             <span

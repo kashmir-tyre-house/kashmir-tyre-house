@@ -1,4 +1,4 @@
-import { Button } from "@kth/ui";
+import Link from "next/link";
 
 import { AboutSection } from "../components/about-section";
 import { BrandsSection } from "../components/brands-section";
@@ -94,22 +94,15 @@ export default function Home() {
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button
-                className="inline-flex items-center gap-2 rounded-[10px] bg-[#c8922a] px-5 text-[14px] font-bold text-black hover:bg-[#e0a830] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter,transform,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_34px_rgba(218, 198, 168, 0.32),inset_0_1px_0_rgba(255,255,255,0.36)]"
-                size="lg"
+              <Link
+                href="/products"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-[10px] bg-[#c8922a] px-5 text-[14px] font-bold text-black no-underline hover:bg-[#e0a830] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter,transform,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_34px_rgba(218, 198, 168, 0.32),inset_0_1px_0_rgba(255,255,255,0.36)]"
               >
                 Explore Inventory
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                 </svg>
-              </Button>
-              <Button
-                className="inline-flex items-center gap-2 rounded-[10px] border border-white/12 bg-transparent px-5 text-[13px] font-medium text-white/60 hover:border-[#c8922a]/40 hover:bg-[#000000]/05 hover:text-black"
-                size="lg"
-                variant="secondary"
-              >
-                View Catalogue
-              </Button>
+              </Link>
             </div>
 
             <div className="mt-12 flex flex-wrap items-center gap-10 border-t border-white/[0.07] pt-8">
