@@ -52,20 +52,20 @@ function GalleryRow({
   images: GalleryImage[];
 }) {
   return (
-    <div className="about-marquee h-45 w-full overflow-hidden sm:h-55">
+    <div className="about-marquee h-32 w-full overflow-hidden sm:h-45 lg:h-55">
       <div
-        className={`about-marquee__track about-marquee__track--${direction} flex h-full gap-4 sm:gap-5`}
+        className={`about-marquee__track about-marquee__track--${direction} flex h-full gap-3 sm:gap-4 lg:gap-5`}
       >
         {[...images, ...images, ...images].map((image, index) => (
           <div
-            className="group relative h-45 w-72.5 shrink-0 overflow-hidden rounded-[22px] sm:h-55 sm:w-95"
+            className="group relative h-32 w-52 shrink-0 overflow-hidden rounded-[16px] sm:h-45 sm:w-72.5 sm:rounded-[20px] lg:h-55 lg:w-95 lg:rounded-[22px]"
             key={`${image.alt}-${index}`}
           >
             <Image
               alt={image.alt}
               className="object-cover transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
               fill
-              sizes="(min-width: 640px) 380px, 290px"
+              sizes="(min-width: 1024px) 380px, (min-width: 640px) 290px, 208px"
               src={image.src}
             />
 
@@ -114,39 +114,39 @@ export function AboutSection() {
   return (
     <section
       aria-labelledby="about-heading"
-      className={`${karla.className} mx-auto max-w-330 overflow-hidden pt-24 text-[#231a12]`}
+      className={`${karla.className} mx-auto max-w-330 overflow-hidden pt-12 text-[#231a12] sm:pt-24`}
       id="about"
     >
-      <div className="mx-auto mb-12 max-w-3xl text-center">
+      <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-12">
         <h2
-          className={`${raleway.className} text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+          className={`${raleway.className} text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
           id="about-heading"
         >
           <BlurText text="About Us" delay={160} />
         </h2>
       </div>
 
-      <div className="mx-auto grid gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:px-8">
+      <div className="mx-auto grid gap-8 px-4 text-center sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:px-8 lg:text-left">
         <div className="lg:pt-1">
           <h2
-            className={`${raleway.className} max-w-2xl font-semibold leading-[1.03] tracking-[-0.055em] text-[#231a12] lg:text-[54px]`}
+            className={`${raleway.className} mx-auto max-w-2xl text-[28px] font-semibold leading-[1.05] tracking-[-0.055em] text-[#231a12] sm:text-[42px] sm:leading-[1.03] lg:mx-0 lg:text-[54px]`}
           >
             <BlurText text="Over two decades of marching forward." delay={80} />
           </h2>
         </div>
 
         <Reveal delayMs={90}>
-          <p className="max-w-3xl text-[16px] font-medium leading-[1.8] text-[#6f6258] sm:text-[18px]">
+          <p className="mx-auto max-w-3xl text-[15px] font-medium leading-[1.75] text-[#6f6258] sm:text-[18px] sm:leading-[1.8] lg:mx-0">
             Kashmir Tyre House began as a single workshop and has grown into one
             of the region&apos;s trusted names in tyre sales and service. We
             work with leading brands to offer reliable tyres for industrial,
             construction, mining, and earthmover equipment.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-8 border-t border-[#231a12]/10 pt-6">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4 border-t border-[#231a12]/10 pt-6 sm:gap-8 lg:justify-start">
             {aboutStats.map((stat, index) => (
-              <div key={stat.label} className="flex items-center gap-8">
-                <div className="flex flex-col gap-1">
+              <div key={stat.label} className="flex items-center gap-6 sm:gap-8">
+                <div className="flex flex-col gap-1 text-center lg:text-left">
                   <CountUp
                     className={`${raleway.className} text-[30px] font-bold leading-none tracking-[0.02em] text-[#231a12]`}
                     suffix={stat.suffix}

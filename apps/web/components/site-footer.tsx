@@ -20,14 +20,14 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className={`${karla.className} px-4 pb-4 pt-24 text-[#fff8f5]`}
+      className={`${karla.className} px-4 pb-4 pt-12 text-[#fff8f5] sm:pt-24`}
     >
-      <div className="relative w-full overflow-hidden rounded-[28px] border border-[#dac2ad]/30 bg-[#2a1a14] py-8 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:px-8 lg:px-12 lg:py-10">
+      <div className="relative w-full overflow-hidden rounded-[28px] border border-[#dac2ad]/30 bg-[#2a1a14] px-5 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:px-8 lg:px-12 lg:py-10">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(246,147,0,0.18),transparent_34%),radial-gradient(circle_at_78%_18%,rgba(255,184,111,0.14),transparent_32%),linear-gradient(120deg,rgba(138,81,0,0.26),rgba(35,26,18,0.94)_52%,rgba(17,14,12,0.98))]" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[#fff8f5]/20" />
 
         <div className="relative">
-          <div className="grid gap-10 border-b border-[#fff8f5]/10 pb-10 lg:grid-cols-[1.2fr_220px_360px] lg:gap-12">
+          <div className="grid gap-8 border-b border-[#fff8f5]/10 pb-8 sm:gap-10 sm:pb-10 lg:grid-cols-[1.2fr_220px_360px] lg:gap-12">
             <div>
               <Link
                 href="/"

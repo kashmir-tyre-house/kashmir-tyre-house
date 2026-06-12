@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, ChevronDown, ChevronRight, LayoutGrid, Scale, Sparkles } from "lucide-react";
+import { Bookmark, ChevronDown, ChevronRight, LayoutGrid, Menu, Scale, Sparkles, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -49,6 +49,10 @@ export function SiteHeader() {
   const tyresTriggerRef = useRef<HTMLLIElement>(null);
   const tyresCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Mobile navigation menu.
+  const [menuOpen, setMenuOpen] = useState(false);
+  const sectionHref = (id: string) => (isHomePage ? `#${id}` : `/#${id}`);
+
   useEffect(() => {
     setMounted(true);
     return () => {
@@ -57,6 +61,11 @@ export function SiteHeader() {
       }
     };
   }, []);
+
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   function openTyres() {
     if (tyresCloseTimer.current) {
@@ -175,7 +184,7 @@ export function SiteHeader() {
         blur={12}
         displace={4}
         className={[
-          "glass-nav mx-auto max-w-350",
+          "glass-nav relative z-20 mx-auto max-w-350",
           "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
           isDarkGlass
             ? "shadow-[0_12px_42px_rgba(0,0,0,0.52)]"
@@ -221,7 +230,7 @@ export function SiteHeader() {
                     aria-haspopup="true"
                     aria-expanded={tyresOpen}
                     className={[
-                      "inline-flex items-center gap-1 rounded-full px-5 py-2 text-[14px] transition-colors duration-300",
+                      "inline-flex items-center gap-1 rounded-full px-4 py-2 text-[13px] transition-colors duration-300",
                       isActive || tyresOpen
                         ? "text-[#f8ab59]"
                         : "text-white/55 hover:text-white",
@@ -250,7 +259,7 @@ export function SiteHeader() {
                       : `/#${item.toLowerCase()}`
                   }
                   className={[
-                    "rounded-full px-5 py-2 text-[14px] no-underline transition-colors duration-300",
+                    "rounded-full px-4 py-2 text-[13px] no-underline transition-colors duration-300",
                     isActive
                       ? "text-[#f8ab59]"
                       : "text-white/55 hover:text-white",
@@ -263,7 +272,8 @@ export function SiteHeader() {
           })}
         </ul>
 
-        <div className="flex items-center mr-[-2px]">
+        <div className="flex items-center gap-1 mr-[-2px]">
+          <div className="hidden items-center lg:flex">
           <Link
             href="/bookmarks"
             className={[
@@ -297,11 +307,12 @@ export function SiteHeader() {
               </span>
             ) : null}
           </StarBorder>
+          </div>
 
           <Link
             href="/contact"
             className={[
-              "relative inline-flex h-9 items-center overflow-hidden rounded-full px-4 text-[13px] font-bold text-[#231a12] no-underline scale-95",
+              "relative hidden h-9 items-center overflow-hidden rounded-full px-4 text-[13px] font-bold text-[#231a12] no-underline scale-95 lg:inline-flex",
               "transition-[filter,box-shadow,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
               "hover:brightness-110",
               isDarkGlass
@@ -325,9 +336,101 @@ export function SiteHeader() {
             />
             <span className="relative">Send Enquiry</span>
           </Link>
+
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="ml-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full text-white/70 transition-colors duration-300 hover:text-white lg:hidden"
+          >
+            {menuOpen ? (
+              <X aria-hidden="true" className="h-5 w-5" strokeWidth={2} />
+            ) : (
+              <Menu aria-hidden="true" className="h-5 w-5" strokeWidth={2} />
+            )}
+          </button>
         </div>
       </nav>
       </GlassSurface>
+
+      {/* Mobile navigation menu */}
+      <div className="lg:hidden">
+        <div
+          aria-hidden="true"
+          onClick={() => setMenuOpen(false)}
+          className={[
+            "fixed inset-0 bg-black/50 transition-opacity duration-300",
+            menuOpen ? "opacity-100" : "pointer-events-none opacity-0",
+          ].join(" ")}
+        />
+
+        <div
+          role="menu"
+          className={[
+            "absolute left-5 right-5 top-[calc(100%+10px)] z-10 origin-top overflow-hidden rounded-[20px] border border-[#ffeee0]/12 bg-[#1a120c] p-2 shadow-[0_24px_60px_rgba(0,0,0,0.55)]",
+            "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            menuOpen
+              ? "visible translate-y-0 scale-100 opacity-100"
+              : "pointer-events-none invisible -translate-y-2 scale-[0.98] opacity-0",
+          ].join(" ")}
+        >
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(246,147,0,0.12),transparent_45%)]" />
+
+          <nav className="relative flex flex-col gap-0.5" aria-label="Mobile navigation">
+            {[
+              { label: "Home", href: sectionHref("home") },
+              { label: "Brand", href: sectionHref("brand") },
+              { label: "All Tyres", href: "/products" },
+              { label: "Featured Tyres", href: sectionHref("tyres") },
+              { label: "Services", href: sectionHref("services") },
+              { label: "About", href: sectionHref("about") },
+            ].map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-between rounded-[12px] px-4 py-3 text-[14px] font-medium text-white/75 no-underline transition-colors hover:bg-white/5 hover:text-white"
+              >
+                {link.label}
+                <ChevronRight aria-hidden="true" className="h-4 w-4 text-white/30" strokeWidth={2} />
+              </Link>
+            ))}
+
+            <div className="my-1.5 h-px bg-white/10" />
+
+            <Link
+              href="/bookmarks"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2.5 rounded-[12px] px-4 py-3 text-[14px] font-medium text-white/75 no-underline transition-colors hover:bg-white/5 hover:text-white"
+            >
+              <Bookmark aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+              Saved
+            </Link>
+            <Link
+              href="/compare"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2.5 rounded-[12px] px-4 py-3 text-[14px] font-medium text-white/75 no-underline transition-colors hover:bg-white/5 hover:text-white"
+            >
+              <Scale aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
+              Compare
+              {compareCount > 0 ? (
+                <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#f8ab59] px-1.5 text-[11px] font-bold text-[#231a12]">
+                  {compareCount}
+                </span>
+              ) : null}
+            </Link>
+
+            <Link
+              href="/contact"
+              onClick={() => setMenuOpen(false)}
+              className="mt-1.5 flex items-center justify-center gap-2 rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-4 py-3 text-[14px] font-bold text-[#231a12] no-underline shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter] duration-300 hover:brightness-110"
+            >
+              Send Enquiry
+            </Link>
+          </nav>
+        </div>
+      </div>
 
       {mounted
         ? createPortal(
@@ -340,7 +443,7 @@ export function SiteHeader() {
                 // would disable the panel's backdrop-filter mid-transition
                 // (opacity < 1 creates an isolated group with no backdrop to
                 // sample), causing a flash of un-frosted glass.
-                transform: `translateX(-50%) translateY(${tyresOpen ? "0" : "0px"})`,
+                transform: `translateX(-50%) translateY(${tyresOpen ? "0" : "-6px"})`,
                 transition:
                   "transform 200ms cubic-bezier(0.22,1,0.36,1), visibility 200ms",
               }}
@@ -352,7 +455,7 @@ export function SiteHeader() {
               ].join(" ")}
             >
               <GlassSurface
-                width={216}
+                width={248}
                 height="auto"
                 borderRadius={18}
                 backgroundOpacity={0.5}
@@ -361,38 +464,53 @@ export function SiteHeader() {
                 displace={4}
                 className="glass-dropdown shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
               >
-                <div className="flex w-full flex-col gap-0.5 p-1.5">
+                <div className="flex w-full flex-col p-2">
+                  <p className="px-2.5 pb-1.5 pt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/35">
+                    Browse Tyres
+                  </p>
+
                   <Link
                     href={isHomePage ? "#tyres" : "/#tyres"}
                     onClick={() => setTyresOpen(false)}
-                    className="group/item flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 no-underline transition-colors duration-200 hover:bg-white/6"
+                    className="group/item flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 no-underline transition-colors duration-200 hover:bg-white/[0.07]"
                   >
-                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#f8ab59]/25 bg-[#f8ab59]/10 text-[#f8ab59]">
+                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] border border-[#f8ab59]/25 bg-[#f8ab59]/10 text-[#f8ab59] transition-colors duration-200 group-hover/item:bg-[#f8ab59]/15">
                       <Sparkles aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
                     </span>
-                    <span className="text-[13px] font-medium text-white/80 transition-colors duration-200 group-hover/item:text-white">
-                      Featured Products
+                    <span className="flex min-w-0 flex-col">
+                      <span className="text-[12px] font-semibold leading-tight text-white/85 transition-colors duration-200 group-hover/item:text-white">
+                        Featured Products
+                      </span>
+                      <span className="mt-0.5 text-[10px] leading-tight text-white/40">
+                        Our hand-picked top picks
+                      </span>
                     </span>
                     <ChevronRight
                       aria-hidden="true"
-                      className="ml-auto h-3.5 w-3.5 -translate-x-1 text-white/30 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:text-[#f8ab59] group-hover/item:opacity-100"
+                      className="ml-auto h-3.5 w-3.5 shrink-0 -translate-x-1 text-white/25 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:text-[#f8ab59] group-hover/item:opacity-100"
                       strokeWidth={2}
                     />
                   </Link>
+
                   <Link
                     href="/products"
                     onClick={() => setTyresOpen(false)}
-                    className="group/item flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 no-underline transition-colors duration-200 hover:bg-white/6"
+                    className="group/item flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 no-underline transition-colors duration-200 hover:bg-white/[0.07]"
                   >
-                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/12 bg-white/5 text-white/80">
+                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] border border-white/12 bg-white/5 text-white/80 transition-colors duration-200 group-hover/item:bg-white/10">
                       <LayoutGrid aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
                     </span>
-                    <span className="text-[13px] font-medium text-white/80 transition-colors duration-200 group-hover/item:text-white">
-                      All Products
+                    <span className="flex min-w-0 flex-col">
+                      <span className="text-[12px] font-semibold leading-tight text-white/85 transition-colors duration-200 group-hover/item:text-white">
+                        All Products
+                      </span>
+                      <span className="mt-0.5 text-[10px] leading-tight text-white/40">
+                        Browse the full catalogue
+                      </span>
                     </span>
                     <ChevronRight
                       aria-hidden="true"
-                      className="ml-auto h-3.5 w-3.5 -translate-x-1 text-white/30 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:text-[#f8ab59] group-hover/item:opacity-100"
+                      className="ml-auto h-3.5 w-3.5 shrink-0 -translate-x-1 text-white/25 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:text-[#f8ab59] group-hover/item:opacity-100"
                       strokeWidth={2}
                     />
                   </Link>
