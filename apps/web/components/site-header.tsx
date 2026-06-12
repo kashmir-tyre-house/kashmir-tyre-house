@@ -1,12 +1,14 @@
 "use client";
 
-import { Bookmark, ChevronDown, LayoutGrid, Scale, Sparkles } from "lucide-react";
+import { Bookmark, ChevronDown, ChevronRight, LayoutGrid, Scale, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { useCompare } from "../lib/compare";
+import { GlassSurface } from "./GlassSurface";
 import { StarBorder } from "./StarBorder";
 
 const navItems = ["Home", "Brand", "Tyres", "Services", "About"];
@@ -34,6 +36,45 @@ export function SiteHeader() {
   const [isDarkGlass, setIsDarkGlass] = useState(!isHomePage);
   const previousScrollY = useRef(0);
   const ticking = useRef(false);
+
+  // Tyres dropdown — rendered in a portal so its glass backdrop-filter isn't
+  // clipped by the navbar's own backdrop-filter (a nested backdrop-filter only
+  // samples within its filtered ancestor's box, which kills the effect here).
+  const [mounted, setMounted] = useState(false);
+  const [tyresOpen, setTyresOpen] = useState(false);
+  const [tyresMenuPos, setTyresMenuPos] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  const tyresTriggerRef = useRef<HTMLLIElement>(null);
+  const tyresCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => {
+      if (tyresCloseTimer.current) {
+        clearTimeout(tyresCloseTimer.current);
+      }
+    };
+  }, []);
+
+  function openTyres() {
+    if (tyresCloseTimer.current) {
+      clearTimeout(tyresCloseTimer.current);
+    }
+    const rect = tyresTriggerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setTyresMenuPos({ left: rect.left + rect.width / 2, top: rect.bottom });
+    }
+    setTyresOpen(true);
+  }
+
+  function scheduleCloseTyres() {
+    if (tyresCloseTimer.current) {
+      clearTimeout(tyresCloseTimer.current);
+    }
+    tyresCloseTimer.current = setTimeout(() => setTyresOpen(false), 120);
+  }
 
   useEffect(() => {
     if (!isHomePage) {
@@ -115,24 +156,36 @@ export function SiteHeader() {
       onFocus={() => setIsHidden(false)}
       className={[
         "fixed left-0 right-0 top-4 z-50 px-5 ",
-        "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
         "motion-reduce:transition-none",
+        // Slide off-screen with transform only — animating opacity or a blur
+        // filter on this ancestor would disable the navbar's backdrop-filter
+        // mid-transition, flashing un-frosted glass on re-appear.
         isHidden
-          ? "pointer-events-none translate-y-[-130%] opacity-0 blur-sm"
-          : "translate-y-0 opacity-100 blur-0",
+          ? "pointer-events-none translate-y-[-160%]"
+          : "translate-y-0",
       ].join(" ")}
     >
-      <nav
-        aria-label="Primary navigation"
+      <GlassSurface
+        width="100%"
+        height={50}
+        borderRadius={9999}
+        backgroundOpacity={isDarkGlass ? 0.42 : 0.28}
+        saturation={1.4}
+        blur={12}
+        displace={4}
         className={[
-          "mx-auto flex h-12.5 max-w-350 items-center justify-between",
-          "rounded-full border px-2 backdrop-blur-md",
+          "glass-nav mx-auto max-w-350",
           "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
           isDarkGlass
-            ? "border-[#ffeee0]/12 bg-[#564b41b6]/82 shadow-[0_12px_42px_rgba(0,0,0,0.52)]"
-            : "border-white/8 bg-[#4537273d]/55 shadow-[0_8px_32px_rgba(0,0,0,0.45)]",
+            ? "shadow-[0_12px_42px_rgba(0,0,0,0.52)]"
+            : "shadow-[0_8px_32px_rgba(0,0,0,0.45)]",
           isHidden ? "scale-[0.98]" : "scale-100",
         ].join(" ")}
+      >
+      <nav
+        aria-label="Primary navigation"
+        className="flex h-full w-full items-center justify-between px-2"
       >
         <Link
           href="/"
@@ -156,65 +209,34 @@ export function SiteHeader() {
 
             if (item === "Tyres") {
               return (
-                <li key={item} className="group relative">
+                <li
+                  key={item}
+                  ref={tyresTriggerRef}
+                  className="relative"
+                  onMouseEnter={openTyres}
+                  onMouseLeave={scheduleCloseTyres}
+                >
                   <button
                     type="button"
+                    aria-haspopup="true"
+                    aria-expanded={tyresOpen}
                     className={[
                       "inline-flex items-center gap-1 rounded-full px-5 py-2 text-[14px] transition-colors duration-300",
-                      isActive
+                      isActive || tyresOpen
                         ? "text-[#f8ab59]"
-                        : "text-white/55 group-hover:text-white",
+                        : "text-white/55 hover:text-white",
                     ].join(" ")}
                   >
                     Tyres
                     <ChevronDown
                       aria-hidden="true"
-                      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180"
+                      className={[
+                        "h-3.5 w-3.5 transition-transform duration-300",
+                        tyresOpen ? "rotate-180" : "",
+                      ].join(" ")}
                       strokeWidth={2}
                     />
                   </button>
-
-                  {/* Hover bridge + dropdown */}
-                  <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                    <div className="relative w-66 overflow-hidden rounded-2xl border border-[#ffeee0]/12 bg-[#2a2017]/95 p-2 shadow-[0_24px_60px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-x-6 top-3 h-px bg-linear-to-r from-transparent via-[#f8ab59]/50 to-transparent"
-                      />
-                      <Link
-                        href={isHomePage ? "#tyres" : "/#tyres"}
-                        className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 no-underline transition-colors duration-200 hover:bg-white/5"
-                      >
-                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#f8ab59]/25 bg-[#f8ab59]/10 text-[#f8ab59]">
-                          <Sparkles aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
-                        </span>
-                        <span className="flex flex-col">
-                          <span className="text-[14px] font-semibold text-white">
-                            Featured Products
-                          </span>
-                          <span className="text-[12px] text-white/45">
-                            Our handpicked highlights
-                          </span>
-                        </span>
-                      </Link>
-                      <Link
-                        href="/products"
-                        className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 no-underline transition-colors duration-200 hover:bg-white/5"
-                      >
-                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/12 bg-white/5 text-white/80">
-                          <LayoutGrid aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
-                        </span>
-                        <span className="flex flex-col">
-                          <span className="text-[14px] font-semibold text-white">
-                            All Products
-                          </span>
-                          <span className="text-[12px] text-white/45">
-                            Browse the full inventory
-                          </span>
-                        </span>
-                      </Link>
-                    </div>
-                  </div>
                 </li>
               );
             }
@@ -305,6 +327,81 @@ export function SiteHeader() {
           </Link>
         </div>
       </nav>
+      </GlassSurface>
+
+      {mounted
+        ? createPortal(
+            <div
+              style={{
+                position: "fixed",
+                left: tyresMenuPos?.left ?? 0,
+                top: tyresMenuPos?.top ?? 0,
+                // Reveal via transform + visibility only. Animating opacity here
+                // would disable the panel's backdrop-filter mid-transition
+                // (opacity < 1 creates an isolated group with no backdrop to
+                // sample), causing a flash of un-frosted glass.
+                transform: `translateX(-50%) translateY(${tyresOpen ? "0" : "0px"})`,
+                transition:
+                  "transform 200ms cubic-bezier(0.22,1,0.36,1), visibility 200ms",
+              }}
+              onMouseEnter={openTyres}
+              onMouseLeave={scheduleCloseTyres}
+              className={[
+                "z-60 pt-2.5",
+                tyresOpen ? "visible" : "pointer-events-none invisible",
+              ].join(" ")}
+            >
+              <GlassSurface
+                width={216}
+                height="auto"
+                borderRadius={18}
+                backgroundOpacity={0.5}
+                saturation={1.4}
+                blur={12}
+                displace={4}
+                className="glass-dropdown shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+              >
+                <div className="flex w-full flex-col gap-0.5 p-1.5">
+                  <Link
+                    href={isHomePage ? "#tyres" : "/#tyres"}
+                    onClick={() => setTyresOpen(false)}
+                    className="group/item flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 no-underline transition-colors duration-200 hover:bg-white/6"
+                  >
+                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#f8ab59]/25 bg-[#f8ab59]/10 text-[#f8ab59]">
+                      <Sparkles aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+                    </span>
+                    <span className="text-[13px] font-medium text-white/80 transition-colors duration-200 group-hover/item:text-white">
+                      Featured Products
+                    </span>
+                    <ChevronRight
+                      aria-hidden="true"
+                      className="ml-auto h-3.5 w-3.5 -translate-x-1 text-white/30 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:text-[#f8ab59] group-hover/item:opacity-100"
+                      strokeWidth={2}
+                    />
+                  </Link>
+                  <Link
+                    href="/products"
+                    onClick={() => setTyresOpen(false)}
+                    className="group/item flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 no-underline transition-colors duration-200 hover:bg-white/6"
+                  >
+                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/12 bg-white/5 text-white/80">
+                      <LayoutGrid aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+                    </span>
+                    <span className="text-[13px] font-medium text-white/80 transition-colors duration-200 group-hover/item:text-white">
+                      All Products
+                    </span>
+                    <ChevronRight
+                      aria-hidden="true"
+                      className="ml-auto h-3.5 w-3.5 -translate-x-1 text-white/30 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:text-[#f8ab59] group-hover/item:opacity-100"
+                      strokeWidth={2}
+                    />
+                  </Link>
+                </div>
+              </GlassSurface>
+            </div>,
+            document.body
+          )
+        : null}
     </header>
   );
 }
