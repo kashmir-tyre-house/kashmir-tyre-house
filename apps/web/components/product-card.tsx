@@ -12,6 +12,7 @@ import { getBookmarkKey, useBookmarks } from "../lib/bookmarks";
 import { getCompareKey, useCompare } from "../lib/compare";
 import { addToEnquiry } from "../lib/enquiry";
 import type { Product } from "../lib/products";
+import { StarBorder } from "./StarBorder";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -232,16 +233,18 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
           </div>
         </div>
 
-        <div className="mt-5 flex gap-2">
+        <div className="mt-5 flex gap-2 align-middle">
           <Button
-            className="h-9 flex-1 rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
+            className="h-9 flex-1 place-self-center rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
             onClick={(e) => { stop(e); handleEnquire(); }}
             size="sm"
           >
             Enquire
           </Button>
 
-          <Button
+          <StarBorder
+            as="button"
+            type="button"
             aria-label={
               comparing
                 ? `Remove ${product.productName} from compare`
@@ -250,23 +253,20 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
                   : `Add ${product.productName} to compare`
             }
             aria-pressed={comparing}
-            className={`h-9 rounded-md px-3 text-[12px] font-bold transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${
-              comparing
-                ? "border border-[#a85d00] bg-[#fff1e3] text-[#a85d00] hover:bg-[#ffe6d0]"
-                : "border border-[#231a12]/20 bg-transparent text-[#231a12] hover:bg-white"
-            }`}
+            className={`compare-card${comparing ? " is-comparing" : ""}`}
+            color="#ff8400"
+            speed="3s"
+            thickness={1.5}
             disabled={compareDisabled}
             onClick={handleCompareClick}
-            size="sm"
             title={!comparing && isCompareFull ? "Compare list is full (3 max)" : undefined}
-            variant="secondary"
           >
             {comparing ? (
               <><Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />Comparing</>
             ) : (
               <><Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />Compare</>
             )}
-          </Button>
+          </StarBorder>
         </div>
       </div>
     </article>
