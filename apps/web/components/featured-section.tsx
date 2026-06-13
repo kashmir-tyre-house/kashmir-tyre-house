@@ -124,12 +124,12 @@ export function FeaturedSection() {
   return (
     <section
       aria-labelledby="featured-heading"
-      className="px-4 pt-20 text-[#231a12] sm:px-6 lg:px-8"
+      className="px-4 pt-10 text-[#231a12] sm:px-6 sm:pt-20 lg:px-8"
       id="tyres"
     >
       <div className="mx-auto max-w-3xl text-center">
         <h2
-          className={`${raleway.className} mb-10 mt-3 place-self-center font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+          className={`${raleway.className} mb-8 mt-3 place-self-center text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:mb-10 sm:text-[38px] lg:text-[44px]`}
           id="featured-heading"
         >
           <BlurText text="Featured Products" delay={150} />
@@ -146,10 +146,10 @@ export function FeaturedSection() {
         </Link>
       </Reveal>
 
-      <div className="mx-auto mt-10 max-w-330">
+      <div className="mx-auto mt-8 max-w-330 sm:mt-10">
         <div className="relative pb-15">
           {isInitialLoad ? (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 justify-between">
+            <div className="grid justify-items-center gap-5 md:grid-cols-2 xl:grid-cols-4">
               {Array.from({ length: PAGE_SIZE }).map((_, index) => (
                 <ProductCardSkeleton
                   className="!min-w-0 !w-full !flex-auto !snap-none"
@@ -166,7 +166,7 @@ export function FeaturedSection() {
               No products available yet.
             </div>
           ) : (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 justify-between">
+            <div className="grid justify-items-center gap-5 md:grid-cols-2 xl:grid-cols-4">
               {products.map((product, index) => (
                 <Reveal
                   className="h-full"

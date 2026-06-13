@@ -37,19 +37,19 @@ export function BrandsSection() {
   return (
     <section
       aria-labelledby="brand-heading"
-      className="pb-8 pt-24 max-w-330 text-[#231a12] place-self-center"
+      className="mx-auto max-w-330 px-4 pb-8 pt-12 text-[#231a12] sm:px-6 sm:pt-24 lg:px-8"
       id="brand"
     >
       <div className="mx-auto max-w-[1480px]">
-        <div className="mx-auto mb-12 max-w-3xl text-center">
+        <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-12">
           <h2
-            className={`${raleway.className} mt-5 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+            className={`${raleway.className} mt-5 text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
             id="brand-heading"
           >
             <BlurText text="Trusted Brands" delay={160} />
           </h2>
           <Reveal delayMs={200}>
-            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-[1.8] text-[#6f6258]">
+            <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-[1.75] text-[#6f6258] sm:mt-5 sm:text-[15px] sm:leading-[1.8]">
               We work with established tyre manufacturers known for reliability,
               field-tested durability, and dependable support across industrial,
               fleet, and commercial applications.

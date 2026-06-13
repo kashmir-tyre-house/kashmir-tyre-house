@@ -57,7 +57,7 @@ export default function Home() {
       {/* ── HERO ── */}
       <section
         id="home"
-        className="relative isolate flex min-h-screen flex-col justify-center px-8 pb-16 pt-[68px]"
+        className="relative isolate flex min-h-screen flex-col justify-center px-5 pb-12 pt-[88px] sm:px-8 sm:pb-16 sm:pt-[68px]"
       >
         <HeroBackgroundRotator
           alt="Heavy-duty industrial vehicle on rugged tyres at a work site"
@@ -72,14 +72,14 @@ export default function Home() {
 
           {/* Left */}
           <Reveal className="flex flex-col" delayMs={40} distance="sm">
-            <div className="mb-8 flex items-center gap-3">
+            <div className="mb-6 flex items-center gap-3 sm:mb-8">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#c8922a]/35 bg-[#c8922a]/10 px-4 py-1.5 text-[10px] font-semibold  tracking-[0.14em] text-[#c8922a]">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#c8922a]" />
                 Premium Supplier
               </span>
             </div>
 
-            <h1 className="font-display text-[58px] font-extrabold  leading-[0.9] tracking-[0.01em] text-white sm:text-[72px] lg:text-[50px]">
+            <h1 className="font-display text-[46px] font-extrabold  leading-[0.9] tracking-[0.01em] text-white sm:text-[72px] lg:text-[50px]">
               Find the<br />
               right{" "}
               <span className="text-[#c8922a]">tyre.</span>
@@ -89,14 +89,14 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="mt-7 max-w-lg text-[15px] font-normal leading-[1.8] text-white/70">
+            <p className="mt-5 max-w-lg text-[14px] font-normal leading-[1.75] text-white/70 sm:mt-7 sm:text-[15px] sm:leading-[1.8]">
               Kashmir Tyre House Private Limited is a leading authorised OTR tyre dealer in India, representing trusted brands like Bridgestone, Maxam, and Michelin for mining, construction, industrial, and earthmover applications across Central India.
             </p>
 
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="mt-7 flex flex-wrap items-center gap-4 sm:mt-10">
               <Link
                 href="/products"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-[10px] bg-[#c8922a] px-5 text-[14px] font-bold text-black no-underline hover:bg-[#e0a830] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter,transform,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_34px_rgba(218, 198, 168, 0.32),inset_0_1px_0_rgba(255,255,255,0.36)]"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-[#c8922a] px-4 text-[13px] font-bold text-black no-underline hover:bg-[#e0a830] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] shadow-[0_10px_28px_rgba(246,147,0,0.24)] transition-[filter,transform,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_34px_rgba(218,198,168,0.32),inset_0_1px_0_rgba(255,255,255,0.36)] sm:h-12 sm:px-5 sm:text-[14px]"
               >
                 Explore Inventory
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -105,19 +105,19 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="mt-12 flex flex-wrap items-center gap-10 border-t border-white/[0.07] pt-8">
+            <div className="mt-8 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-6 sm:mt-12 sm:justify-start sm:gap-10 sm:pt-8">
               {stats.map((s, i) => (
-                <div key={s.label} className="flex items-center gap-10">
+                <div key={s.label} className="flex items-center gap-3 sm:gap-10">
                   <div className="flex flex-col gap-1">
-                    <span className="font-display text-[30px] font-bold  leading-none tracking-[0.02em] text-white">
+                    <span className="font-display text-[20px] font-bold  leading-none tracking-[0.02em] text-white sm:text-[30px]">
                       {s.num}
                     </span>
-                    <span className="text-[11px] font-medium tracking-[0.14em] text-[#f9eee4b8]">
+                    <span className="text-[10px] font-medium tracking-[0.1em] text-[#f9eee4b8] sm:text-[11px] sm:tracking-[0.14em]">
                       {s.label}
                     </span>
                   </div>
                   {i < stats.length - 1 && (
-                    <div className="h-10 w-px bg-white/[0.08]" />
+                    <div className="hidden h-10 w-px bg-white/[0.08] sm:block" />
                   )}
                 </div>
               ))}
