@@ -1,5 +1,6 @@
 "use client";
 
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { ArrowRight, Loader2, Plus, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -197,6 +198,7 @@ function ProductHeaderCell({
   onRemove: () => void;
 }) {
   const primary = product.images.find((img) => img.isPrimaryImage) ?? product.images[0];
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <div className="relative flex h-full flex-col items-start gap-3 px-1">
@@ -214,13 +216,21 @@ function ProductHeaderCell({
         className="relative aspect-square w-full max-w-[180px] overflow-hidden rounded-[14px] border border-[#ead9c9]/70 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)] transition-all duration-200 hover:border-[#a85d00] hover:shadow-[0_8px_22px_rgba(168,93,0,0.12)] focus-visible:border-[#a85d00] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a85d00]/30"
         href={`/products/${product.id}`}
       >
+        {!imgLoaded ? (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <div className="w-16">
+              <DotLottieReact autoplay loop src="/lottie/loading-animation.lottie" />
+            </div>
+          </div>
+        ) : null}
         <Image
           alt={`${product.brand?.name ?? ""} ${product.name}`}
-          className="object-contain p-3 rounded-[20px]"
+          className={`object-contain p-3 rounded-[20px] transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
           fill
+          onError={() => setImgLoaded(true)}
+          onLoad={() => setImgLoaded(true)}
           sizes="180px"
           src={primary?.url ?? FALLBACK_IMAGE}
-          unoptimized
         />
       </Link>
 

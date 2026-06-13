@@ -218,7 +218,7 @@ export default function ProductDetailsPage() {
     <main className={`${karla.className} bg-[#f9eee4] text-[#231a12]`}>
       <SiteHeader />
 
-      <section className="mx-auto max-w-7xl px-4 pb-24 pt-28 sm:px-6 lg:px-8 !h-screen">
+      <section className="mx-auto min-h-screen max-w-7xl px-4 pb-24 pt-28 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-[12px] font-semibold text-[#8b7a6c]">
           <Link className="transition-colors hover:text-[#231a12]" href="/">
