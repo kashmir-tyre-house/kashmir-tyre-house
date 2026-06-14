@@ -107,10 +107,16 @@ export async function POST(request: Request) {
     // Email is best-effort — never fail the submission if it bounces. The
     // enquiry is already in the DB and admins can follow up via the portal.
     const to = process.env.ENQUIRY_TO_EMAIL;
+    // Optional comma-separated list of additional recipients to keep in the loop.
+    const cc = (process.env.ENQUIRY_CC_EMAIL ?? "")
+      .split(",")
+      .map((address) => address.trim())
+      .filter(Boolean);
     if (to) {
       try {
         await sendTemplateEmail({
           to,
+          ...(cc.length > 0 ? { cc } : {}),
           subject: `New enquiry from ${customerName}${companyName ? ` · ${companyName}` : ""}`,
           replyTo: email,
           template: EnquiryEmail,
