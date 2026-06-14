@@ -1,13 +1,16 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Raleway } from "next/font/google";
 
 import { ProductCard } from "../../components/product-card";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteHeader } from "../../components/site-header";
 import { useBookmarks, getBookmarkKey } from "../../lib/bookmarks";
+import { addManyToEnquiry } from "../../lib/enquiry";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -59,11 +62,17 @@ function EmptyView() {
 }
 
 export default function BookmarksPage() {
+  const router = useRouter();
   const { bookmarks, hydrated } = useBookmarks();
 
   // Avoid flashing the empty state before localStorage has been read.
   const showEmpty = hydrated && bookmarks.length === 0;
   const showList = hydrated && bookmarks.length > 0;
+
+  function handleEnquireAll() {
+    addManyToEnquiry(bookmarks);
+    router.push("/contact");
+  }
 
   return (
     <main className="min-h-screen text-[#231a12] bg-[#f9eee4]">
@@ -86,6 +95,19 @@ export default function BookmarksPage() {
                 compare the products you have saved and move quickly into an
                 enquiry when you are ready.
               </p>
+
+              <button
+                className="group mt-7 inline-flex h-11 items-center justify-center gap-2 rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.9),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(246,147,0,0.24)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_14px_30px_rgba(246,147,0,0.32)]"
+                onClick={handleEnquireAll}
+                type="button"
+              >
+                Enquire all ({bookmarks.length})
+                <ArrowRight
+                  aria-hidden="true"
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                  strokeWidth={2.5}
+                />
+              </button>
             </div>
 
             <div className="mt-14 flex flex-wrap items-start gap-5">

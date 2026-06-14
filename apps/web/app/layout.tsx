@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Figtree, Inter } from "next/font/google";
 
+import { EnquiryBar } from "../components/enquiry-bar";
 import { WorkInProgressModal } from "../components/work-in-progress-modal";
 import { Providers } from "./providers";
 import "./globals.css";
@@ -35,6 +36,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${display.variable} ${sans.variable} font-sans`}>
         <Providers>{children}</Providers>
+        <EnquiryBar />
         <WorkInProgressModal />
       </body>
     </html>

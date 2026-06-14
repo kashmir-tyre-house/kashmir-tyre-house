@@ -10,7 +10,7 @@ import { useState, useRef, useCallback } from "react";
 
 import { getBookmarkKey, useBookmarks } from "../lib/bookmarks";
 import { getCompareKey, useCompare } from "../lib/compare";
-import { addToEnquiry } from "../lib/enquiry";
+import { useEnquiryProducts } from "../lib/enquiry";
 import type { Product } from "../lib/products";
 import { StarBorder } from "./StarBorder";
 
@@ -86,6 +86,10 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
   const comparing = compareHydrated && isInCompare(getCompareKey(product));
   const compareDisabled = !product.id || (!comparing && isCompareFull);
 
+  const { has: hasEnquiry, toggle: toggleEnquiry, hydrated: enquiryHydrated } =
+    useEnquiryProducts();
+  const inEnquiry = enquiryHydrated && hasEnquiry(product);
+
   const handleCompareClick = (e: React.MouseEvent | React.KeyboardEvent) => {
     stop(e);
     // Snapshot prior state so we know whether this click is an add (vs. remove)
@@ -108,8 +112,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
   }, []);
 
   const handleEnquire = () => {
-    addToEnquiry(product);
-    router.push("/contact");
+    toggleEnquiry(product);
   };
 
   const handleDetails = () => {
@@ -235,11 +238,20 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
 
         <div className="mt-5 flex gap-2 align-middle">
           <Button
-            className="h-9 flex-1 place-self-center rounded-md bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] px-3 text-[12px] font-extrabold text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
+            aria-pressed={inEnquiry}
+            className={`h-9 flex-1 place-self-center rounded-md px-3 text-[12px] font-extrabold transition-[transform,filter,box-shadow] duration-300 ${
+              inEnquiry
+                ? "bg-[#fff1e3] text-[#a85d00] hover:bg-[#ffe6d0]"
+                : "bg-[linear-gradient(135deg,#ffae2b_0%,#f69300_42%,#a85d00_100%)] text-[#231a12] shadow-[0_10px_22px_rgba(246,147,0,0.2)] hover:brightness-110 hover:shadow-[0_14px_28px_rgba(246,147,0,0.28)]"
+            }`}
             onClick={(e) => { stop(e); handleEnquire(); }}
             size="sm"
           >
-            Enquire
+            {inEnquiry ? (
+              <><Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />Added</>
+            ) : (
+              "Enquire"
+            )}
           </Button>
 
           <StarBorder

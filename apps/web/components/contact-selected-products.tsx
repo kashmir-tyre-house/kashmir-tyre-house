@@ -67,22 +67,23 @@ export function ContactSelectedProducts() {
           {!hydrated ? (
             <div className="h-20" />
           ) : items.length > 0 ? (
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col">
               {items.map((product) => {
                 const key = getBookmarkKey(product);
                 const removing = removingKeys.includes(key);
                 return (
                   <li
                     className={[
-                      "overflow-hidden transition-[max-height,opacity,margin] duration-300 ease-in-out motion-reduce:transition-none",
-                      removing ? "mb-0 max-h-0 opacity-0" : "max-h-32 opacity-100",
+                      "grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none",
+                      removing ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100",
                     ].join(" ")}
                     key={key}
                   >
+                    <div className="overflow-hidden">
                     <div
                       className={[
-                        "group relative flex gap-3 rounded-[12px] border border-transparent bg-white p-2 pr-9",
-                        "transition-[transform,opacity,border-color,background-color] duration-300 ease-in-out motion-reduce:transition-none",
+                        "group relative mb-2 flex gap-3 rounded-[12px] border border-transparent bg-white p-2 pr-9",
+                        "transition-[transform,opacity,border-color,background-color] duration-300 ease-out motion-reduce:transition-none",
                         "hover:border-[#ead9c9] hover:bg-[#fffbf7]",
                         removing ? "translate-x-4 opacity-0" : "translate-x-0 opacity-100",
                       ].join(" ")}
@@ -126,6 +127,7 @@ export function ContactSelectedProducts() {
                       >
                         <X aria-hidden="true" className="h-3 w-3" strokeWidth={2.5} />
                       </button>
+                    </div>
                     </div>
                   </li>
                 );
