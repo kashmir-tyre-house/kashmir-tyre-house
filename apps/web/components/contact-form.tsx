@@ -59,7 +59,7 @@ const FORM_FIELDS: ReadonlyArray<keyof EnquiryFormValues> = [
 ];
 
 const baseInputClass =
-  "h-11 w-full rounded-[10px] border bg-[#fff8f5] px-4 text-[13.5px] font-medium text-[#231a12] outline-none transition-colors duration-200 placeholder:text-[#bfad9f] placeholder:font-normal disabled:cursor-not-allowed disabled:opacity-60";
+  "h-10 w-full rounded-[10px] border bg-[#fff8f5] px-4 text-[13px] font-medium text-[#231a12] outline-none transition-colors duration-200 placeholder:text-[#bfad9f] placeholder:font-normal disabled:cursor-not-allowed disabled:opacity-60 sm:h-11 sm:text-[13.5px]";
 
 const normalStateClass =
   "border-[#ead9c9] hover:border-[#d8b997] focus:border-[#a85d00] focus:ring-2 focus:ring-[#a85d00]/12";
@@ -195,7 +195,7 @@ export function ContactForm() {
       noValidate
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
         <label className="block">
           <span className={labelClass}>
             Full Name <span className="text-[#a85d00]">*</span>

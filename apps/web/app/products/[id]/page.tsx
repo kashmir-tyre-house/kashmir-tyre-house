@@ -218,9 +218,9 @@ export default function ProductDetailsPage() {
     <main className={`${karla.className} bg-[#f9eee4] text-[#231a12]`}>
       <SiteHeader />
 
-      <section className="mx-auto min-h-screen max-w-7xl px-4 pb-24 pt-28 sm:px-6 lg:px-8">
+      <section className="mx-auto min-h-screen max-w-7xl px-4 pb-20 pt-24 sm:px-6 sm:pb-24 sm:pt-28 lg:px-8">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-[12px] font-semibold text-[#8b7a6c]">
+        <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-[11px] font-semibold text-[#8b7a6c] sm:mb-6 sm:text-[12px]">
           <Link className="transition-colors hover:text-[#231a12]" href="/">
             Home
           </Link>
@@ -235,7 +235,7 @@ export default function ProductDetailsPage() {
         <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-8">
           {/* ── Left: Image gallery ───────────────────────────── */}
           <div>
-            <div className="relative aspect-square w-[85%] overflow-hidden rounded-[20px] border border-[#ead9c9] bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)] shadow-[0_18px_46px_rgba(35,26,18,0.06)]">
+            <div className="relative aspect-square w-full overflow-hidden rounded-[20px] border border-[#ead9c9] bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)] shadow-[0_18px_46px_rgba(35,26,18,0.06)] lg:w-[85%]">
               {!imageLoaded ? (
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
                   <div className="w-32">
@@ -258,7 +258,7 @@ export default function ProductDetailsPage() {
             </div>
 
             {product.images.length > 1 ? (
-              <div className="mt-4 grid grid-cols-4 gap-3 sm:gap-4 w-[85%]">
+              <div className="mt-4 grid grid-cols-4 gap-3 sm:gap-4 w-full lg:w-[85%]">
                 {product.images.slice(0, 4).map((img, i) => {
                   const active = i === activeImageIndex;
                   return (
@@ -292,7 +292,10 @@ export default function ProductDetailsPage() {
           </div>
 
           {/* ── Right: Details ─────────────────────────────────── */}
-          <div className="flex flex-col">
+          {/* On small/tablet screens the details sit on a white card so they
+              don't blend into the cream page background; on desktop they revert
+              to the borderless side-by-side panel. */}
+          <div className="flex flex-col rounded-[18px] border border-[#ead9c9] bg-white p-5 shadow-[0_10px_32px_rgba(35,26,18,0.05)] sm:p-6 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
             {/* Brand */}
             <p className="text-[12px] font-bold uppercase tracking-[0.2em] text-[#c07000]">
               {product.brand?.name ?? "—"}
@@ -300,17 +303,17 @@ export default function ProductDetailsPage() {
 
             {/* Name */}
             <h1
-              className={`${inter.className} mt-2 text-[32px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12] sm:text-[40px] lg:text-[44px]`}
+              className={`${inter.className} mt-2 text-[clamp(1.75rem,6vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12]`}
             >
               {product.name}
             </h1>
 
             {/* Specifications */}
-            <div className="mt-8 border-t border-[#ead9c9] pt-6">
+            <div className="mt-6 border-t border-[#ead9c9] pt-5 sm:mt-8 sm:pt-6">
               <p className={`${raleway.className} text-[14px] font-bold uppercase tracking-[0.14em] text-[#231a12]`}>
                 Specifications
               </p>
-              <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:mt-5 sm:grid-cols-4 sm:gap-x-6 sm:gap-y-5">
                 <SpecCell label="Tyre Size" value={product.tyreSize} />
                 <SpecCell label="Vehicle Type" value={product.vehicleType} />
                 <SpecCell label="Category" value={product.category} />
@@ -325,11 +328,11 @@ export default function ProductDetailsPage() {
             </div>
 
             {/* Ratings */}
-            <div className="mt-8 border-t border-[#ead9c9] pt-6">
+            <div className="mt-6 border-t border-[#ead9c9] pt-5 sm:mt-8 sm:pt-6">
               <p className={`${raleway.className} text-[14px] font-bold uppercase tracking-[0.14em] text-[#231a12]`}>
                 Ratings
               </p>
-              <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:mt-5 sm:grid-cols-4 sm:gap-x-6 sm:gap-y-5">
                 <SpecCell label="Ply Rating" value={product.plyRating} />
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8a5100]/70">
@@ -348,7 +351,7 @@ export default function ProductDetailsPage() {
 
             {/* Description */}
             {product.description ? (
-              <div className="mt-8 border-t border-[#ead9c9] pt-6">
+              <div className="mt-6 border-t border-[#ead9c9] pt-5 sm:mt-8 sm:pt-6">
                 <p className={`${raleway.className} text-[14px] font-bold uppercase tracking-[0.14em] text-[#231a12]`}>
                   Product Description
                 </p>
@@ -360,7 +363,7 @@ export default function ProductDetailsPage() {
 
             {/* Tyre Features */}
             {product.tyreFeatures && product.tyreFeatures.length > 0 ? (
-              <div className="mt-8 border-t border-[#ead9c9] pt-6">
+              <div className="mt-6 border-t border-[#ead9c9] pt-5 sm:mt-8 sm:pt-6">
                 <p className={`${raleway.className} text-[14px] font-bold uppercase tracking-[0.14em] text-[#231a12]`}>
                   Key Features
                 </p>
@@ -378,7 +381,7 @@ export default function ProductDetailsPage() {
             ) : null}
 
             {/* CTA row */}
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-7 flex items-center gap-3 sm:mt-8">
               <button
                 className="group inline-flex h-12 flex-1 items-center justify-center gap-2.5 rounded-[14px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[14px] font-bold text-white shadow-[0_14px_34px_rgba(246,147,0,0.28)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_18px_40px_rgba(246,147,0,0.36)]"
                 onClick={handleEnquire}

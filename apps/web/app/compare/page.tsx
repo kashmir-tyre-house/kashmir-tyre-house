@@ -281,6 +281,58 @@ function LoadingHeaderCell() {
   );
 }
 
+// ─── Mobile (stacked) compare pieces ──────────────────────────────────────
+// Tiny product header for the sticky bar at the top of the mobile compare view.
+function MobileCompareHead({
+  product,
+  onRemove,
+}: {
+  product: ApiProduct;
+  onRemove: () => void;
+}) {
+  const primary = product.images.find((img) => img.isPrimaryImage) ?? product.images[0];
+  return (
+    <div className="relative flex flex-col items-center gap-1.5 text-center">
+      <button
+        aria-label={`Remove ${product.name} from compare`}
+        className="absolute -right-1.5 -top-1.5 z-10 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#ead9c9] bg-white text-[#8b7a6c] shadow-[0_2px_6px_rgba(35,26,18,0.12)] transition-colors duration-200 hover:border-[#a85d00] hover:text-[#a85d00]"
+        onClick={onRemove}
+        type="button"
+      >
+        <X aria-hidden="true" className="h-3 w-3" strokeWidth={2.5} />
+      </button>
+      <Link
+        aria-label={`View ${product.name} details`}
+        className="relative aspect-square w-full overflow-hidden rounded-[10px] border border-[#ead9c9]/70 bg-[radial-gradient(circle_at_50%_45%,rgba(246,147,0,0.10),transparent_42%),linear-gradient(180deg,#fff7ef_0%,#f0e0cf_100%)]"
+        href={`/products/${product.id}`}
+      >
+        <Image
+          alt={`${product.brand?.name ?? ""} ${product.name}`}
+          className="object-contain p-1.5"
+          fill
+          sizes="120px"
+          src={primary?.url ?? FALLBACK_IMAGE}
+        />
+      </Link>
+      <Link
+        className={`${inter.className} line-clamp-2 text-[11px] font-bold leading-[1.15] tracking-[-0.02em] text-[#231a12]`}
+        href={`/products/${product.id}`}
+      >
+        {product.name}
+      </Link>
+    </div>
+  );
+}
+
+function MobileLoadingHead() {
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="aspect-square w-full animate-pulse rounded-[10px] bg-[linear-gradient(110deg,#ead9c9_0%,#f3e4d4_45%,#ead9c9_100%)]" />
+      <div className="h-2.5 w-3/4 animate-pulse rounded bg-[#ead9c9]" />
+    </div>
+  );
+}
+
 export default function ComparePage() {
   const router = useRouter();
   const { compare, hydrated, remove, clear } = useCompare();
@@ -349,6 +401,18 @@ export default function ComparePage() {
   const loadedProducts: ApiProduct[] = slots
     .map((s) => (s.kind === "loaded" ? s.product : null))
     .filter((p): p is ApiProduct => p !== null);
+
+  // Mobile view compares only the slots that actually hold (or are loading) a
+  // product, so columns stretch to fill the screen instead of showing empties.
+  const activeSlots = slots.filter(
+    (s): s is Extract<Slot, { kind: "loaded" } | { kind: "loading" }> =>
+      s.kind !== "empty"
+  );
+  const mobileColCount = Math.max(activeSlots.length, 1);
+  const canAddMore = activeSlots.length < MAX_COMPARE;
+  const mobileGridStyle = {
+    gridTemplateColumns: `repeat(${mobileColCount}, minmax(0, 1fr))`,
+  };
 
   const hasAnyDescription = loadedProducts.some((p) => p.description);
   const hasAnyFeatures = loadedProducts.some(
@@ -424,10 +488,10 @@ export default function ComparePage() {
     return (
       <main className={`${karla.className} min-h-screen bg-[#f9eee4] text-[#231a12]`}>
         <SiteHeader />
-        <section className="mx-auto max-w-[1480px] px-4 pb-20 pt-32 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-[1480px] px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8">
           <div className="max-w-3xl">
             <h1
-              className={`${raleway.className} text-[38px] font-medium leading-[0.96] tracking-[-0.04em] text-[#231a12] sm:text-[52px] lg:text-[64px]`}
+              className={`${raleway.className} text-[clamp(2.125rem,7vw,4rem)] font-medium leading-[0.96] tracking-[-0.04em] text-[#231a12]`}
             >
               Compare tyres.
             </h1>
@@ -443,20 +507,20 @@ export default function ComparePage() {
     <main className={`${karla.className} min-h-screen bg-[#f9eee4] text-[#231a12]`}>
       <SiteHeader />
 
-      <section className="mx-auto max-w-[1480px] px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-[1480px] px-4 pb-20 pt-24 sm:px-6 sm:pb-24 sm:pt-32 lg:px-8">
         {/* ─── Page header ─────────────────────────────────────────── */}
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-5 sm:gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[#ead9c9] bg-white/70 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00] backdrop-blur-sm">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#f69300]" />
               Side-by-side
             </span>
             <h1
-              className={`${raleway.className} mt-4 text-[38px] font-medium leading-[0.96] tracking-[-0.04em] text-[#231a12] sm:text-[52px] lg:text-[64px]`}
+              className={`${raleway.className} mt-4 text-[clamp(2.125rem,7vw,4rem)] font-medium leading-[0.96] tracking-[-0.04em] text-[#231a12]`}
             >
               Compare tyres.
             </h1>
-            <p className="mt-4 max-w-2xl text-[14px] font-medium leading-[1.8] text-[#6f6258]">
+            <p className="mt-4 max-w-2xl text-[13.5px] font-medium leading-[1.75] text-[#6f6258] sm:text-[14px] sm:leading-[1.8]">
               Up to {MAX_COMPARE} products side-by-side. Differences are
               highlighted so you can spot what sets each tyre apart.
             </p>
@@ -485,8 +549,186 @@ export default function ComparePage() {
           </p>
         ) : null}
 
-        {/* ─── Comparison table card ──────────────────────────────── */}
-        <div className="mt-10 overflow-hidden rounded-[20px] border border-[#d8b997] bg-white shadow-[0_2px_0_rgba(255,255,255,0.6)_inset,0_24px_64px_-12px_rgba(35,26,18,0.18),0_8px_24px_-8px_rgba(35,26,18,0.10)] ring-1 ring-[#ead9c9]/30">
+        {/* ─── Mobile / tablet comparison (stacked, no horizontal scroll) ─── */}
+        <div className="mt-7 lg:hidden">
+          {/* Sticky product header — stays visible while scrolling specs */}
+          <div className="sticky top-20 z-20 rounded-[16px] border border-[#d8b997] bg-white/95 p-3 shadow-[0_8px_24px_rgba(35,26,18,0.10)] backdrop-blur-sm">
+            <div className="grid gap-2.5" style={mobileGridStyle}>
+              {activeSlots.map((slot, i) =>
+                slot.kind === "loaded" ? (
+                  <MobileCompareHead
+                    key={`mhead-${i}`}
+                    onRemove={() =>
+                      remove(
+                        getCompareKey({
+                          id: slot.product.id,
+                          productName: slot.product.name,
+                        })
+                      )
+                    }
+                    product={slot.product}
+                  />
+                ) : (
+                  <MobileLoadingHead key={`mhead-${i}`} />
+                )
+              )}
+            </div>
+          </div>
+
+          {canAddMore ? (
+            <Link
+              className="mt-2.5 flex items-center justify-center gap-1.5 rounded-[12px] border-2 border-dashed border-[#ead9c9] bg-[#fffbf7] py-2.5 text-[12px] font-bold text-[#a85d00] transition-colors duration-200 hover:border-[#a85d00] hover:bg-[#fff1e3]"
+              href="/products"
+            >
+              <Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />
+              Add another tyre
+            </Link>
+          ) : null}
+
+          {loadedProducts.length > 1 ? (
+            <p className="mt-3 flex items-center justify-end gap-2 text-[10px] font-semibold text-[#8b7a6c]">
+              <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#fff1e3] ring-1 ring-[#f8ab59]/40" />
+              Differs across products
+            </p>
+          ) : null}
+
+          {/* Spec sections */}
+          {SPEC_SECTIONS.map((section) => (
+            <div className="mt-4" key={`m-${section.title}`}>
+              <h3 className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00]">
+                {section.title}
+              </h3>
+              <div className="overflow-hidden rounded-[14px] border border-[#ead9c9] bg-white">
+                {section.fields.map((field) => {
+                  const values = activeSlots.map((s) =>
+                    s.kind === "loaded" ? field.pick(s.product) : null
+                  );
+                  const differs = isDifferentiator(values);
+                  return (
+                    <div
+                      className={`border-b border-[#ead9c9]/60 px-3 py-2.5 last:border-b-0 ${differs ? "bg-[#fff1e3]/60" : ""}`}
+                      key={`m-${field.label}`}
+                    >
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8a5100]/80">
+                        {field.label}
+                      </p>
+                      <div className="mt-1.5 grid gap-2.5" style={mobileGridStyle}>
+                        {activeSlots.map((slot, slotIdx) => {
+                          const v = values[slotIdx];
+                          return (
+                            <div
+                              className="text-[12px] font-semibold text-[#231a12]"
+                              key={`m-${field.label}-${slotIdx}`}
+                            >
+                              {slot.kind === "loaded" ? (
+                                field.render ? (
+                                  field.render(slot.product)
+                                ) : v && v.trim() !== "" ? (
+                                  v
+                                ) : (
+                                  <span className="text-[#c0ac9e]">—</span>
+                                )
+                              ) : (
+                                <Loader2
+                                  aria-hidden="true"
+                                  className="h-3 w-3 animate-spin text-[#c0ac9e]"
+                                  strokeWidth={2}
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {/* Description — stacked per product (long text doesn't fit columns) */}
+          {hasAnyDescription ? (
+            <div className="mt-4">
+              <h3 className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00]">
+                About
+              </h3>
+              <div className="space-y-2">
+                {activeSlots.map((slot, i) =>
+                  slot.kind === "loaded" && slot.product.description ? (
+                    <div
+                      className="rounded-[14px] border border-[#ead9c9] bg-white px-3 py-3"
+                      key={`m-desc-${i}`}
+                    >
+                      <p className="line-clamp-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#c07000]">
+                        {slot.product.name}
+                      </p>
+                      <p className="mt-1.5 text-[12.5px] leading-[1.7] text-[#6f6258]">
+                        {slot.product.description}
+                      </p>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Key Features — stacked per product */}
+          {hasAnyFeatures ? (
+            <div className="mt-4">
+              <h3 className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a85d00]">
+                Key Features
+              </h3>
+              <div className="space-y-2">
+                {activeSlots.map((slot, i) =>
+                  slot.kind === "loaded" && slot.product.tyreFeatures?.length ? (
+                    <div
+                      className="rounded-[14px] border border-[#ead9c9] bg-white px-3 py-3"
+                      key={`m-feat-${i}`}
+                    >
+                      <p className="line-clamp-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#c07000]">
+                        {slot.product.name}
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {slot.product.tyreFeatures.map((f) => (
+                          <span
+                            className="inline-flex items-center rounded-full border border-[#ead9c9] bg-[#fff8f5] px-2.5 py-1 text-[11px] font-semibold text-[#544434]"
+                            key={f}
+                          >
+                            {f}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Enquiry CTAs aligned to the product columns */}
+          {loadedProducts.length > 0 ? (
+            <div className="mt-5 grid gap-2.5" style={mobileGridStyle}>
+              {activeSlots.map((slot, i) =>
+                slot.kind === "loaded" ? (
+                  <button
+                    className="inline-flex h-10 items-center justify-center gap-1 rounded-[10px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-2 text-[11px] font-bold text-white shadow-[0_8px_20px_rgba(246,147,0,0.22)] transition-all duration-300 hover:brightness-110"
+                    key={`m-cta-${i}`}
+                    onClick={() => handleEnquire(slot.product)}
+                    type="button"
+                  >
+                    Enquire
+                    <ArrowRight aria-hidden="true" className="h-3 w-3" strokeWidth={2.5} />
+                  </button>
+                ) : (
+                  <div key={`m-cta-${i}`} />
+                )
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        {/* ─── Comparison table card (desktop) ────────────────────── */}
+        <div className="mt-8 hidden overflow-hidden rounded-[20px] border border-[#d8b997] bg-white shadow-[0_2px_0_rgba(255,255,255,0.6)_inset,0_24px_64px_-12px_rgba(35,26,18,0.18),0_8px_24px_-8px_rgba(35,26,18,0.10)] ring-1 ring-[#ead9c9]/30 sm:mt-10 lg:block">
           {/* Top accent stripe — gives the card a clear visual identity */}
           <div
             aria-hidden="true"

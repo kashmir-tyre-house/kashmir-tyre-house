@@ -218,30 +218,30 @@ export default function ProductsPage() {
     <main className="min-h-screen text-[#231a12]">
       <SiteHeader />
 
-      <section className="px-4 pb-20 pt-32 sm:px-6 lg:px-8 max-w-330 mx-auto">
+      <section className="px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8 max-w-330 mx-auto">
         <div className="mx-auto max-w-[1480px]">
           <div className="max-w-3xl">
             <h1
-              className={`${raleway.className} mt-6 text-[38px] font-medium leading-[0.96] tracking-[-0.04em] text-[#231a12] sm:text-[52px] lg:text-[64px]`}
+              className={`${raleway.className} text-[clamp(1.875rem,6vw,4rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[#231a12]`}
             >
               All Products.
             </h1>
 
-            <p className="mt-5 max-w-2xl text-[15px] font-medium leading-[1.8] text-[#6f6258]">
+            <p className="mt-3 max-w-2xl text-[13px] font-medium leading-[1.7] text-[#6f6258] sm:mt-5 sm:text-[15px] sm:leading-[1.8]">
               Browse the complete range. Filter by category or brand, or search
               by name and pattern to narrow down quickly.
             </p>
           </div>
 
           {/* Filter card */}
-          <div className="mt-10 overflow-hidden rounded-[18px] border border-[#ead9c9] bg-white shadow-[0_10px_32px_rgba(35,26,18,0.05)]">
+          <div className="mt-8 overflow-hidden rounded-[18px] border border-[#ead9c9] bg-white shadow-[0_10px_32px_rgba(35,26,18,0.05)] sm:mt-10">
             {/* Header strip */}
-            <div className="flex items-center justify-between gap-3 border-b border-[#ead9c9]/70 bg-[linear-gradient(180deg,#fff8f5_0%,#ffffff_100%)] px-5 py-3.5">
-              <div className="flex items-center gap-2.5">
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#fff1e3] text-[#a85d00]">
-                  <SlidersHorizontal aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.25} />
+            <div className="flex items-center justify-between gap-3 border-b border-[#ead9c9]/70 bg-[linear-gradient(180deg,#fff8f5_0%,#ffffff_100%)] px-4 py-3 sm:px-5 sm:py-3.5">
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-[8px] bg-[#fff1e3] text-[#a85d00] sm:h-7 sm:w-7">
+                  <SlidersHorizontal aria-hidden="true" className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={2.25} />
                 </span>
-                <span className="text-[13px] font-bold tracking-[-0.01em] text-[#231a12]">
+                <span className="text-[12.5px] font-bold tracking-[-0.01em] text-[#231a12] sm:text-[13px]">
                   Filters
                 </span>
                 {activeFilterCount > 0 ? (
@@ -264,8 +264,8 @@ export default function ProductsPage() {
             </div>
 
             {/* Field row */}
-            <div className="grid grid-cols-1 gap-4 px-5 py-4 md:grid-cols-[1fr_200px_240px]">
-              <div className="flex flex-col gap-1.5">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-3 px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4 md:grid-cols-[1fr_200px_240px]">
+              <div className="col-span-2 flex flex-col gap-1 sm:gap-1.5 md:col-span-1">
                 <label
                   className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b7a6c]"
                   htmlFor="product-search"
@@ -279,7 +279,7 @@ export default function ProductsPage() {
                     strokeWidth={2}
                   />
                   <input
-                    className="h-11 w-full rounded-[10px] border border-[#ead9c9] bg-[#fff8f5] pl-9 pr-3 text-[13px] font-medium text-[#231a12] outline-none transition-colors duration-200 placeholder:text-[#8b7a6c] hover:border-[#d8b997] focus:border-[#a85d00] focus:ring-2 focus:ring-[#a85d00]/15"
+                    className="h-10 w-full rounded-[10px] border border-[#ead9c9] bg-[#fff8f5] pl-9 pr-3 text-[12.5px] font-medium text-[#231a12] outline-none transition-colors duration-200 placeholder:text-[#8b7a6c] hover:border-[#d8b997] focus:border-[#a85d00] focus:ring-2 focus:ring-[#a85d00]/15 sm:h-11 sm:text-[13px]"
                     id="product-search"
                     onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Name or pattern…"
@@ -289,7 +289,7 @@ export default function ProductsPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1 sm:gap-1.5">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b7a6c]">
                   Category
                 </span>
@@ -311,7 +311,7 @@ export default function ProductsPage() {
                 </Select>
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1 sm:gap-1.5">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b7a6c]">
                   Brand
                 </span>
@@ -336,7 +336,7 @@ export default function ProductsPage() {
 
             {/* Footer: chips + result count */}
             {(hasActiveFilters || (!loading && !error)) ? (
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#ead9c9]/60 bg-[#fffbf7] px-5 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#ead9c9]/60 bg-[#fffbf7] px-4 py-3 sm:px-5">
                 <div className="flex flex-wrap items-center gap-1.5">
                   {search ? (
                     <FilterChip
@@ -371,9 +371,9 @@ export default function ProductsPage() {
           </div>
 
           {/* Results */}
-          <div className="relative mt-10 pb-15">
+          <div className="relative mt-8 pb-15 sm:mt-10">
             {loading ? (
-              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 justify-between">
+              <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                 {Array.from({ length: PAGE_SIZE }).map((_, index) => (
                   <ProductCardSkeleton
                     className="!min-w-0 !w-full !flex-auto !snap-none"
@@ -401,7 +401,7 @@ export default function ProductsPage() {
                 ) : null}
               </div>
             ) : (
-              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4 justify-between">
+              <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
                 {products.map((product, index) => (
                   <Reveal
                     className="h-full"
