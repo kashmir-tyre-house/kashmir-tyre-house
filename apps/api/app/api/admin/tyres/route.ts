@@ -11,6 +11,8 @@ export const runtime = "nodejs";
 const MAX_TYRE_IMAGES = 10;
 const MAX_IMAGE_SIZE  = 3 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_BROCHURE_SIZE = 2 * 1024 * 1024;
+const ALLOWED_BROCHURE_TYPES = ["application/pdf"];
 
 const VEHICLE_TYPES = [
   "Earthmover",
@@ -60,6 +62,10 @@ const createSchema = z.object({
 // ── GET /api/admin/tyres ──────────────────────────────────────────────────────
 
 export async function GET(request: Request) {
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
+
   try {
     const { searchParams } = new URL(request.url);
     const parsed = listQuerySchema.safeParse(Object.fromEntries(searchParams));
@@ -201,11 +207,37 @@ export async function POST(request: Request) {
       }
     }
 
+    const brochureForm = formData.get("brochure");
+    const brochureFile = brochureForm instanceof File && brochureForm.size > 0 ? brochureForm : null;
+    if (brochureFile) {
+      if (!ALLOWED_BROCHURE_TYPES.includes(brochureFile.type)) {
+        return NextResponse.json(
+          { ok: false, message: "Brochure must be a PDF file." },
+          { status: 422 }
+        );
+      }
+      if (brochureFile.size > MAX_BROCHURE_SIZE) {
+        return NextResponse.json(
+          { ok: false, message: "Brochure is too large. Maximum 2 MB." },
+          { status: 422 }
+        );
+      }
+    }
+
     const db = getDb();
     const [created] = await db
       .insert(tyreProducts)
       .values(parsed.data)
       .returning();
+
+    if (brochureFile) {
+      const key = `tyres/${created.id}/brochure-${Date.now()}.pdf`;
+      await uploadToR2(Buffer.from(await brochureFile.arrayBuffer()), key, "application/pdf");
+      await db
+        .update(tyreProducts)
+        .set({ brochureUrl: key, brochureName: brochureFile.name.slice(0, 200) })
+        .where(eq(tyreProducts.id, created.id));
+    }
 
     if (imageFiles.length > 0) {
       const imageRows = await Promise.all(

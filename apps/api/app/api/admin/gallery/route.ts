@@ -13,7 +13,11 @@ const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // ── GET /api/admin/gallery ────────────────────────────────────────────────────
 
-export async function GET() {
+export async function GET(request: Request) {
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
+
   try {
     const db = getDb();
     const rows = await db

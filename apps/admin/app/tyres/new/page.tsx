@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Check,
   ChevronDown,
+  FileText,
   ImagePlus,
   Loader2,
   Plus,
@@ -28,6 +29,7 @@ const VEHICLE_TYPES = [
   "Industrial",
 ] as const;
 const MAX_IMAGES = 10;
+const MAX_BROCHURE_SIZE = 2 * 1024 * 1024;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -67,6 +69,8 @@ export default function NewTyrePage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandsLoading, setBrandsLoading] = useState(true);
   const [images, setImages] = useState<ImageEntry[]>([]);
+  const [brochure, setBrochure] = useState<File | null>(null);
+  const brochureInputRef = useRef<HTMLInputElement>(null);
   const [featureDraft, setFeatureDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -133,6 +137,22 @@ export default function NewTyrePage() {
     });
   }
 
+  function handleBrochureChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      setSaveError("Brochure must be a PDF file.");
+      return;
+    }
+    if (file.size > MAX_BROCHURE_SIZE) {
+      setSaveError("Brochure is too large. Maximum 2 MB.");
+      return;
+    }
+    setSaveError(null);
+    setBrochure(file);
+  }
+
   function setPrimary(id: string) {
     setImages((prev) =>
       prev.map((img) => ({ ...img, isPrimary: img.id === id })),
@@ -192,6 +212,7 @@ export default function NewTyrePage() {
       const primaryIdx = Math.max(0, images.findIndex((img) => img.isPrimary));
       fd.append("primaryIndex", String(primaryIdx));
       images.forEach((img, i) => fd.append(`image_${i}`, img.file));
+      if (brochure) fd.append("brochure", brochure);
 
       const res = await fetch("/api/tyres", { method: "POST", body: fd });
       const data = await res.json();
@@ -589,6 +610,57 @@ export default function NewTyrePage() {
               <p className="text-[11px] text-[var(--muted-foreground)]">
                 The <strong>primary</strong> image is shown as the hero on
                 product pages. Hover any image to change it.
+              </p>
+            </div>
+          </Card>
+
+          {/* Brochure */}
+          <Card title="Brochure">
+            <div className="flex flex-col gap-3">
+              {brochure ? (
+                <div className="flex items-center gap-3 rounded-lg border border-(--border) bg-slate-50 p-3">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground)">
+                    <FileText className="size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[12.5px] font-medium text-(--foreground)">
+                      {brochure.name}
+                    </p>
+                    <p className="text-[11px] text-(--muted-foreground)">
+                      {(brochure.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                  <button
+                    aria-label="Remove brochure"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-lg text-(--muted-foreground) transition hover:bg-slate-200 hover:text-(--foreground)"
+                    onClick={() => setBrochure(null)}
+                    type="button"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-(--border) py-6 text-(--muted-foreground) transition hover:border-slate-400 hover:bg-slate-50"
+                    onClick={() => brochureInputRef.current?.click()}
+                    type="button"
+                  >
+                    <FileText className="size-6 opacity-50" />
+                    <span className="text-[12px] font-medium">Click to upload PDF</span>
+                    <span className="text-[11px] opacity-60">PDF — max 2 MB</span>
+                  </button>
+                  <input
+                    ref={brochureInputRef}
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={handleBrochureChange}
+                    type="file"
+                  />
+                </>
+              )}
+              <p className="text-[11px] text-(--muted-foreground)">
+                Optional. Shown as a download button on the product page.
               </p>
             </div>
           </Card>

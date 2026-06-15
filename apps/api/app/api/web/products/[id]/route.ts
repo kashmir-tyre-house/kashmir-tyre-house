@@ -2,7 +2,7 @@ import { brands, getDb, tyreImages, tyreProducts } from "@kth/db";
 import { and, asc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-import { presignedUrl } from "../../../../../lib/r2";
+import { presignedDownloadUrl, presignedUrl } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
 
@@ -49,6 +49,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         treadDepth:   tyreProducts.treadDepth,
         loadIndex:    tyreProducts.loadIndex,
         tyreFeatures: tyreProducts.tyreFeatures,
+        brochureUrl:  tyreProducts.brochureUrl,
+        brochureName: tyreProducts.brochureName,
         createdAt:    tyreProducts.createdAt,
         brand: {
           id:      brands.id,
@@ -83,8 +85,16 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       }))
     );
 
+    const { brochureUrl, brochureName, ...rest } = row;
+    const brochure = brochureUrl
+      ? {
+          name: brochureName ?? "brochure.pdf",
+          url:  await presignedDownloadUrl(brochureUrl, brochureName ?? "brochure.pdf", 3600),
+        }
+      : null;
+
     return NextResponse.json(
-      { ok: true, data: { ...row, images } },
+      { ok: true, data: { ...rest, images, brochure } },
       { headers: CORS_HEADERS }
     );
   } catch (error) {

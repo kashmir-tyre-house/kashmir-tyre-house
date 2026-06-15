@@ -5,6 +5,8 @@ import {
   ArrowLeft,
   Check,
   ChevronDown,
+  Download,
+  FileText,
   ImagePlus,
   Loader2,
   Plus,
@@ -30,6 +32,9 @@ const VEHICLE_TYPES = [
   "Industrial",
 ] as const;
 const MAX_IMAGES = 10;
+const MAX_BROCHURE_SIZE = 2 * 1024 * 1024;
+
+type ExistingBrochure = { name: string; url: string };
 
 type ImageEntry = {
   id: string;
@@ -97,6 +102,10 @@ export default function EditTyrePage() {
   const [images, setImages] = useState<ImageEntry[]>([]);
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
   const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
+  const [existingBrochure, setExistingBrochure] = useState<ExistingBrochure | null>(null);
+  const [brochureFile, setBrochureFile] = useState<File | null>(null);
+  const [brochureRemoved, setBrochureRemoved] = useState(false);
+  const brochureInputRef = useRef<HTMLInputElement>(null);
   const [featureDraft, setFeatureDraft] = useState("");
 
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -134,6 +143,7 @@ export default function EditTyrePage() {
         const p = data.data;
         setProductName(p.name);
         setExistingImages(p.images ?? []);
+        setExistingBrochure(p.brochure ?? null);
         setForm({
           name:         p.name ?? "",
           brandId:      p.brand?.id ?? "",
@@ -193,6 +203,22 @@ export default function EditTyrePage() {
   function removeExistingImage(imageId: string) {
     setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
     setRemovedImageIds((prev) => [...prev, imageId]);
+  }
+
+  function handleBrochureChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      setSaveError("Brochure must be a PDF file.");
+      return;
+    }
+    if (file.size > MAX_BROCHURE_SIZE) {
+      setSaveError("Brochure is too large. Maximum 2 MB.");
+      return;
+    }
+    setSaveError(null);
+    setBrochureFile(file);
   }
 
   async function setExistingPrimary(imageId: string) {
@@ -308,6 +334,21 @@ export default function EditTyrePage() {
           setSaveError(imgData.message ?? "Failed to upload images.");
           return;
         }
+      }
+
+      // Brochure: a new file replaces (and deletes) any existing one; removing
+      // an existing brochure without a replacement deletes it.
+      if (brochureFile) {
+        const bfd = new FormData();
+        bfd.append("brochure", brochureFile);
+        const bRes = await fetch(`/api/tyres/${id}/brochure`, { method: "POST", body: bfd });
+        const bData = await bRes.json().catch(() => null);
+        if (!bRes.ok || !bData?.ok) {
+          setSaveError(bData?.message ?? "Failed to upload brochure.");
+          return;
+        }
+      } else if (brochureRemoved && existingBrochure) {
+        await fetch(`/api/tyres/${id}/brochure`, { method: "DELETE" });
       }
 
       router.push("/tyres");
@@ -751,6 +792,87 @@ export default function EditTyrePage() {
 
               <p className="text-[11px] text-(--muted-foreground)">
                 The <strong>primary</strong> image is shown as the hero on product pages. Hover any image to change it.
+              </p>
+            </div>
+          </Card>
+
+          {/* Brochure */}
+          <Card title="Brochure">
+            <div className="flex flex-col gap-3">
+              {brochureFile ? (
+                <div className="flex items-center gap-3 rounded-lg border border-(--border) bg-slate-50 p-3">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground)">
+                    <FileText className="size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[12.5px] font-medium text-(--foreground)">
+                      {brochureFile.name}
+                    </p>
+                    <p className="text-[11px] text-(--muted-foreground)">
+                      {(brochureFile.size / 1024 / 1024).toFixed(2)} MB · replaces current
+                    </p>
+                  </div>
+                  <button
+                    aria-label="Remove selected brochure"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-lg text-(--muted-foreground) transition hover:bg-slate-200 hover:text-(--foreground)"
+                    onClick={() => setBrochureFile(null)}
+                    type="button"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              ) : existingBrochure && !brochureRemoved ? (
+                <div className="flex items-center gap-3 rounded-lg border border-(--border) bg-slate-50 p-3">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-(--border) bg-white text-(--muted-foreground)">
+                    <FileText className="size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[12.5px] font-medium text-(--foreground)">
+                      {existingBrochure.name}
+                    </p>
+                    <a
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-(--muted-foreground) transition hover:text-(--foreground)"
+                      href={existingBrochure.url}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <Download className="size-3" />
+                      Download
+                    </a>
+                  </div>
+                  <button
+                    aria-label="Remove brochure"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-lg text-(--muted-foreground) transition hover:bg-slate-200 hover:text-red-600"
+                    disabled={fetchLoading}
+                    onClick={() => setBrochureRemoved(true)}
+                    type="button"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-(--border) py-6 text-(--muted-foreground) transition hover:border-slate-400 hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-50"
+                    disabled={fetchLoading}
+                    onClick={() => brochureInputRef.current?.click()}
+                    type="button"
+                  >
+                    <FileText className="size-6 opacity-50" />
+                    <span className="text-[12px] font-medium">Click to upload PDF</span>
+                    <span className="text-[11px] opacity-60">PDF — max 2 MB</span>
+                  </button>
+                  <input
+                    ref={brochureInputRef}
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={handleBrochureChange}
+                    type="file"
+                  />
+                </>
+              )}
+              <p className="text-[11px] text-(--muted-foreground)">
+                Optional. Shown as a download button on the product page.
               </p>
             </div>
           </Card>
