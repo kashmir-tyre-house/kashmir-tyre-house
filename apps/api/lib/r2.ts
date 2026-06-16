@@ -41,6 +41,31 @@ export async function presignedUrl(key: string, expiresIn = 3600): Promise<strin
   );
 }
 
+// Presigned URL that prompts a download with the given filename (via
+// Content-Disposition), used for product brochures.
+export async function presignedDownloadUrl(
+  key: string,
+  filename?: string,
+  expiresIn = 3600
+): Promise<string> {
+  const bucket = process.env.R2_BUCKET_NAME;
+  if (!bucket) throw new Error("R2_BUCKET_NAME is not configured.");
+
+  const safeName = (filename ?? "brochure.pdf").replace(/["\r\n]/g, "");
+
+  const client = getR2Client();
+  return getSignedUrl(
+    client,
+    new GetObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ResponseContentDisposition: `attachment; filename="${safeName}"`,
+      ResponseContentType: "application/pdf",
+    }),
+    { expiresIn }
+  );
+}
+
 export async function deleteFromR2(key: string): Promise<void> {
   const bucket = process.env.R2_BUCKET_NAME;
   if (!bucket) throw new Error("R2_BUCKET_NAME is not configured.");

@@ -1,7 +1,7 @@
 "use client";
 
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { ArrowRight, Bookmark, ChevronLeft, Loader2, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Bookmark, ChevronLeft, Download, Loader2, ShieldCheck, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -58,6 +58,7 @@ type ApiProduct = {
   createdAt: string;
   brand: { id: string; name: string; logoUrl: string | null } | null;
   images: Array<{ id: string; url: string; imageType: "hero" | "gallery"; isPrimaryImage: boolean }>;
+  brochure: { name: string; url: string } | null;
 };
 
 type ApiResponse = { ok: true; data: ApiProduct } | { ok: false; message: string };
@@ -378,7 +379,7 @@ export default function ProductDetailsPage() {
             ) : null}
 
             {/* CTA row */}
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-7 flex items-center gap-2.5 sm:mt-8 sm:gap-3">
               <button
                 className="group inline-flex h-12 flex-1 items-center justify-center gap-2.5 rounded-[14px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[14px] font-bold text-white shadow-[0_14px_34px_rgba(246,147,0,0.28)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_18px_40px_rgba(246,147,0,0.36)]"
                 onClick={handleEnquire}
@@ -387,6 +388,24 @@ export default function ProductDetailsPage() {
                 Add to Enquiry
                 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2.5} />
               </button>
+
+              {/* Brochure download — only when a brochure has been uploaded.
+                  Icon-only on mobile to keep the row compact; labelled on ≥sm. */}
+              {product.brochure ? (
+                <a
+                  aria-label="Download brochure (PDF)"
+                  className="group inline-flex h-12 w-12 shrink-0 items-center justify-center gap-2 rounded-[14px] border border-[#ead9c9] bg-white px-0 text-[13px] font-bold text-[#231a12] shadow-[0_8px_20px_rgba(35,26,18,0.05)] transition-colors duration-300 hover:border-[#a85d00] hover:bg-[#fff1e3] hover:text-[#a85d00] sm:w-auto sm:px-5"
+                  download
+                  href={product.brochure.url}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  title="Download brochure (PDF)"
+                >
+                  <Download aria-hidden="true" className="h-4 w-4" strokeWidth={2.25} />
+                  <span className="hidden sm:inline">Brochure</span>
+                </a>
+              ) : null}
+
               <button
                 aria-label={saved ? "Remove from saved" : "Save"}
                 aria-pressed={saved}
