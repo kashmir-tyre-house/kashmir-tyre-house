@@ -72,6 +72,8 @@ export const tyreProducts = pgTable(
     rim: varchar("rim", { length: 80 }),
     treadDepth: varchar("tread_depth", { length: 80 }),
     tyreFeatures: jsonb("tyre_features").$type<string[]>().default([]).notNull(),
+    brochureUrl: text("brochure_url"),
+    brochureName: varchar("brochure_name", { length: 200 }),
     isActive: boolean("is_active").default(true).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()

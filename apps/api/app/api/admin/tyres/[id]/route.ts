@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getAdminRole, requireAdmin } from "../../../../../lib/auth";
-import { presignedUrl } from "../../../../../lib/r2";
+import { presignedDownloadUrl, presignedUrl } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
 
@@ -45,7 +45,11 @@ function notFound() {
 
 // ── GET /api/admin/tyres/[id] ─────────────────────────────────────────────────
 
-export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const role = await getAdminRole(request);
+  const forbidden = requireAdmin(role);
+  if (forbidden) return forbidden;
+
   try {
     const { id } = await params;
     const db = getDb();
@@ -68,6 +72,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         rim:          tyreProducts.rim,
         treadDepth:   tyreProducts.treadDepth,
         tyreFeatures: tyreProducts.tyreFeatures,
+        brochureUrl:  tyreProducts.brochureUrl,
+        brochureName: tyreProducts.brochureName,
         isActive:     tyreProducts.isActive,
         createdAt:    tyreProducts.createdAt,
         updatedAt:    tyreProducts.updatedAt,
@@ -104,7 +110,15 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       }))
     );
 
-    return NextResponse.json({ ok: true, data: { ...row, images } });
+    const { brochureUrl, brochureName, ...rest } = row;
+    const brochure = brochureUrl
+      ? {
+          name: brochureName ?? "brochure.pdf",
+          url:  await presignedDownloadUrl(brochureUrl, brochureName ?? "brochure.pdf", 3600),
+        }
+      : null;
+
+    return NextResponse.json({ ok: true, data: { ...rest, images, brochure } });
   } catch (error) {
     console.error("[tyres] GET detail failed", error);
     return NextResponse.json(
