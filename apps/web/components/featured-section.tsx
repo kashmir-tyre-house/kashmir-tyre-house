@@ -149,7 +149,7 @@ export function FeaturedSection() {
       <div className="mx-auto mt-8 max-w-330 sm:mt-10">
         <div className="relative pb-15">
           {isInitialLoad ? (
-            <div className="grid justify-items-center gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid justify-center gap-5 grid-cols-[minmax(0,372px)] md:grid-cols-[repeat(2,minmax(0,372px))] xl:grid-cols-[repeat(4,minmax(0,372px))]">
               {Array.from({ length: PAGE_SIZE }).map((_, index) => (
                 <ProductCardSkeleton
                   className="!min-w-0 !w-full !flex-auto !snap-none"
@@ -166,7 +166,7 @@ export function FeaturedSection() {
               No products available yet.
             </div>
           ) : (
-            <div className="grid justify-items-center gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid justify-center gap-5 grid-cols-[minmax(0,352px)] md:grid-cols-[repeat(2,minmax(0,352px))] xl:grid-cols-[repeat(4,minmax(0,352px))]">
               {products.map((product, index) => (
                 <Reveal
                   className="h-full"
