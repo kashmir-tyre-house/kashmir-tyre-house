@@ -28,6 +28,11 @@ type ProductCardProps = {
 
 type BadgeTheme = "light" | "dark";
 
+/** Truncate a value to `max` characters, appending an ellipsis when longer. */
+function truncate(value: string, max = 13): string {
+  return value.length > max ? `${value.slice(0, max)}…` : value;
+}
+
 /** Sample the average brightness of a small region at the bottom-left of the image */
 function sampleRegionBrightness(
   img: HTMLImageElement,
@@ -212,20 +217,29 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
         <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3">
           <div>
             <p className="text-[10px] font-semibold text-[#8b7a6c]">Tyre Size</p>
-            <p className="mt-1 whitespace-nowrap text-[13px] font-bold leading-tight text-[#231a12]">
-              {product.primarySize}
+            <p
+              className="mt-1 whitespace-nowrap text-[13px] font-bold leading-tight text-[#231a12]"
+              title={product.primarySize}
+            >
+              {truncate(product.primarySize)}
             </p>
           </div>
           <div>
             <p className="text-[10px] font-semibold text-[#8b7a6c]">Vehicle Type</p>
-            <p className="mt-1 whitespace-nowrap text-[13px] font-semibold leading-tight text-[#231a12]">
-              {product.vehicleType}
+            <p
+              className="mt-1 whitespace-nowrap text-[13px] font-semibold leading-tight text-[#231a12]"
+              title={product.vehicleType}
+            >
+              {truncate(product.vehicleType)}
             </p>
           </div>
           <div>
             <p className="text-[10px] font-semibold text-[#8b7a6c]">Load Index</p>
-            <p className="mt-1 whitespace-nowrap text-[13px] font-bold leading-tight text-[#231a12]">
-              {product.loadIndex}
+            <p
+              className="mt-1 whitespace-nowrap text-[13px] font-bold leading-tight text-[#231a12]"
+              title={product.loadIndex}
+            >
+              {truncate(product.loadIndex)}
             </p>
           </div>
           <div>
