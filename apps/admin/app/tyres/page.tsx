@@ -231,9 +231,9 @@ export default function TyresPage() {
                 <SortTh label="Name" sortKey="name" current={sortKey} dir={sortDir} onSort={handleSort} className="min-w-50" />
                 <PlainTh className="w-36 min-w-36">Brand</PlainTh>
                 <SortTh label="Category" sortKey="category" current={sortKey} dir={sortDir} onSort={handleSort} className="w-28 min-w-28" />
-                <SortTh label="Tyre Size" sortKey="tyreSize" current={sortKey} dir={sortDir} onSort={handleSort} className="w-36 min-w-36" />
+                <SortTh label="Tyre Size" sortKey="tyreSize" current={sortKey} dir={sortDir} onSort={handleSort} className="w-48 min-w-48" />
                 <PlainTh className="w-28 min-w-28">Pattern</PlainTh>
-                <PlainTh className="w-32 min-w-32">Load Index</PlainTh>
+                <PlainTh className="w-48 min-w-48">Load Index</PlainTh>
                 <PlainTh className="w-56 min-w-56">Vehicle Type</PlainTh>
                 <SortTh label="Application" sortKey="application" current={sortKey} dir={sortDir} onSort={handleSort} className="w-36 min-w-36" />
                 <PlainTh className="w-32 min-w-32">Weight (kg)</PlainTh>

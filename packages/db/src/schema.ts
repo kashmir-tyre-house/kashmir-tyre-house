@@ -153,9 +153,11 @@ export const enquiryItems = pgTable(
     enquiryId: uuid("enquiry_id")
       .references(() => enquiries.id, { onDelete: "cascade" })
       .notNull(),
-    tyreProductId: uuid("tyre_product_id")
-      .references(() => tyreProducts.id, { onDelete: "restrict" })
-      .notNull(),
+    // Nullable + SET NULL: deleting a tyre product keeps the enquiry (lead)
+    // and its line items intact, just clearing the product reference.
+    tyreProductId: uuid("tyre_product_id").references(() => tyreProducts.id, {
+      onDelete: "set null"
+    }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull()
