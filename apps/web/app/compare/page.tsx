@@ -59,8 +59,8 @@ type ApiProduct = {
   images: Array<{ id: string; url: string; isPrimaryImage: boolean }>;
 };
 
-type ApiResponse =
-  | { ok: true; data: ApiProduct }
+type BatchResponse =
+  | { ok: true; data: ApiProduct[] }
   | { ok: false; message: string };
 
 type Slot =
@@ -285,7 +285,9 @@ export default function ComparePage() {
   const router = useRouter();
   const { compare, hydrated, remove, clear } = useCompare();
 
-  const [cache, setCache] = useState<Record<string, ApiProduct>>({});
+  // Maps id → product, or the "missing" sentinel for ids that are
+  // inactive/deleted (so we don't refetch them or spin forever).
+  const [cache, setCache] = useState<Record<string, ApiProduct | "missing">>({});
   const [error, setError] = useState<string | null>(null);
   const inFlightIds = useRef<Set<string>>(new Set());
 
@@ -297,7 +299,7 @@ export default function ComparePage() {
   useEffect(() => {
     if (!hydrated) return;
     const missing = compareIds.filter(
-      (id) => !cache[id] && !inFlightIds.current.has(id)
+      (id) => cache[id] === undefined && !inFlightIds.current.has(id)
     );
     if (missing.length === 0) return;
 
@@ -306,20 +308,21 @@ export default function ComparePage() {
 
     (async () => {
       try {
-        const results = await Promise.all(
-          missing.map(async (id) => {
-            const res = await fetch(`${API_BASE}/api/web/products/${id}`);
-            const json = (await res.json()) as ApiResponse;
-            if (!res.ok || !json.ok) {
-              throw new Error(("message" in json && json.message) || "Failed to load.");
-            }
-            return [id, json.data] as const;
-          })
-        );
+        const res = await fetch(`${API_BASE}/api/web/products/batch`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: missing }),
+        });
+        const json = (await res.json()) as BatchResponse;
+        if (!res.ok || !json.ok) {
+          throw new Error(("message" in json && json.message) || "Failed to load.");
+        }
         if (cancelled) return;
+        const found = new Map(json.data.map((p) => [p.id, p]));
         setCache((prev) => {
           const next = { ...prev };
-          for (const [id, data] of results) next[id] = data;
+          // Cache found products; flag the rest as "missing" so we don't refetch.
+          for (const id of missing) next[id] = found.get(id) ?? "missing";
           return next;
         });
       } catch (e) {
@@ -338,8 +341,9 @@ export default function ComparePage() {
   const slots: Slot[] = useMemo(() => {
     const result: Slot[] = compare.map<Slot>((p) => {
       if (!p.id) return { kind: "empty" };
-      const loaded = cache[p.id];
-      if (loaded) return { kind: "loaded", product: loaded };
+      const entry = cache[p.id];
+      if (entry === "missing") return { kind: "empty" };
+      if (entry) return { kind: "loaded", product: entry };
       return { kind: "loading", id: p.id };
     });
     while (result.length < MAX_COMPARE) result.push({ kind: "empty" });
