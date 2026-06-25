@@ -1,8 +1,8 @@
 "use client";
 
-import { ArrowBigDown, Loader2, Search, SlidersHorizontal, X } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal, X } from "lucide-react";
 import { Raleway } from "next/font/google";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Select,
@@ -186,7 +186,7 @@ export default function ProductsPage() {
     ? brands.find((b) => b.id === brandId)?.name ?? null
     : null;
 
-  const loadMore = async () => {
+  const loadMore = useCallback(async () => {
     if (loadingMore || loading || !hasMore) return;
     const next = page + 1;
     setLoadingMore(true);
@@ -206,7 +206,23 @@ export default function ProductsPage() {
     } finally {
       setLoadingMore(false);
     }
-  };
+  }, [loadingMore, loading, hasMore, page, queryFor]);
+
+  // Infinite scroll: load the next page when the sentinel nears the viewport.
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: "400px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore]);
 
   const clearFilters = () => {
     setSearchInput("");
@@ -421,34 +437,18 @@ export default function ProductsPage() {
 
             {products.length > 0 && hasMore ? (
               <>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-32 bg-[linear-gradient(180deg,rgba(249,238,228,0)_0%,rgba(249,238,228,0.64)_38%,rgba(249,238,228,0.9)_68%,#f9eee4_100%)]" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-7 z-10 flex justify-center">
-                  <div className="h-16 w-64 rounded-full bg-[radial-gradient(circle,rgba(246,147,0,0.18)_0%,rgba(246,147,0,0.08)_42%,transparent_72%)] blur-2xl" />
-                </div>
+                {/* Sentinel: triggers the next page as it nears the viewport. */}
+                <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
 
-                <div className="absolute inset-x-0 bottom-5 z-20 flex justify-center transition-transform hover:translate-y-0.5">
-                  <button
-                    aria-label="Load more products"
-                    className="w-12 disabled:opacity-50"
-                    disabled={loadingMore}
-                    onClick={loadMore}
-                    type="button"
-                  >
-                    {loadingMore ? (
-                      <Loader2
-                        aria-hidden="true"
-                        className="mx-auto h-4 w-4 animate-spin"
-                        strokeWidth={2}
-                      />
-                    ) : (
-                      <ArrowBigDown
-                        aria-hidden="true"
-                        className="mx-auto h-4 w-4"
-                        strokeWidth={2}
-                      />
-                    )}
-                  </button>
-                </div>
+                {loadingMore ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2
+                      aria-label="Loading more products"
+                      className="h-5 w-5 animate-spin text-[#a85d00]"
+                      strokeWidth={2}
+                    />
+                  </div>
+                ) : null}
               </>
             ) : null}
           </div>
