@@ -68,6 +68,7 @@ function mapApiToProduct(p: ApiProduct): CardProduct {
     vehicleType: p.vehicleType ?? "—",
     loadIndex: p.loadIndex ?? "—",
     plyRating: p.plyRating ?? "—",
+    pattern: p.pattern ?? "—",
     starRating: p.starRating ? Number.parseFloat(p.starRating) || 0 : 0,
     image: p.primaryImageUrl ?? FALLBACK_IMAGE,
     isBookmarked: false,

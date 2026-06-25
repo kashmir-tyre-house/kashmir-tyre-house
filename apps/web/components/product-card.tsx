@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Button } from "@kth/ui";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { Bookmark, Check, Plus } from "lucide-react";
+import { Bookmark, Check, Plus, Star } from "lucide-react";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useCallback } from "react";
@@ -225,27 +225,44 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
             </p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-[#8b7a6c]">Vehicle Type</p>
-            <p
-              className="mt-1 whitespace-nowrap text-[13px] font-semibold leading-tight text-[#231a12]"
-              title={product.vehicleType}
-            >
-              {truncate(product.vehicleType)}
-            </p>
+            <p className="text-[10px] font-semibold text-[#8b7a6c]">Star Rating</p>
+            {product.starRating > 0 ? (
+              <div
+                aria-label={`${Math.round(product.starRating)} out of 5 stars`}
+                className="mt-1 flex items-center gap-0.5"
+                title={`${product.starRating}`}
+              >
+                {Array.from({ length: Math.round(product.starRating) }).map((_, i) => (
+                  <Star
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 fill-[#f69300] text-[#f69300]"
+                    key={i}
+                    strokeWidth={2}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="mt-1 whitespace-nowrap text-[13px] font-bold leading-tight text-[#231a12]">
+                —
+              </p>
+            )}
           </div>
           <div>
             <p className="text-[10px] font-semibold text-[#8b7a6c]">Load Index</p>
             <p
               className="mt-1 whitespace-nowrap text-[13px] font-bold leading-tight text-[#231a12]"
-              title={product.loadIndex}
+              title={product.loadIndex?.trim() ? product.loadIndex : "—"}
             >
-              {truncate(product.loadIndex)}
+              {product.loadIndex?.trim() ? truncate(product.loadIndex) : "—"}
             </p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-[#8b7a6c]">Ply Rating</p>
-            <p className="mt-1 whitespace-nowrap text-[13px] font-semibold leading-tight text-[#231a12]">
-              {product.plyRating}
+            <p className="text-[10px] font-semibold text-[#8b7a6c]">Pattern</p>
+            <p
+              className="mt-1 whitespace-nowrap text-[13px] font-semibold leading-tight text-[#231a12]"
+              title={product.pattern ?? "—"}
+            >
+              {product.pattern ? truncate(product.pattern) : "—"}
             </p>
           </div>
         </div>
