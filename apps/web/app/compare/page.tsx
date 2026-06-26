@@ -285,11 +285,11 @@ function LoadingHeaderCell() {
 
 export default function ComparePage() {
   const router = useRouter();
-  const { compare, hydrated, remove, clear } = useCompare();
+  const { compare, hydrated, remove, removeMany, clear } = useCompare();
 
-  // Maps id → product, or the "missing" sentinel for ids that are
-  // inactive/deleted (so we don't refetch them or spin forever).
-  const [cache, setCache] = useState<Record<string, ApiProduct | "missing">>({});
+  // Maps id → product. Ids that the API doesn't return (deleted/inactive) are
+  // pruned from storage instead of being kept around.
+  const [cache, setCache] = useState<Record<string, ApiProduct>>({});
   const [error, setError] = useState<string | null>(null);
   const inFlightIds = useRef<Set<string>>(new Set());
 
@@ -323,10 +323,13 @@ export default function ComparePage() {
         const found = new Map(json.data.map((p) => [p.id, p]));
         setCache((prev) => {
           const next = { ...prev };
-          // Cache found products; flag the rest as "missing" so we don't refetch.
-          for (const id of missing) next[id] = found.get(id) ?? "missing";
+          for (const [id, product] of found) next[id] = product;
           return next;
         });
+        // Ids the API didn't return are deleted/inactive — drop them from
+        // localStorage so they stop showing up entirely.
+        const notFound = missing.filter((id) => !found.has(id));
+        if (notFound.length > 0) removeMany(notFound);
       } catch (e) {
         if (cancelled) return;
         setError(e instanceof Error ? e.message : "Failed to load compare products.");
@@ -338,7 +341,7 @@ export default function ComparePage() {
     return () => {
       cancelled = true;
     };
-  }, [hydrated, compareIds, cache]);
+  }, [hydrated, compareIds, cache, removeMany]);
 
   const slots: Slot[] = useMemo(() => {
     // Build real (loaded/loading) columns first so empty "Add a tyre" columns
@@ -348,7 +351,6 @@ export default function ComparePage() {
     for (const id of compare) {
       if (!UUID_RE.test(id)) continue;
       const entry = cache[id];
-      if (entry === "missing") continue;
       if (entry) filled.push({ kind: "loaded", product: entry });
       else filled.push({ kind: "loading", id });
     }
