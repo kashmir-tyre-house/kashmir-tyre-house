@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { Raleway } from "next/font/google";
 
 import { BlurText } from "./blur-text";
 import { Reveal } from "./reveal";
+import { LogoCloud } from "./ui/logo-cloud";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -12,87 +12,55 @@ const raleway = Raleway({
 });
 
 const customers = [
-  { name: "JSW Group", logo: "/images/customer-logo-images/JSW_Group_logo.svg.png" },
-  { name: "Jindal Steel & Power", logo: "/images/customer-logo-images/Jindal_Steel_and_Power_Logo.png" },
-  { name: "Birla Group", logo: "/images/customer-logo-images/birla_group_logo.png" },
-  { name: "Durga Mining", logo: "/images/customer-logo-images/durga_mining_logo.webp" },
-  { name: "Hindalco", logo: "/images/customer-logo-images/hindalco_logo.png" },
-  { name: "Navayuga", logo: "/images/customer-logo-images/navayuga_logo.png" },
-  { name: "Tata Steel", logo: "/images/customer-logo-images/tata_steel_logo.svg" },
-  { name: "Thriveny", logo: "/images/customer-logo-images/thriveny_logo.svg" },
-  { name: "UltraTech", logo: "/images/customer-logo-images/ultratech_logo.png" },
-  { name: "Vedanta", logo: "/images/customer-logo-images/vedanta_logo.png" },
+  { src: "/images/customer-logo-images/JSW_Group_logo.svg.png", alt: "JSW Group" },
+  { src: "/images/customer-logo-images/Jindal_Steel_and_Power_Logo.png", alt: "Jindal Steel & Power" },
+  { src: "/images/customer-logo-images/birla_group_logo.png", alt: "Birla Group" },
+  { src: "/images/customer-logo-images/durga_mining_logo.webp", alt: "Durga Mining" },
+  { src: "/images/customer-logo-images/hindalco_logo.png", alt: "Hindalco" },
+  { src: "/images/customer-logo-images/navayuga_logo.png", alt: "Navayuga" },
+  { src: "/images/customer-logo-images/tata_steel_logo.svg", alt: "Tata Steel" },
+  { src: "/images/customer-logo-images/thriveny_logo.svg", alt: "Thriveny" },
+  { src: "/images/customer-logo-images/ultratech_logo.png", alt: "UltraTech" },
+  { src: "/images/customer-logo-images/vedanta_logo.png", alt: "Vedanta" },
 ];
-
-const allItems = [...customers, ...customers];
 
 export function CustomersSection() {
   return (
     <section
       aria-labelledby="customers-heading"
-      className="py-20 overflow-hidden"
+      className="relative overflow-hidden py-24 sm:py-20 mt-12"
       id="customers"
     >
-      <style>{`
-        @keyframes marquee-right {
-          from { transform: translateX(-50%); }
-          to   { transform: translateX(0%); }
-        }
-      `}</style>
-      <div className="mx-auto max-w-[1480px] px-8">
-        <div className="mx-auto mb-14 max-w-3xl text-center">
-          <h2
-            className={`${raleway.className} mt-5 text-[30px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
-            id="customers-heading"
-          >
-            <BlurText text="Our Customers" delay={160} />
-          </h2>
-          <Reveal delayMs={200}>
-            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-[1.8] text-[#6f6258]">
-              Trusted by leading industrial conglomerates, mining operations, and
-              steel giants across India for their critical tyre requirements.
-            </p>
-          </Reveal>
-        </div>
+      {/* Soft radial glow behind the cloud */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[70vmin] w-[120vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(246,147,0,0.08),transparent_60%)] blur-[30px]"
+      />
+
+      <div className="mx-auto max-w-3xl px-6">
+        <h2
+          className={`${raleway.className} text-center text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[34px] lg:text-[40px]`}
+          id="customers-heading"
+        >
+          <span className="text-[#9b8d82]">
+            <BlurText text="Trusted across India by" delay={160} />
+          </span>
+          <br />
+          <span className="font-semibold text-[#231a12]">
+            mining, steel &amp; infrastructure leaders.
+          </span>
+        </h2>
+
+        <div className="mx-auto my-6 h-px max-w-sm bg-[#ead9c9] [mask-image:linear-gradient(to_right,transparent,black,transparent)] sm:my-8" />
       </div>
 
-      {/* Marquee track */}
-      <div
-        className="relative w-full"
-        style={{
-          maskImage:
-            "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
-        }}
-      >
-        <div
-          className="flex"
-          style={{
-            width: "max-content",
-            animation: "marquee-right 32s linear infinite",
-          }}
-        >
-          {allItems.map((customer, i) => (
-            <div
-              key={i}
-              className="mx-5 flex w-[180px] flex-shrink-0 flex-col items-center gap-4 rounded-2xl border border-[#ead9c9] bg-white px-5 py-6 shadow-[0_4px_18px_rgba(35,26,18,0.05)]"
-            >
-              <div className="relative h-16 w-full">
-                <Image
-                  alt={`${customer.name} logo`}
-                  className="object-contain"
-                  fill
-                  sizes="160px"
-                  src={customer.logo}
-                />
-              </div>
-              <span className="text-center text-[12px] font-semibold tracking-[0.03em] text-[#544434]">
-                {customer.name}
-              </span>
-            </div>
-          ))}
-        </div>
+      {/* Logo cloud spans a much wider track so more logos are visible */}
+      <div className="mx-auto max-w-[1600px] px-6">
+        <Reveal delayMs={160}>
+          <LogoCloud gap={72} logos={customers} />
+        </Reveal>
+
+        <div className="mt-6 h-px bg-[#ead9c9] [mask-image:linear-gradient(to_right,transparent,black,transparent)] sm:mt-8" />
       </div>
     </section>
   );

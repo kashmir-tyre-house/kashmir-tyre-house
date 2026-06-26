@@ -72,6 +72,8 @@ export const tyreProducts = pgTable(
     rim: varchar("rim", { length: 80 }),
     treadDepth: varchar("tread_depth", { length: 80 }),
     tyreFeatures: jsonb("tyre_features").$type<string[]>().default([]).notNull(),
+    brochureUrl: text("brochure_url"),
+    brochureName: varchar("brochure_name", { length: 200 }),
     isActive: boolean("is_active").default(true).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -151,9 +153,11 @@ export const enquiryItems = pgTable(
     enquiryId: uuid("enquiry_id")
       .references(() => enquiries.id, { onDelete: "cascade" })
       .notNull(),
-    tyreProductId: uuid("tyre_product_id")
-      .references(() => tyreProducts.id, { onDelete: "restrict" })
-      .notNull(),
+    // Nullable + SET NULL: deleting a tyre product keeps the enquiry (lead)
+    // and its line items intact, just clearing the product reference.
+    tyreProductId: uuid("tyre_product_id").references(() => tyreProducts.id, {
+      onDelete: "set null"
+    }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull()

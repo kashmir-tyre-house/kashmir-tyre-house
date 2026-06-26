@@ -15,25 +15,44 @@ export function getCompareKey(product: Pick<Product, "id" | "productName">) {
 // One snapshot, many subscribers. `useSyncExternalStore` keeps every component
 // in sync — so a toggle anywhere triggers a re-render of every ProductCard and
 // the SiteHeader badge simultaneously.
+//
+// We persist ONLY product ids (not full objects). Pages hydrate the details
+// from the API (`/api/web/products/batch`) on demand.
 
-const EMPTY: Product[] = [];
-let snapshot: Product[] = EMPTY;
+const EMPTY: string[] = [];
+let snapshot: string[] = EMPTY;
 const listeners = new Set<() => void>();
 let storageBound = false;
 
-function readStorage(): Product[] {
+// Accepts the current (id[]) format and the legacy (Product[]) format, returning
+// a clean id list so existing users' saved data keeps working.
+function normalizeIds(parsed: unknown): string[] {
+  if (!Array.isArray(parsed)) return EMPTY;
+  const ids = parsed
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") {
+        const obj = item as Partial<Product>;
+        return obj.id ?? obj.productName ?? null;
+      }
+      return null;
+    })
+    .filter((x): x is string => typeof x === "string" && x.length > 0);
+  return ids.slice(0, MAX_COMPARE);
+}
+
+function readStorage(): string[] {
   if (typeof window === "undefined") return EMPTY;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return EMPTY;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as Product[]).slice(0, MAX_COMPARE) : EMPTY;
+    return normalizeIds(JSON.parse(raw));
   } catch {
     return EMPTY;
   }
 }
 
-function writeStorage(items: Product[]) {
+function writeStorage(items: string[]) {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
@@ -72,15 +91,15 @@ function subscribe(cb: () => void) {
   };
 }
 
-function getSnapshot(): Product[] {
+function getSnapshot(): string[] {
   return snapshot;
 }
 
-function getServerSnapshot(): Product[] {
+function getServerSnapshot(): string[] {
   return EMPTY;
 }
 
-function setSnapshot(next: Product[]) {
+function setSnapshot(next: string[]) {
   snapshot = next.slice(0, MAX_COMPARE);
   writeStorage(snapshot);
   notify();
@@ -89,6 +108,7 @@ function setSnapshot(next: Product[]) {
 // ── Public hook ──────────────────────────────────────────────────────────────
 
 export function useCompare() {
+  // `compare` is the list of saved product ids.
   const compare = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   // `hydrated` lets callers gate UI that depends on storage state (e.g. to
@@ -100,7 +120,7 @@ export function useCompare() {
   }, []);
 
   const isInCompare = useCallback(
-    (key: string) => snapshot.some((p) => getCompareKey(p) === key),
+    (key: string) => snapshot.includes(key),
     // snapshot reference changes on every store update via useSyncExternalStore,
     // which causes this hook's owner to re-render — so reading the module var
     // is always fresh at call time. Listing `compare` keeps the dep linter happy.
@@ -111,22 +131,27 @@ export function useCompare() {
 
   const toggle = useCallback((product: Product) => {
     const key = getCompareKey(product);
-    const exists = snapshot.some((p) => getCompareKey(p) === key);
-    if (exists) {
-      setSnapshot(snapshot.filter((p) => getCompareKey(p) !== key));
+    if (snapshot.includes(key)) {
+      setSnapshot(snapshot.filter((id) => id !== key));
       return;
     }
     if (snapshot.length >= MAX_COMPARE) return;
-    setSnapshot([...snapshot, product]);
+    setSnapshot([...snapshot, key]);
   }, []);
 
   const remove = useCallback((key: string) => {
-    setSnapshot(snapshot.filter((p) => getCompareKey(p) !== key));
+    setSnapshot(snapshot.filter((id) => id !== key));
+  }, []);
+
+  const removeMany = useCallback((keys: string[]) => {
+    if (keys.length === 0) return;
+    const drop = new Set(keys);
+    setSnapshot(snapshot.filter((id) => !drop.has(id)));
   }, []);
 
   const clear = useCallback(() => {
     setSnapshot([]);
   }, []);
 
-  return { compare, hydrated, isInCompare, isFull, toggle, remove, clear };
+  return { compare, hydrated, isInCompare, isFull, toggle, remove, removeMany, clear };
 }

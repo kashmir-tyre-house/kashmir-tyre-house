@@ -64,6 +64,20 @@
       "when": 1781107200000,
       "tag": "0008_add_rim_tread_depth",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1781193600000,
+      "tag": "0009_add_brochure",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1781280000000,
+      "tag": "0010_enquiry_items_product_set_null",
+      "breakpoints": true
     }
   ]
 }

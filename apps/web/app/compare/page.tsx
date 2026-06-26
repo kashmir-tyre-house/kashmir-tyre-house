@@ -37,6 +37,8 @@ const inter = Inter({
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 const FALLBACK_IMAGE = "/images/placeholder-image.jpg";
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type ApiProduct = {
   id: string;
@@ -59,8 +61,8 @@ type ApiProduct = {
   images: Array<{ id: string; url: string; isPrimaryImage: boolean }>;
 };
 
-type ApiResponse =
-  | { ok: true; data: ApiProduct }
+type BatchResponse =
+  | { ok: true; data: ApiProduct[] }
   | { ok: false; message: string };
 
 type Slot =
@@ -335,21 +337,23 @@ function MobileLoadingHead() {
 
 export default function ComparePage() {
   const router = useRouter();
-  const { compare, hydrated, remove, clear } = useCompare();
+  const { compare, hydrated, remove, removeMany, clear } = useCompare();
 
+  // Maps id → product. Ids that the API doesn't return (deleted/inactive) are
+  // pruned from storage instead of being kept around.
   const [cache, setCache] = useState<Record<string, ApiProduct>>({});
   const [error, setError] = useState<string | null>(null);
   const inFlightIds = useRef<Set<string>>(new Set());
 
   const compareIds = useMemo(
-    () => compare.map((p) => p.id).filter((id): id is string => Boolean(id)),
+    () => compare.filter((id) => UUID_RE.test(id)),
     [compare]
   );
 
   useEffect(() => {
     if (!hydrated) return;
     const missing = compareIds.filter(
-      (id) => !cache[id] && !inFlightIds.current.has(id)
+      (id) => cache[id] === undefined && !inFlightIds.current.has(id)
     );
     if (missing.length === 0) return;
 
@@ -358,22 +362,26 @@ export default function ComparePage() {
 
     (async () => {
       try {
-        const results = await Promise.all(
-          missing.map(async (id) => {
-            const res = await fetch(`${API_BASE}/api/web/products/${id}`);
-            const json = (await res.json()) as ApiResponse;
-            if (!res.ok || !json.ok) {
-              throw new Error(("message" in json && json.message) || "Failed to load.");
-            }
-            return [id, json.data] as const;
-          })
-        );
+        const res = await fetch(`${API_BASE}/api/web/products/batch`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: missing }),
+        });
+        const json = (await res.json()) as BatchResponse;
+        if (!res.ok || !json.ok) {
+          throw new Error(("message" in json && json.message) || "Failed to load.");
+        }
         if (cancelled) return;
+        const found = new Map(json.data.map((p) => [p.id, p]));
         setCache((prev) => {
           const next = { ...prev };
-          for (const [id, data] of results) next[id] = data;
+          for (const [id, product] of found) next[id] = product;
           return next;
         });
+        // Ids the API didn't return are deleted/inactive — drop them from
+        // localStorage so they stop showing up entirely.
+        const notFound = missing.filter((id) => !found.has(id));
+        if (notFound.length > 0) removeMany(notFound);
       } catch (e) {
         if (cancelled) return;
         setError(e instanceof Error ? e.message : "Failed to load compare products.");
@@ -385,17 +393,22 @@ export default function ComparePage() {
     return () => {
       cancelled = true;
     };
-  }, [hydrated, compareIds, cache]);
+  }, [hydrated, compareIds, cache, removeMany]);
 
   const slots: Slot[] = useMemo(() => {
-    const result: Slot[] = compare.map<Slot>((p) => {
-      if (!p.id) return { kind: "empty" };
-      const loaded = cache[p.id];
-      if (loaded) return { kind: "loaded", product: loaded };
-      return { kind: "loading", id: p.id };
-    });
+    // Build real (loaded/loading) columns first so empty "Add a tyre" columns
+    // always sit at the right. Deleted/inactive ("missing") and non-UUID legacy
+    // ids are dropped rather than leaving a gap mid-row.
+    const filled: Slot[] = [];
+    for (const id of compare) {
+      if (!UUID_RE.test(id)) continue;
+      const entry = cache[id];
+      if (entry) filled.push({ kind: "loaded", product: entry });
+      else filled.push({ kind: "loading", id });
+    }
+    const result = filled.slice(0, MAX_COMPARE);
     while (result.length < MAX_COMPARE) result.push({ kind: "empty" });
-    return result.slice(0, MAX_COMPARE);
+    return result;
   }, [compare, cache]);
 
   const loadedProducts: ApiProduct[] = slots

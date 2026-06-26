@@ -178,9 +178,9 @@ export default function Home() {
         </Reveal>
       </section>
 
-      <BrandsSection />
-
       {/* <CustomersSection /> */}
+
+      <BrandsSection />
 
       <FeaturedSection />
 

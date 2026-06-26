@@ -8,6 +8,7 @@ export type Product = {
   vehicleType: string;
   loadIndex: string;
   plyRating: string;
+  pattern?: string;
   starRating: number;
   image: string;
   isBookmarked: boolean;
