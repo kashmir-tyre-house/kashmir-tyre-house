@@ -66,20 +66,20 @@ function toProduct(p: ApiProduct): Product {
 
 function EmptyView() {
   return (
-    <div className="mt-20 h-[90vh] flex flex-col items-center justify-center text-center">
+    <div className="flex min-h-[72vh] flex-col items-center justify-center px-6 text-center">
       <Image
         alt="No bookmarks"
-        className="opacity-80"
+        className="h-auto w-[210px] opacity-80 sm:w-[300px]"
         height={140}
         src="/illustrations/empty-box.svg"
         width={300}
       />
       <h2
-        className={`${raleway.className} mt-8 text-[26px] font-medium tracking-[-0.03em] text-[#231a12]`}
+        className={`${raleway.className} mt-7 text-[22px] font-medium tracking-[-0.03em] text-[#231a12] sm:mt-8 sm:text-[26px]`}
       >
         No saved products yet
       </h2>
-      <p className="mt-3 max-w-sm text-[14px] leading-[1.8] text-[#6f6258]">
+      <p className="mt-3 max-w-sm text-[13.5px] leading-[1.75] text-[#6f6258] sm:text-[14px] sm:leading-[1.8]">
         Products you bookmark will appear here so you can compare them and raise
         an enquiry when you&apos;re ready.
       </p>
@@ -195,23 +195,23 @@ export default function BookmarksPage() {
       {showEmpty ? (
         <EmptyView />
       ) : hydrated ? (
-        <section className="px-4 pb-20 pt-32 sm:px-6 lg:px-8 max-w-330 mx-auto">
+        <section className="px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8 max-w-330 mx-auto">
           <div className="mx-auto max-w-[1480px]">
             <div className="max-w-3xl">
               <h1
-                className={`${raleway.className} mt-6 text-[38px] font-medium leading-[0.96] tracking-[-0.04em] text-[#231a12] sm:text-[52px] lg:text-[64px]`}
+                className={`${raleway.className} text-[clamp(1.875rem,6vw,4rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[#231a12]`}
               >
                 Bookmarked products.
               </h1>
 
-              <p className="mt-5 max-w-2xl text-[15px] font-medium leading-[1.8] text-[#6f6258]">
+              <p className="mt-3 max-w-2xl text-[13px] font-medium leading-[1.7] text-[#6f6258] sm:mt-5 sm:text-[15px] sm:leading-[1.8]">
                 A focused shortlist of tyres worth revisiting. Use this page to
                 compare the products you have saved and move quickly into an
                 enquiry when you are ready.
               </p>
 
               <button
-                className="group mt-7 inline-flex h-11 items-center justify-center gap-2 rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.9),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(246,147,0,0.24)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_14px_30px_rgba(246,147,0,0.32)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="group mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.9),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(246,147,0,0.24)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_14px_30px_rgba(246,147,0,0.32)] disabled:cursor-not-allowed disabled:opacity-60 sm:mt-7"
                 disabled={loadedProducts.length === 0}
                 onClick={handleEnquireAll}
                 type="button"
@@ -231,10 +231,10 @@ export default function BookmarksPage() {
               </p>
             ) : null}
 
-            <div className="mt-14 flex flex-wrap items-start gap-5">
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-14 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {loadedProducts.map((product) => (
                 <ProductCard
-                  className="!min-w-[290px] !max-w-[290px] !w-full !flex-[1_1_290px] !snap-none"
+                  className="!min-w-0 !w-full !max-w-none !flex-auto !snap-none"
                   key={product.id}
                   product={toProduct(product)}
                 />
@@ -245,7 +245,7 @@ export default function BookmarksPage() {
                     length: Math.max(bookmarkIds.length - loadedProducts.length, 1),
                   }).map((_, i) => (
                     <ProductCardSkeleton
-                      className="!min-w-[290px] !max-w-[290px] !w-full !flex-[1_1_290px] !snap-none"
+                      className="!min-w-0 !w-full !max-w-none !flex-auto !snap-none"
                       key={`sk-${i}`}
                     />
                   ))
