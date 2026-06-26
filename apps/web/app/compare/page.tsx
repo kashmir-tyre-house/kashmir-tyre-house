@@ -37,6 +37,8 @@ const inter = Inter({
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 const FALLBACK_IMAGE = "/images/placeholder-image.jpg";
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type ApiProduct = {
   id: string;
@@ -292,7 +294,7 @@ export default function ComparePage() {
   const inFlightIds = useRef<Set<string>>(new Set());
 
   const compareIds = useMemo(
-    () => compare.map((p) => p.id).filter((id): id is string => Boolean(id)),
+    () => compare.filter((id) => UUID_RE.test(id)),
     [compare]
   );
 
@@ -339,15 +341,20 @@ export default function ComparePage() {
   }, [hydrated, compareIds, cache]);
 
   const slots: Slot[] = useMemo(() => {
-    const result: Slot[] = compare.map<Slot>((p) => {
-      if (!p.id) return { kind: "empty" };
-      const entry = cache[p.id];
-      if (entry === "missing") return { kind: "empty" };
-      if (entry) return { kind: "loaded", product: entry };
-      return { kind: "loading", id: p.id };
-    });
+    // Build real (loaded/loading) columns first so empty "Add a tyre" columns
+    // always sit at the right. Deleted/inactive ("missing") and non-UUID legacy
+    // ids are dropped rather than leaving a gap mid-row.
+    const filled: Slot[] = [];
+    for (const id of compare) {
+      if (!UUID_RE.test(id)) continue;
+      const entry = cache[id];
+      if (entry === "missing") continue;
+      if (entry) filled.push({ kind: "loaded", product: entry });
+      else filled.push({ kind: "loading", id });
+    }
+    const result = filled.slice(0, MAX_COMPARE);
     while (result.length < MAX_COMPARE) result.push({ kind: "empty" });
-    return result.slice(0, MAX_COMPARE);
+    return result;
   }, [compare, cache]);
 
   const loadedProducts: ApiProduct[] = slots
