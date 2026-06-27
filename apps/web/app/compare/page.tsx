@@ -242,7 +242,7 @@ function ProductHeaderCell({
         </p>
         <Link
           aria-label={`View ${product.name} details`}
-          className={`${inter.className} mt-1 line-clamp-2 block text-[14px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12] transition-colors duration-200 hover:text-[#a85d00] focus-visible:text-[#a85d00] focus-visible:outline-none`}
+          className={`${inter.className} mt-1 line-clamp-2 block text-[16px] font-bold leading-[1.12] tracking-[-0.035em] text-[#231a12] transition-colors duration-200 hover:text-[#a85d00] focus-visible:text-[#a85d00] focus-visible:outline-none`}
           href={`/products/${product.id}`}
         >
           {product.name}
@@ -518,7 +518,7 @@ export default function ComparePage() {
           ) : null}
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[920px] border-separate border-spacing-0 text-left">
+            <table className="w-full min-w-[920px] table-fixed border-separate border-spacing-0 text-left">
               {/* ─── Product header row ──────────────────────────── */}
               <thead>
                 <tr>
