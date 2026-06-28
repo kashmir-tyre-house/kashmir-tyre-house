@@ -161,16 +161,14 @@ function StarRow({ rating }: { rating: number }) {
 
 function EmptyState() {
   return (
-    <div className="mt-12 flex min-h-[60vh] flex-col items-center justify-center text-center">
-      <div className="relative h-[140px] w-[280px] opacity-90">
-        <Image
-          alt="Empty compare"
-          className="object-contain"
-          fill
-          sizes="280px"
-          src="/illustrations/empty-box.svg"
-        />
-      </div>
+    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <Image
+        alt="Empty compare"
+        className="h-auto w-[210px] opacity-80 sm:w-[300px]"
+        height={140}
+        src="/illustrations/empty-box.svg"
+        width={300}
+      />
       <h2
         className={`${raleway.className} mt-8 text-[26px] font-medium tracking-[-0.03em] text-[#231a12]`}
       >
@@ -501,16 +499,7 @@ export default function ComparePage() {
     return (
       <main className={`${karla.className} min-h-screen bg-[#f9eee4] text-[#231a12]`}>
         <SiteHeader />
-        <section className="mx-auto max-w-[1480px] px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8">
-          <div className="max-w-3xl">
-            <h1
-              className={`${raleway.className} text-[clamp(2.125rem,7vw,4rem)] font-medium leading-[0.96] tracking-[-0.04em] text-[#231a12]`}
-            >
-              Compare tyres.
-            </h1>
-          </div>
-          <EmptyState />
-        </section>
+        <EmptyState />
         <SiteFooter />
       </main>
     );

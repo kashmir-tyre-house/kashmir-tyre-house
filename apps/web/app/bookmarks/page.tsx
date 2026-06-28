@@ -66,7 +66,7 @@ function toProduct(p: ApiProduct): Product {
 
 function EmptyView() {
   return (
-    <div className="flex min-h-[72vh] flex-col items-center justify-center px-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <Image
         alt="No bookmarks"
         className="h-auto w-[210px] opacity-80 sm:w-[300px]"
