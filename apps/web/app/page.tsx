@@ -5,6 +5,7 @@ import { BrandsSection } from "../components/brands-section";
 import { CustomersSection } from "../components/customers-section";
 import { FeaturedSection } from "../components/featured-section";
 import { HeroBackgroundRotator } from "../components/hero-background-rotator";
+import { HeroCommandPalette } from "../components/hero-command-palette";
 import { Reveal } from "../components/reveal";
 import { ServicesSection } from "../components/services-section";
 import { SiteFooter } from "../components/site-footer";
@@ -93,18 +94,20 @@ export default function Home() {
               Kashmir Tyre House Private Limited is a leading authorised OTR tyre dealer in India, representing trusted brands like Bridgestone, Maxam, and Michelin for mining, construction, industrial, and earthmover applications across Central India.
             </p>
 
-            <div className="mt-7 flex flex-wrap items-center gap-4 sm:mt-10">
+            <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-10">
               <Link
                 href="/products"
-                className="group/cta relative inline-flex h-11 items-center justify-center gap-2 overflow-hidden rounded-[12px] px-5 text-[13px] font-bold text-black no-underline shadow-[0_12px_30px_rgba(246,147,0,0.28)] transition-[transform,box-shadow] duration-300 hover:shadow-[0_18px_40px_rgba(246,147,0,0.4)] sm:h-12 sm:px-6 sm:text-[14px]"
+                className="group/cta relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-[10px] px-4 text-[13px] font-bold text-black no-underline shadow-[0_10px_24px_rgba(246,147,0,0.26)] transition-[transform,box-shadow] duration-300 hover:shadow-[0_16px_34px_rgba(246,147,0,0.36)] sm:h-11 sm:px-5"
               >
                 <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,196,128,0.95),transparent_36%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)]" />
                 <span className="absolute inset-0 -translate-x-full bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.45),transparent)] transition-transform duration-700 ease-out group-hover/cta:translate-x-full" />
                 <span className="relative">Explore Inventory</span>
-                <svg className="relative transition-transform duration-300 " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="relative transition-transform duration-300 group-hover/cta:translate-x-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
               </Link>
+
+              <HeroCommandPalette />
             </div>
 
             <div className="mt-8 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-6 sm:mt-12 sm:justify-start sm:gap-10 sm:pt-8">
