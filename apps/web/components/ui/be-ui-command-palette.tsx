@@ -1,6 +1,5 @@
 "use client";
 
-import { clsx, type ClassValue } from "clsx";
 import { motion, useReducedMotion } from "framer-motion";
 import { Search, type LucideIcon } from "lucide-react";
 import {
@@ -14,10 +13,11 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { twMerge } from "tailwind-merge";
+
+type ClassValue = string | false | null | undefined;
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return inputs.filter(Boolean).join(" ");
 }
 
 export const EASE_OUT = [0.16, 1, 0.3, 1] as const;
