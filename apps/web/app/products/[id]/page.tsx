@@ -1,7 +1,7 @@
 "use client";
 
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { ArrowRight, Bookmark, ChevronLeft, Download, Loader2, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Bookmark, ChevronLeft, Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";

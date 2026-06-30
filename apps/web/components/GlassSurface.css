@@ -118,7 +118,7 @@
 
 .glass-nav.glass-surface--svg {
   background: hsl(28 26% 14% / 0.5);
-  border: 1px solid rgba(255, 238, 224, 0.12);
+  border: 0.5px solid rgba(255, 238, 224, 0.12);
 }
 
 .glass-nav.glass-surface--fallback {
