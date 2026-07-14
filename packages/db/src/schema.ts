@@ -130,21 +130,30 @@ export const tyreImages = pgTable(
   ]
 );
 
-export const enquiries = pgTable("enquiries", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  customerName: varchar("customer_name", { length: 120 }).notNull(),
-  phone: varchar("phone", { length: 24 }).notNull(),
-  email: varchar("email", { length: 160 }),
-  companyName: varchar("company_name", { length: 160 }),
-  message: text("message"),
-  status: enquiryStatus("status").default("new").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull()
-});
+export const enquiries = pgTable(
+  "enquiries",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    customerName: varchar("customer_name", { length: 120 }).notNull(),
+    phone: varchar("phone", { length: 24 }).notNull(),
+    email: varchar("email", { length: 160 }),
+    companyName: varchar("company_name", { length: 160 }),
+    message: text("message"),
+    // Submitter IP — used for per-IP daily rate limiting. Nullable (unknown IPs
+    // and pre-existing rows). Length fits IPv6.
+    ipAddress: varchar("ip_address", { length: 45 }),
+    status: enquiryStatus("status").default("new").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull()
+  },
+  (table) => [
+    index("enquiries_ip_created_at_idx").on(table.ipAddress, table.createdAt)
+  ]
+);
 
 export const enquiryItems = pgTable(
   "enquiry_items",

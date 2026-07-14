@@ -8,6 +8,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 
 import { useEnquiryProducts } from "../lib/enquiry";
+import { toast } from "./toaster";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -133,6 +134,17 @@ export function ContactForm() {
         | null;
 
       if (!res.ok || !json?.ok) {
+        // Policy responses — the daily cap (429) and duplicate-enquiry block
+        // (409) — surface as a toast rather than an inline form error.
+        if (res.status === 429 || res.status === 409) {
+          toast(
+            json?.message ??
+              "You've reached the enquiry limit for now. Please try again later.",
+            { variant: "warning", dismissible: false }
+          );
+          return;
+        }
+
         // Surface backend field-level validation errors against their inputs.
         if (json?.errors) {
           for (const [field, messages] of Object.entries(json.errors)) {

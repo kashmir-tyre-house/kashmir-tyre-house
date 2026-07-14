@@ -1,5 +1,5 @@
 import { enquiries, enquiryItems, getDb, tyreProducts } from "@kth/db";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -8,6 +8,10 @@ import { EnquiryEmail } from "../../../../lib/email/templates/enquiry-email";
 import { checkRateLimit, getRequestIp } from "../../../../lib/rate-limit";
 
 export const runtime = "nodejs";
+
+// Hard cap: at most this many enquiries per IP address per calendar day (IST).
+// Persisted in the DB so it survives serverless cold starts / multiple regions.
+const DAILY_ENQUIRY_LIMIT = 2;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -93,9 +97,68 @@ export async function POST(request: Request) {
       );
     }
 
+    // Prevent duplicate enquiries: the same email cannot enquire again about a
+    // product it has already enquired about. Email is compared case-insensitively.
+    if (email && productIds.length > 0) {
+      const alreadyEnquired = await db
+        .select({ productId: enquiryItems.tyreProductId })
+        .from(enquiryItems)
+        .innerJoin(enquiries, eq(enquiryItems.enquiryId, enquiries.id))
+        .where(
+          and(
+            sql`lower(${enquiries.email}) = ${email.toLowerCase()}`,
+            inArray(enquiryItems.tyreProductId, productIds)
+          )
+        );
+
+      if (alreadyEnquired.length > 0) {
+        const dupeCount = new Set(alreadyEnquired.map((r) => r.productId)).size;
+
+        return NextResponse.json(
+          {
+            ok: false,
+            message: `You've already enquired about ${dupeCount > 1 ? "these products" : "this product"} with this email.`,
+          },
+          { status: 409, headers: CORS_HEADERS }
+        );
+      }
+    }
+
+    // Per-IP daily hard limit — checked after the duplicate guard so a repeat
+    // enquiry gets the duplicate message rather than this one. Counts this IP's
+    // enquiries since midnight IST; skipped when the IP can't be determined.
+    if (ip !== "unknown") {
+      const [{ count }] = await db
+        .select({ count: sql<number>`cast(count(*) as int)` })
+        .from(enquiries)
+        .where(
+          and(
+            eq(enquiries.ipAddress, ip),
+            sql`${enquiries.createdAt} >= (date_trunc('day', now() AT TIME ZONE 'Asia/Kolkata') AT TIME ZONE 'Asia/Kolkata')`
+          )
+        );
+
+      if (count >= DAILY_ENQUIRY_LIMIT) {
+        return NextResponse.json(
+          {
+            ok: false,
+            message: `Daily limit reached. Try again tomorrow or contact us.`,
+          },
+          { status: 429, headers: CORS_HEADERS }
+        );
+      }
+    }
+
     const [created] = await db
       .insert(enquiries)
-      .values({ customerName, phone, email, companyName, message })
+      .values({
+        customerName,
+        phone,
+        email,
+        companyName,
+        message,
+        ipAddress: ip === "unknown" ? null : ip,
+      })
       .returning();
 
     if (resolvedProducts.length > 0) {
