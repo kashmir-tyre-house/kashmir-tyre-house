@@ -123,7 +123,7 @@ export function AboutSection() {
           id="about-heading"
         >
           <span className="text-[#9b8d82]">
-            <BlurText text="Get to know" delay={160} />
+            <BlurText text="Get to know more about" delay={160} />
           </span>
           <br />
           <span className="font-semibold text-[#231a12]">

@@ -182,8 +182,8 @@ export default function Home() {
           </span>
         </Reveal>
       </section>
+      <CustomersSection />
 
-      {/* <CustomersSection /> */}
 
       <BrandsSection />
 
