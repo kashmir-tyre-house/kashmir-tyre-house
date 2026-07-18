@@ -119,10 +119,16 @@ export function AboutSection() {
     >
       <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-12">
         <h2
-          className={`${raleway.className} text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+          className={`${raleway.className} text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[34px] lg:text-[40px]`}
           id="about-heading"
         >
-          <BlurText text="About Us" delay={160} />
+          <span className="text-[#9b8d82]">
+            <BlurText text="Get to know" delay={160} />
+          </span>
+          <br />
+          <span className="font-semibold text-[#231a12]">
+            who we are.
+          </span>
         </h2>
       </div>
 

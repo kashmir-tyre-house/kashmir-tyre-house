@@ -43,10 +43,16 @@ export function BrandsSection() {
       <div className="mx-auto max-w-[1480px]">
         <div className="mx-auto mb-8 max-w-3xl text-center sm:mb-12">
           <h2
-            className={`${raleway.className} mt-5 text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[38px] lg:text-[44px]`}
+            className={`${raleway.className} mt-5 text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:text-[34px] lg:text-[40px]`}
             id="brand-heading"
           >
-            <BlurText text="Trusted Brands" delay={160} />
+            <span className="text-[#9b8d82]">
+              <BlurText text="The world's most" delay={160} />
+            </span>
+            <br />
+            <span className="font-semibold text-[#231a12]">
+              trusted tyre brands.
+            </span>
           </h2>
           <Reveal delayMs={200}>
             <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-[1.75] text-[#6f6258] sm:mt-5 sm:text-[15px] sm:leading-[1.8]">

@@ -130,10 +130,16 @@ export function FeaturedSection() {
     >
       <div className="mx-auto max-w-3xl text-center">
         <h2
-          className={`${raleway.className} mb-8 mt-3 place-self-center text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:mb-10 sm:text-[38px] lg:text-[44px]`}
+          className={`${raleway.className} mb-8 mt-3 place-self-center text-[26px] font-medium leading-tight tracking-[-0.03em] text-[#231a12] sm:mb-10 sm:text-[34px] lg:text-[40px]`}
           id="featured-heading"
         >
-          <BlurText text="Featured Products" delay={150} />
+          <span className="text-[#9b8d82]">
+            <BlurText text="A closer look at our" delay={150} />
+          </span>
+          <br />
+          <span className="font-semibold text-[#231a12]">
+            featured products.
+          </span>
         </h2>
       </div>
 
