@@ -57,7 +57,10 @@ export function CustomersSection() {
       {/* Logo cloud spans a much wider track so more logos are visible */}
       <div className="mx-auto max-w-[1600px] px-6">
         <Reveal delayMs={160}>
-          <LogoCloud gap={72} logos={customers} />
+          <div className="space-y-6 sm:space-y-10">
+            <LogoCloud duration={70} gap={72} logos={customers} reverse />
+            <LogoCloud duration={70} gap={72} logos={customers} reverse={false} />
+          </div>
         </Reveal>
 
         <div className="mt-6 h-px bg-[#ead9c9] [mask-image:linear-gradient(to_right,transparent,black,transparent)] sm:mt-8" />
