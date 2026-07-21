@@ -79,10 +79,14 @@ export function SiteFooter() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href="/contact"
-                className="group inline-flex h-11 items-center gap-2 rounded-[10px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,196,128,0.95),transparent_36%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[13px] font-bold text-[#231a12] no-underline shadow-[0_12px_30px_rgba(246,147,0,0.3)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_16px_38px_rgba(246,147,0,0.42)] sm:h-12 sm:px-6 sm:text-[14px]"
+                className="group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-[10px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,196,128,0.95),transparent_36%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[13px] font-bold text-[#231a12] no-underline shadow-[0_12px_30px_rgba(246,147,0,0.3)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_16px_38px_rgba(246,147,0,0.42)] sm:h-12 sm:px-6 sm:text-[14px]"
               >
-                Send an Enquiry
-                <svg className="transition-transform duration-300 group-hover:translate-x-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 -translate-x-full bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.45),transparent)] transition-transform duration-700 ease-out group-hover:translate-x-full"
+                />
+                <span className="relative">Send an Enquiry</span>
+                <svg className="relative transition-transform duration-300 group-hover:translate-x-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
               </Link>

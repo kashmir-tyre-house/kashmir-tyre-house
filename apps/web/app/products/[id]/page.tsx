@@ -384,12 +384,16 @@ export default function ProductDetailsPage() {
             {/* CTA row */}
             <div className="mt-7 flex items-center gap-2.5 sm:mt-8 sm:gap-3">
               <button
-                className="group inline-flex h-12 flex-1 items-center justify-center gap-2.5 rounded-[14px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[14px] font-bold text-white shadow-[0_14px_34px_rgba(246,147,0,0.28)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_18px_40px_rgba(246,147,0,0.36)]"
+                className="group relative inline-flex h-12 flex-1 items-center justify-center gap-2.5 overflow-hidden rounded-[14px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[14px] font-bold text-white shadow-[0_14px_34px_rgba(246,147,0,0.28)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_18px_40px_rgba(246,147,0,0.36)]"
                 onClick={handleEnquire}
                 type="button"
               >
-                Add to Enquiry
-                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2.5} />
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 -translate-x-full bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.4),transparent)] transition-transform duration-700 ease-out group-hover:translate-x-full"
+                />
+                <span className="relative">Add to Enquiry</span>
+                <ArrowRight aria-hidden="true" className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2.5} />
               </button>
 
               {/* Brochure download — only when a brochure has been uploaded.

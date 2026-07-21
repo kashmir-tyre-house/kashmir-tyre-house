@@ -713,13 +713,17 @@ export default function ComparePage() {
               {activeSlots.map((slot, i) =>
                 slot.kind === "loaded" ? (
                   <button
-                    className="inline-flex h-10 items-center justify-center gap-1 rounded-[10px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-2 text-[11px] font-bold text-white shadow-[0_8px_20px_rgba(246,147,0,0.22)] transition-all duration-300 hover:brightness-110"
+                    className="group relative inline-flex h-10 items-center justify-center gap-1 overflow-hidden rounded-[10px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-2 text-[11px] font-bold text-white shadow-[0_8px_20px_rgba(246,147,0,0.22)] transition-all duration-300 hover:brightness-110"
                     key={`m-cta-${i}`}
                     onClick={() => handleEnquire(slot.product)}
                     type="button"
                   >
-                    Enquire
-                    <ArrowRight aria-hidden="true" className="h-3 w-3" strokeWidth={2.5} />
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 -translate-x-full bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.4),transparent)] transition-transform duration-700 ease-out group-hover:translate-x-full"
+                    />
+                    <span className="relative">Enquire</span>
+                    <ArrowRight aria-hidden="true" className="relative h-3 w-3" strokeWidth={2.5} />
                   </button>
                 ) : (
                   <div key={`m-cta-${i}`} />
@@ -942,14 +946,18 @@ export default function ComparePage() {
                         return (
                           <td className="px-5 py-5 align-middle" key={`cta-${i}`}>
                             <button
-                              className="group inline-flex h-11 w-full items-center justify-center gap-2 rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-4 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(246,147,0,0.24)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_14px_30px_rgba(246,147,0,0.32)]"
+                              className="group relative inline-flex h-11 w-full items-center justify-center gap-2 overflow-hidden rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.95),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-4 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(246,147,0,0.24)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_14px_30px_rgba(246,147,0,0.32)]"
                               onClick={() => handleEnquire(slot.product)}
                               type="button"
                             >
-                              Add to Enquiry
+                              <span
+                                aria-hidden="true"
+                                className="absolute inset-0 -translate-x-full bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.4),transparent)] transition-transform duration-700 ease-out group-hover:translate-x-full"
+                              />
+                              <span className="relative">Add to Enquiry</span>
                               <ArrowRight
                                 aria-hidden="true"
-                                className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                                className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
                                 strokeWidth={2.5}
                               />
                             </button>
