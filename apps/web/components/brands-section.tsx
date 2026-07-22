@@ -4,6 +4,7 @@ import { Raleway } from "next/font/google";
 
 import { BlurText } from "./blur-text";
 import { Reveal } from "./reveal";
+import { Meteors } from "./ui/meteors";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -102,6 +103,17 @@ export function BrandsSection() {
                 >
                   0{index + 1}
                 </span>
+
+                {/* Shooting-star trails — Michelin card only. Sits before the
+                    content block so the positioned content paints above it. */}
+                {brand.name === "Michelin" ? (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 overflow-hidden"
+                  >
+                    <Meteors number={18} />
+                  </span>
+                ) : null}
 
                 <div className="relative flex h-full flex-col">
                   {/* Logo plinth */}
