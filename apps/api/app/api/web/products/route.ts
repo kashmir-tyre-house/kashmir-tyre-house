@@ -14,11 +14,12 @@ const CORS_HEADERS = {
 };
 
 const listQuerySchema = z.object({
-  search:   z.string().trim().min(1).optional(),
-  brandId:  z.string().uuid().optional(),
-  category: z.enum(["Radial", "Bais", "Solid"]).optional(),
-  page:     z.coerce.number().int().min(1).default(1),
-  limit:    z.coerce.number().int().min(1).max(48).default(24),
+  search:    z.string().trim().min(1).optional(),
+  brandId:   z.string().uuid().optional(),
+  category:  z.enum(["Radial", "Bais", "Solid"]).optional(),
+  page:      z.coerce.number().int().min(1).default(1),
+  limit:     z.coerce.number().int().min(1).max(48).default(24),
+  isRandom:  z.coerce.boolean().default(false),
 });
 
 export async function OPTIONS() {
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const { search, brandId, category, page, limit } = parsed.data;
+    const { search, brandId, category, page, limit, isRandom } = parsed.data;
 
     const conditions = [eq(tyreProducts.isActive, true)];
     if (search)   conditions.push(or(ilike(tyreProducts.name, `%${search}%`), ilike(tyreProducts.pattern, `%${search}%`))!);
@@ -56,6 +57,8 @@ export async function GET(request: Request) {
       .select({ total: sql<number>`cast(count(*) as int)` })
       .from(tyreProducts)
       .where(where);
+
+    const orderByClause = isRandom ? sql`random()` : desc(tyreProducts.createdAt);
 
     const rows = await db
       .select({
@@ -83,7 +86,7 @@ export async function GET(request: Request) {
       .from(tyreProducts)
       .leftJoin(brands, eq(tyreProducts.brandId, brands.id))
       .where(where)
-      .orderBy(desc(tyreProducts.createdAt))
+      .orderBy(orderByClause)
       .limit(limit)
       .offset((page - 1) * limit);
 

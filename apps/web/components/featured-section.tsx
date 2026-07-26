@@ -75,7 +75,7 @@ export function FeaturedSection() {
     (async () => {
       try {
         const res = await fetch(
-          `${API_BASE}/api/web/products?limit=${PAGE_SIZE}&page=1`
+          `${API_BASE}/api/web/products?limit=${PAGE_SIZE}&page=1&isRandom=true`
         );
         const json = (await res.json()) as ApiListResponse;
         if (cancelled) return;
