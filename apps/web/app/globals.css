@@ -131,3 +131,35 @@ body {
   from { transform: translateX(-50%); }
   to   { transform: translateX(0%); }
 }
+
+/* Meteor / shooting-star trail (Meteors component). Registered through
+   @theme so Tailwind v4 generates the `animate-meteor-effect` utility. */
+@theme {
+  --animate-meteor-effect: meteor 5s linear infinite;
+}
+
+/* Diagonal fall — down and to the right — fading in near the top edge and
+   out towards the bottom. --meteor-dx / --meteor-dy are set per element and
+   together define the flight path; the streak is rotated to match it. */
+@keyframes meteor {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--meteor-dx, 336px), var(--meteor-dy, 560px), 0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-meteor-effect {
+    animation: none;
+  }
+}
