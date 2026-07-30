@@ -1,5 +1,6 @@
 "use client";
 
+import type { FeatureFlags, FeatureName } from "@kth/config";
 import {
   ChevronsUpDown,
   CircleGauge,
@@ -18,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 type NavItem = {
   label: string;
   href: string;
+  feature: FeatureName;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
 };
 
@@ -30,34 +32,45 @@ const navItems: NavItem[] = [
   {
     label: "Tyres",
     href: "/tyres",
+    feature: "products",
     icon: CircleGauge,
   },
   {
     label: "Gallery Upload",
     href: "/gallery-upload",
+    feature: "gallery",
     icon: GalleryHorizontal,
   },
   {
     label: "Enquiries",
     href: "/enquiries",
+    feature: "enquiries",
     icon: MessageSquareText,
   },
   // {
   //   label: "Brands",
   //   href: "/brands",
+  //   feature: "brands",
   //   icon: Tags,
   // },
 ];
 
+/** Nav entries whose module is switched on, in sidebar order. */
+export function enabledNavItems(flags: FeatureFlags): NavItem[] {
+  return navItems.filter((item) => flags[item.feature]);
+}
+
 type AdminSidebarProps = {
   collapsed: boolean;
+  flags: FeatureFlags;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
   onToggle: () => void;
 };
 
-export function AdminSidebar({ collapsed, mobileOpen, onMobileClose }: AdminSidebarProps) {
+export function AdminSidebar({ collapsed, flags, mobileOpen, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const visibleNavItems = enabledNavItems(flags);
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -114,7 +127,7 @@ export function AdminSidebar({ collapsed, mobileOpen, onMobileClose }: AdminSide
         <div className="flex items-center gap-3 mt-2">
           <Link
             className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-white text-[11px] font-bold tracking-[-0.03em] text-[#17213a] shadow-[0_16px_32px_rgba(0,0,0,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            href="/tyres"
+            href={visibleNavItems[0]?.href ?? "/"}
           >
             KTH
           </Link>
@@ -138,7 +151,7 @@ export function AdminSidebar({ collapsed, mobileOpen, onMobileClose }: AdminSide
           ) : null}
 
           <ul className="mt-4 space-y-1">
-            {navItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const isParentActive = isNavItemActive(item, pathname);
               const Icon = item.icon;
 
@@ -243,11 +256,12 @@ export function AdminSidebar({ collapsed, mobileOpen, onMobileClose }: AdminSide
 
 export function AdminTopbar({
   collapsed,
+  flags,
   onToggle,
 }: AdminSidebarProps) {
   const pathname = usePathname();
   const pageTitle =
-    navItems.find((item) => isNavItemActive(item, pathname))?.label ??
+    enabledNavItems(flags).find((item) => isNavItemActive(item, pathname))?.label ??
     "Dashboard";
 
   return (

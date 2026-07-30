@@ -11,6 +11,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1048.0",
     "@aws-sdk/s3-request-presigner": "^3.1048.0",
+    "@kth/config": "*",
     "@kth/db": "*",
     "@kth/validators": "*",
     "@react-email/components": "^1.0.12",

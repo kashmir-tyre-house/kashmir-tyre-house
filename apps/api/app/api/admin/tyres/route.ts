@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getAdminRole, requireAdmin } from "../../../../lib/auth";
+import { requireFeature } from "../../../../lib/features";
 import { uploadToR2 } from "../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -62,6 +63,9 @@ const createSchema = z.object({
 // ── GET /api/admin/tyres ──────────────────────────────────────────────────────
 
 export async function GET(request: Request) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
@@ -163,6 +167,9 @@ export async function GET(request: Request) {
 // ── POST /api/admin/tyres ─────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;

@@ -3,6 +3,7 @@ import { and, asc, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { requireFeature } from "../../../../../lib/features";
 import { presignedUrl } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -27,6 +28,9 @@ export async function OPTIONS() {
 // Results preserve the order of the requested ids.
 
 export async function POST(request: Request) {
+  const disabled = requireFeature("products", CORS_HEADERS);
+  if (disabled) return disabled;
+
   try {
     let raw: unknown;
     try {

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { sendTemplateEmail } from "../../../../lib/email/service";
+import { requireFeature } from "../../../../lib/features";
 import { EnquiryEmail } from "../../../../lib/email/templates/enquiry-email";
 import { checkRateLimit, getRequestIp } from "../../../../lib/rate-limit";
 
@@ -46,6 +47,9 @@ export async function OPTIONS() {
 // `enquiry_items` and emails the configured ENQUIRY_TO_EMAIL inbox.
 
 export async function POST(request: Request) {
+  const disabled = requireFeature("enquiries", CORS_HEADERS);
+  if (disabled) return disabled;
+
   const ip = getRequestIp(request);
   const rateLimit = checkRateLimit({
     key: `web-enquiries:${ip}`,

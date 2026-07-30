@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 loadEnvConfig(path.resolve(process.cwd(), "../.."), undefined, undefined, true);
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@kth/db", "@kth/validators"]
+  transpilePackages: ["@kth/config", "@kth/db", "@kth/validators"]
 };
 
 export default nextConfig;

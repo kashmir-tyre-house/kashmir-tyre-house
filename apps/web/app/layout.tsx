@@ -1,9 +1,11 @@
+import { getFeatureFlags } from "@kth/config";
 import type { Metadata } from "next";
 import { Figtree, Inter } from "next/font/google";
 
 import { EnquiryBar } from "../components/enquiry-bar";
 import { Toaster } from "../components/toaster";
 import { WorkInProgressModal } from "../components/work-in-progress-modal";
+import { FeatureFlagsProvider } from "../lib/features";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -33,13 +35,18 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
+  // Resolved on the server, then shared with client components via context.
+  const flags = getFeatureFlags();
+
   return (
     <html lang="en">
       <body className={`${display.variable} ${sans.variable} font-sans`}>
-        <Providers>{children}</Providers>
-        <EnquiryBar />
-        <WorkInProgressModal />
-        <Toaster />
+        <FeatureFlagsProvider flags={flags}>
+          <Providers>{children}</Providers>
+          {flags.enquiries ? <EnquiryBar /> : null}
+          <WorkInProgressModal />
+          <Toaster />
+        </FeatureFlagsProvider>
       </body>
     </html>
   );

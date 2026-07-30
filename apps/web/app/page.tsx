@@ -1,3 +1,4 @@
+import { getFeatureFlags } from "@kth/config";
 import Link from "next/link";
 
 import { AboutSection } from "../components/about-section";
@@ -50,6 +51,8 @@ const heroImages = [
 ];
 
 export default function Home() {
+  const flags = getFeatureFlags();
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white bg-[#f9eee4] ">
 
@@ -95,6 +98,7 @@ export default function Home() {
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-10">
+              {flags.products ? (
               <Link
                 href="/products"
                 className="group/cta relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-[10px] px-4 text-[13px] font-bold text-black no-underline shadow-[0_10px_24px_rgba(246,147,0,0.26)] transition-[transform,box-shadow] duration-300 hover:shadow-[0_16px_34px_rgba(246,147,0,0.36)] sm:h-11 sm:px-5"
@@ -106,6 +110,7 @@ export default function Home() {
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
               </Link>
+              ) : null}
 
               <HeroCommandPalette />
             </div>
@@ -182,16 +187,15 @@ export default function Home() {
           </span>
         </Reveal>
       </section>
-      <CustomersSection />
+      {flags.customers ? <CustomersSection /> : null}
 
+      {flags.brands ? <BrandsSection /> : null}
 
-      <BrandsSection />
+      {flags.products ? <FeaturedSection /> : null}
 
-      <FeaturedSection />
+      {flags.services ? <ServicesSection /> : null}
 
-      <ServicesSection />
-
-      <AboutSection />
+      {flags.about ? <AboutSection /> : null}
 
       <SiteFooter />
     </main>

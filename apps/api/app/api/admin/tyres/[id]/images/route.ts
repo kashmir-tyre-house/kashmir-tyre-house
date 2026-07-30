@@ -3,6 +3,7 @@ import { count, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 import { getAdminRole, requireAdmin } from "../../../../../../lib/auth";
+import { requireFeature } from "../../../../../../lib/features";
 import { presignedUrl, uploadToR2 } from "../../../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -14,6 +15,9 @@ const ALLOWED_TYPES    = ["image/jpeg", "image/png", "image/webp"];
 // ── POST /api/admin/tyres/[id]/images ─────────────────────────────────────────
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;

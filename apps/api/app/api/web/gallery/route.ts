@@ -2,6 +2,7 @@ import { aboutImages, getDb } from "@kth/db";
 import { asc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+import { requireFeature } from "../../../../lib/features";
 import { keyFromStored, presignedUrl } from "../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -20,6 +21,9 @@ export async function OPTIONS() {
 // Public gallery list — returns only active images, ordered by sortOrder.
 
 export async function GET() {
+  const disabled = requireFeature("gallery", CORS_HEADERS);
+  if (disabled) return disabled;
+
   try {
     const db = getDb();
 

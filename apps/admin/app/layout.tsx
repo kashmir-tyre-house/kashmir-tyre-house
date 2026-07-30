@@ -1,3 +1,4 @@
+import { getFeatureFlags } from "@kth/config";
 import type { Metadata } from "next";
 import { Figtree, Inter } from "next/font/google";
 
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${display.variable} ${sans.variable} font-sans`}>
-        <AdminShell>{children}</AdminShell>
+        <AdminShell flags={getFeatureFlags()}>{children}</AdminShell>
       </body>
     </html>
   );

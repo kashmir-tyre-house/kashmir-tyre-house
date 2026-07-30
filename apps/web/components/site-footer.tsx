@@ -1,6 +1,15 @@
+"use client";
+
+// Rendered inside both server and client pages. Flags therefore come from the
+// context provider rather than `getFeatureFlags()` — non-public env vars are
+// not available in the browser bundle, so reading them here would resolve every
+// flag to "on" client-side and desync hydration.
+import type { FeatureName } from "@kth/config";
 import Image from "next/image";
 import Link from "next/link";
 import { Karla, Raleway, Big_Shoulders_Inline } from "next/font/google";
+
+import { useFeatureFlags } from "../lib/features";
 
 const karla = Karla({
   subsets: ["latin"],
@@ -23,11 +32,15 @@ const big_shoulders = Big_Shoulders_Inline({
   display: "swap",
 });
 
-const footerLinks = [
-  { label: "Tyres", href: "/#tyres" },
-  { label: "Services", href: "/#services" },
-  { label: "Saved", href: "/bookmarks" },
-  { label: "Send Enquiry", href: "/contact" }
+const footerLinks: ReadonlyArray<{
+  label: string;
+  href: string;
+  feature: FeatureName;
+}> = [
+  { label: "Tyres", href: "/#tyres", feature: "products" },
+  { label: "Services", href: "/#services", feature: "services" },
+  { label: "Saved", href: "/bookmarks", feature: "bookmarks" },
+  { label: "Send Enquiry", href: "/contact", feature: "enquiries" }
 ];
 
 const dealerBrands = ["Michelin", "Maxam", "Bridgestone"];
@@ -37,6 +50,8 @@ const GRAIN =
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const flags = useFeatureFlags();
+  const visibleLinks = footerLinks.filter((link) => flags[link.feature]);
 
   return (
     <footer
@@ -77,6 +92,7 @@ export function SiteFooter() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
+              {flags.enquiries ? (
               <Link
                 href="/contact"
                 className="group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-[10px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,196,128,0.95),transparent_36%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-5 text-[13px] font-bold text-[#231a12] no-underline shadow-[0_12px_30px_rgba(246,147,0,0.3)] transition-[transform,filter,box-shadow] duration-300 hover:brightness-110 hover:shadow-[0_16px_38px_rgba(246,147,0,0.42)] sm:h-12 sm:px-6 sm:text-[14px]"
@@ -90,6 +106,7 @@ export function SiteFooter() {
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
               </Link>
+              ) : null}
 
               <a
                 href="tel:+919977249965"
@@ -150,7 +167,7 @@ export function SiteFooter() {
               </p>
 
               <div className="mt-5 flex flex-col gap-3">
-                {footerLinks.map((link) => (
+                {visibleLinks.map((link) => (
                   <Link
                     className="group inline-flex w-fit items-center gap-1.5 text-[15px] font-medium leading-none text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"
                     href={link.href}
@@ -169,18 +186,34 @@ export function SiteFooter() {
               </p>
 
               <div className="mt-5 flex flex-col gap-4">
-                <Link
-                  className="group flex items-center gap-3 text-[15px] leading-snug text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"
-                  href="/contact"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] border border-[#fff8f5]/12 bg-[#fff8f5]/[0.05] text-[#f69300] transition-colors duration-300 group-hover:border-[#f8ab59]/40">
-                    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                  </span>
-                  Raipur, Chhattisgarh, India
-                </Link>
+                {/* Links through to the enquiry page when that module is on,
+                    otherwise the address stays as plain text. */}
+                {(() => {
+                  const addressBody = (
+                    <>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] border border-[#fff8f5]/12 bg-[#fff8f5]/[0.05] text-[#f69300] transition-colors duration-300 group-hover:border-[#f8ab59]/40">
+                        <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                      </span>
+                      Raipur, Chhattisgarh, India
+                    </>
+                  );
+
+                  return flags.enquiries ? (
+                    <Link
+                      className="group flex items-center gap-3 text-[15px] leading-snug text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"
+                      href="/contact"
+                    >
+                      {addressBody}
+                    </Link>
+                  ) : (
+                    <p className="group flex items-center gap-3 text-[15px] leading-snug text-[#ffeee0]/68">
+                      {addressBody}
+                    </p>
+                  );
+                })()}
 
                 <a
                   className="group flex items-center gap-3 text-[15px] leading-snug text-[#ffeee0]/68 no-underline transition-colors hover:text-[#ffb86f]"

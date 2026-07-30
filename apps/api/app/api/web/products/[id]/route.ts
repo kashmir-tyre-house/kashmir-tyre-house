@@ -2,6 +2,7 @@ import { brands, getDb, tyreImages, tyreProducts } from "@kth/db";
 import { and, asc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+import { requireFeature } from "../../../../../lib/features";
 import { presignedDownloadUrl, presignedUrl } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -27,6 +28,9 @@ function notFound() {
 // Public details for an active product. Returns 404 if missing or inactive.
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("products", CORS_HEADERS);
+  if (disabled) return disabled;
+
   try {
     const { id } = await params;
     const db = getDb();

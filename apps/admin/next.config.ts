@@ -7,7 +7,7 @@ loadEnvConfig(path.resolve(process.cwd(), "../.."), undefined, undefined, true);
 const API_URL = process.env.API_URL ?? "http://localhost:3002";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@kth/ui", "@kth/validators", "@kth/db"],
+  transpilePackages: ["@kth/config", "@kth/ui", "@kth/validators", "@kth/db"],
 
   async rewrites() {
     return [

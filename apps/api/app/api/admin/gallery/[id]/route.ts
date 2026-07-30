@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getAdminRole, requireAdmin } from "../../../../../lib/auth";
+import { requireFeature } from "../../../../../lib/features";
 import { deleteFromR2, keyFromStored } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -17,6 +18,9 @@ const patchSchema = z.object({
 // ── PATCH /api/admin/gallery/[id] ─────────────────────────────────────────────
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("gallery");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
@@ -58,6 +62,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 // ── DELETE /api/admin/gallery/[id] ────────────────────────────────────────────
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("gallery");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;

@@ -1,5 +1,6 @@
 "use client";
 
+import type { FeatureName } from "@kth/config";
 import { Bookmark, ChevronDown, ChevronRight, LayoutGrid, Menu, Scale, Sparkles, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,14 +9,26 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { useCompare } from "../lib/compare";
+import { useFeatureFlags } from "../lib/features";
 import { GlassSurface } from "./GlassSurface";
 import { StarBorder } from "./StarBorder";
 
-const navItems = ["Home", "Brand", "Tyres", "Services", "About"];
+// "Home" has no owning module — it is always present.
+const NAV_ITEMS: ReadonlyArray<{ label: string; feature?: FeatureName }> = [
+  { label: "Home" },
+  { label: "Brand", feature: "brands" },
+  { label: "Tyres", feature: "products" },
+  { label: "Services", feature: "services" },
+  { label: "About", feature: "about" }
+];
 
 export function SiteHeader() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const flags = useFeatureFlags();
+  const navItems = NAV_ITEMS.filter(
+    (item) => !item.feature || flags[item.feature]
+  ).map((item) => item.label);
   const { compare, hydrated: compareHydrated } = useCompare();
   const compareCount = compareHydrated ? compare.length : 0;
   const [activeTarget, setActiveTarget] = useState(
@@ -274,6 +287,7 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-1 mr-[-2px]">
           <div className="hidden items-center lg:flex">
+          {flags.bookmarks ? (
           <Link
             href="/bookmarks"
             className={[
@@ -286,7 +300,9 @@ export function SiteHeader() {
             <Bookmark aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
             Saved
           </Link>
+          ) : null}
 
+          {flags.compare ? (
           <StarBorder
             as={Link}
             href="/compare"
@@ -307,8 +323,10 @@ export function SiteHeader() {
               </span>
             ) : null}
           </StarBorder>
+          ) : null}
           </div>
 
+          {flags.enquiries ? (
           <Link
             href="/contact"
             className={[
@@ -336,6 +354,7 @@ export function SiteHeader() {
             />
             <span className="relative">Send Enquiry</span>
           </Link>
+          ) : null}
 
           <button
             type="button"
@@ -379,13 +398,13 @@ export function SiteHeader() {
 
           <nav className="relative flex flex-col gap-0.5" aria-label="Mobile navigation">
             {[
-              { label: "Home", href: sectionHref("home") },
-              { label: "Brand", href: sectionHref("brand") },
-              { label: "All Tyres", href: "/products" },
-              { label: "Featured Tyres", href: sectionHref("tyres") },
-              { label: "Services", href: sectionHref("services") },
-              { label: "About", href: sectionHref("about") },
-            ].map((link) => (
+              { label: "Home", href: sectionHref("home"), enabled: true },
+              { label: "Brand", href: sectionHref("brand"), enabled: flags.brands },
+              { label: "All Tyres", href: "/products", enabled: flags.products },
+              { label: "Featured Tyres", href: sectionHref("tyres"), enabled: flags.products },
+              { label: "Services", href: sectionHref("services"), enabled: flags.services },
+              { label: "About", href: sectionHref("about"), enabled: flags.about },
+            ].filter((link) => link.enabled).map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
@@ -397,8 +416,11 @@ export function SiteHeader() {
               </Link>
             ))}
 
-            <div className="my-1.5 h-px bg-white/10" />
+            {flags.bookmarks || flags.compare ? (
+              <div className="my-1.5 h-px bg-white/10" />
+            ) : null}
 
+            {flags.bookmarks ? (
             <Link
               href="/bookmarks"
               onClick={() => setMenuOpen(false)}
@@ -407,6 +429,8 @@ export function SiteHeader() {
               <Bookmark aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
               Saved
             </Link>
+            ) : null}
+            {flags.compare ? (
             <Link
               href="/compare"
               onClick={() => setMenuOpen(false)}
@@ -420,7 +444,9 @@ export function SiteHeader() {
                 </span>
               ) : null}
             </Link>
+            ) : null}
 
+            {flags.enquiries ? (
             <Link
               href="/contact"
               onClick={() => setMenuOpen(false)}
@@ -428,11 +454,12 @@ export function SiteHeader() {
             >
               Send Enquiry
             </Link>
+            ) : null}
           </nav>
         </div>
       </div>
 
-      {mounted
+      {mounted && flags.products
         ? createPortal(
             <div
               style={{

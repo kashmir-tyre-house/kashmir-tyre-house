@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 import { getAdminRole, requireAdmin } from "../../../../../../lib/auth";
+import { requireFeature } from "../../../../../../lib/features";
 import { deleteFromR2, uploadToR2 } from "../../../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -15,6 +16,9 @@ const ALLOWED_BROCHURE_TYPES = ["application/pdf"];
 // from R2 first so we never orphan files.
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
@@ -74,6 +78,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 // ── DELETE /api/admin/tyres/[id]/brochure ─────────────────────────────────────
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;

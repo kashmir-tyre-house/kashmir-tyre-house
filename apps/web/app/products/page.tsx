@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@kth/ui/select";
 
+import { useFeature } from "../../lib/features";
 import { ProductCard } from "../../components/product-card";
 import { ProductCardSkeleton } from "../../components/product-card-skeleton";
 import { Reveal } from "../../components/reveal";
@@ -105,6 +106,7 @@ export default function ProductsPage() {
   const [category, setCategory] = useState<string>("");
   const [brandId, setBrandId] = useState<string>("");
 
+  const brandsEnabled = useFeature("brands");
   const [brands, setBrands] = useState<ApiBrand[]>([]);
 
   // Debounce search input → committed search.
@@ -115,6 +117,8 @@ export default function ProductsPage() {
 
   // Load brand list once.
   useEffect(() => {
+    if (!brandsEnabled) return;
+
     let cancelled = false;
     (async () => {
       try {
@@ -129,7 +133,7 @@ export default function ProductsPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [brandsEnabled]);
 
   // Build query string for current filters + page.
   const queryFor = useMemo(
@@ -328,6 +332,7 @@ export default function ProductsPage() {
                 </Select>
               </div>
 
+              {brandsEnabled ? (
               <div className="flex flex-col gap-1 sm:gap-1.5">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b7a6c]">
                   Brand
@@ -349,6 +354,7 @@ export default function ProductsPage() {
                   </SelectContent>
                 </Select>
               </div>
+              ) : null}
             </div>
 
             {/* Footer: chips + result count */}

@@ -1,5 +1,6 @@
 "use client";
 
+import type { FeatureFlags } from "@kth/config";
 import { SessionProvider } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Suspense, useState, useSyncExternalStore } from "react";
@@ -11,7 +12,13 @@ const SIDEBAR_STORAGE_KEY = "kth-admin-sidebar-collapsed";
 const SIDEBAR_STORAGE_EVENT = "kth-admin-sidebar-storage";
 let canReadSavedSidebarState = false;
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  children,
+  flags
+}: {
+  children: React.ReactNode;
+  flags: FeatureFlags;
+}) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const collapsed = useSyncExternalStore(
@@ -54,6 +61,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <Suspense fallback={null}>
               <AdminSidebar
                 collapsed={collapsed}
+                flags={flags}
                 mobileOpen={mobileOpen}
                 onMobileClose={() => setMobileOpen(false)}
                 onToggle={toggleSidebar}
@@ -66,7 +74,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               ].join(" ")}
             >
               <main className="flex h-[calc(100dvh-1.5rem)] flex-col overflow-clip bg-(--background) my-3 ml-3 mr-3 rounded-[22px] lg:ml-0">
-                <AdminTopbar collapsed={collapsed} onToggle={toggleSidebar} />
+                <AdminTopbar collapsed={collapsed} flags={flags} onToggle={toggleSidebar} />
                 <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
                   {children}
                 </div>

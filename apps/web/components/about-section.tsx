@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Karla, Raleway } from "next/font/google";
 import { useEffect, useState } from "react";
 
+import { useFeature } from "../lib/features";
 import { BlurText } from "./blur-text";
 import { CountUp } from "./count-up";
 import { Reveal } from "./reveal";
@@ -80,9 +81,12 @@ function GalleryRow({
 // Returns null while loading, or when the gallery is empty / the request failed.
 // Returns an array only when we have at least one real image to show.
 function useGalleryImages(): GalleryImage[] | null {
+  const galleryEnabled = useFeature("gallery");
   const [images, setImages] = useState<GalleryImage[] | null>(null);
 
   useEffect(() => {
+    if (!galleryEnabled) return;
+
     let cancelled = false;
     (async () => {
       try {
@@ -103,7 +107,7 @@ function useGalleryImages(): GalleryImage[] | null {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [galleryEnabled]);
 
   return images;
 }

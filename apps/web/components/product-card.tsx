@@ -11,6 +11,7 @@ import { useState, useRef, useCallback } from "react";
 import { getBookmarkKey, useBookmarks } from "../lib/bookmarks";
 import { getCompareKey, useCompare } from "../lib/compare";
 import { useEnquiryProducts } from "../lib/enquiry";
+import { useFeatureFlags } from "../lib/features";
 import type { Product } from "../lib/products";
 import { StarBorder } from "./StarBorder";
 
@@ -78,6 +79,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
   const [badgeTheme, setBadgeTheme] = useState<BadgeTheme>("light");
   const imgRef = useRef<HTMLImageElement | null>(null);
 
+  const flags = useFeatureFlags();
   const { isBookmarked, toggle, hydrated } = useBookmarks();
   const saved = hydrated && isBookmarked(getBookmarkKey(product));
 
@@ -195,6 +197,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
               : product.productName}
           </h3>
 
+          {flags.bookmarks ? (
           <button
             aria-label={saved ? `Remove ${product.productName} from saved` : `Save ${product.productName}`}
             aria-pressed={saved}
@@ -212,6 +215,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
               strokeWidth={2}
             />
           </button>
+          ) : null}
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3">
@@ -268,6 +272,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
         </div>
 
         <div className="mt-5 flex gap-2 align-middle">
+          {flags.enquiries ? (
           <Button
             aria-pressed={inEnquiry}
             className={`h-9 flex-1 place-self-center rounded-md px-3 text-[12px] font-extrabold transition-[transform,filter,box-shadow] duration-300 ${
@@ -284,7 +289,9 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
               "Enquire"
             )}
           </Button>
+          ) : null}
 
+          {flags.compare ? (
           <StarBorder
             as="button"
             type="button"
@@ -310,6 +317,7 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
               <><Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />Compare</>
             )}
           </StarBorder>
+          ) : null}
         </div>
       </div>
     </article>

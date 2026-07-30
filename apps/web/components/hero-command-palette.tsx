@@ -11,16 +11,23 @@ import {
   Sparkles,
   Wrench,
 } from "lucide-react";
+import type { FeatureName } from "@kth/config";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { useFeatureFlags } from "../lib/features";
 import {
   CommandPalette,
   type CommandItem,
 } from "./ui/be-ui-command-palette";
 
+// Each entry belongs to a feature module so the palette never offers a
+// destination that has been switched off.
+type GatedCommandItem = CommandItem & { feature?: FeatureName };
+
 export function HeroCommandPalette() {
   const router = useRouter();
+  const flags = useFeatureFlags();
   const [open, setOpen] = useState(false);
 
   // Smooth-scroll to a homepage section if present, else navigate to it.
@@ -33,9 +40,10 @@ export function HeroCommandPalette() {
     }
   };
 
-  const items: CommandItem[] = [
+  const items: GatedCommandItem[] = [
     {
       id: "all-products",
+      feature: "products",
       label: "Browse all products",
       group: "Explore",
       icon: LayoutGrid,
@@ -44,6 +52,7 @@ export function HeroCommandPalette() {
     },
     {
       id: "featured",
+      feature: "products",
       label: "Featured products",
       group: "Explore",
       icon: Sparkles,
@@ -52,6 +61,7 @@ export function HeroCommandPalette() {
     },
     {
       id: "brands",
+      feature: "brands",
       label: "Trusted brands",
       group: "Explore",
       icon: Boxes,
@@ -60,6 +70,7 @@ export function HeroCommandPalette() {
     },
     {
       id: "services",
+      feature: "services",
       label: "Our services",
       group: "Explore",
       icon: Wrench,
@@ -68,6 +79,7 @@ export function HeroCommandPalette() {
     },
     {
       id: "about",
+      feature: "about",
       label: "About Kashmir Tyre House",
       group: "Company",
       icon: Info,
@@ -76,6 +88,7 @@ export function HeroCommandPalette() {
     },
     {
       id: "bookmarks",
+      feature: "bookmarks",
       label: "Saved products",
       group: "Your shortlist",
       icon: Bookmark,
@@ -84,6 +97,7 @@ export function HeroCommandPalette() {
     },
     {
       id: "compare",
+      feature: "compare",
       label: "Compare products",
       group: "Your shortlist",
       icon: Scale,
@@ -92,6 +106,7 @@ export function HeroCommandPalette() {
     },
     {
       id: "enquiry",
+      feature: "enquiries",
       label: "Send an enquiry",
       group: "Get in touch",
       icon: Mail,
@@ -99,6 +114,10 @@ export function HeroCommandPalette() {
       onSelect: () => router.push("/contact"),
     },
   ];
+
+  const enabledItems = items.filter(
+    (item) => !item.feature || flags[item.feature]
+  );
 
   return (
     <>
@@ -116,7 +135,7 @@ export function HeroCommandPalette() {
       </button>
 
       <CommandPalette
-        items={items}
+        items={enabledItems}
         open={open}
         onOpenChange={setOpen}
         shortcut="k"

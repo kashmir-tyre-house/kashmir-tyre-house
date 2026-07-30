@@ -3,10 +3,14 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 import { getAdminRole, requireAdmin } from "../../../../lib/auth";
+import { requireFeature } from "../../../../lib/features";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
+  const disabled = requireFeature("brands");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;

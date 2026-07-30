@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getAdminRole, requireAdmin } from "../../../../../lib/auth";
+import { requireFeature } from "../../../../../lib/features";
 import { presignedDownloadUrl, presignedUrl } from "../../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -46,6 +47,9 @@ function notFound() {
 // ── GET /api/admin/tyres/[id] ─────────────────────────────────────────────────
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
@@ -137,6 +141,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 // ── PUT /api/admin/tyres/[id] ─────────────────────────────────────────────────
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
@@ -188,6 +195,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 // ── DELETE /api/admin/tyres/[id] ──────────────────────────────────────────────
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const disabled = requireFeature("products");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;

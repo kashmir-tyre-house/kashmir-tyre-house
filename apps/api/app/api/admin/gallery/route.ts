@@ -3,6 +3,7 @@ import { asc, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 import { getAdminRole, requireAdmin } from "../../../../lib/auth";
+import { requireFeature } from "../../../../lib/features";
 import { keyFromStored, presignedUrl, uploadToR2 } from "../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -14,6 +15,9 @@ const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 // ── GET /api/admin/gallery ────────────────────────────────────────────────────
 
 export async function GET(request: Request) {
+  const disabled = requireFeature("gallery");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
@@ -47,6 +51,9 @@ export async function GET(request: Request) {
 // ── POST /api/admin/gallery ───────────────────────────────────────────────────
 
 export async function POST(request: Request) {
+  const disabled = requireFeature("gallery");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;
@@ -120,6 +127,9 @@ export async function POST(request: Request) {
 // ── PATCH /api/admin/gallery (reorder) ───────────────────────────────────────
 
 export async function PATCH(request: Request) {
+  const disabled = requireFeature("gallery");
+  if (disabled) return disabled;
+
   const role = await getAdminRole(request);
   const forbidden = requireAdmin(role);
   if (forbidden) return forbidden;

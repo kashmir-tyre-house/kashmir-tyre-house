@@ -3,6 +3,7 @@ import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { requireFeature } from "../../../../lib/features";
 import { presignedUrl } from "../../../../lib/r2";
 
 export const runtime = "nodejs";
@@ -31,6 +32,9 @@ export async function OPTIONS() {
 // Filters: search (name/pattern), brandId, category. Only active products.
 
 export async function GET(request: Request) {
+  const disabled = requireFeature("products", CORS_HEADERS);
+  if (disabled) return disabled;
+
   try {
     const { searchParams } = new URL(request.url);
     const parsed = listQuerySchema.safeParse(Object.fromEntries(searchParams));

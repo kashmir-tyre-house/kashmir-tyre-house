@@ -2,6 +2,8 @@ import { brands, getDb } from "@kth/db";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+import { requireFeature } from "../../../../lib/features";
+
 export const runtime = "nodejs";
 
 const CORS_HEADERS = {
@@ -15,6 +17,9 @@ export async function OPTIONS() {
 }
 
 export async function GET() {
+  const disabled = requireFeature("brands", CORS_HEADERS);
+  if (disabled) return disabled;
+
   try {
     const db = getDb();
     const rows = await db
