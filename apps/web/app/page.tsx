@@ -5,6 +5,7 @@ import { AboutSection } from "../components/about-section";
 import { BrandsSection } from "../components/brands-section";
 import { CustomersSection } from "../components/customers-section";
 import { FeaturedSection } from "../components/featured-section";
+import { HashScroller } from "../components/hash-scroller";
 import { HeroBackgroundRotator } from "../components/hero-background-rotator";
 import { HeroCommandPalette } from "../components/hero-command-palette";
 import { Reveal } from "../components/reveal";
@@ -56,6 +57,7 @@ export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#0a0a0a] text-white bg-[#f9eee4] ">
 
+      <HashScroller />
       <SiteHeader />
 
       {/* ── HERO ── */}
