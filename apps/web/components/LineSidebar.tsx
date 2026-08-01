@@ -181,7 +181,12 @@ export function LineSidebar({
 
   useEffect(
     () => () => {
+      // Cancel AND clear the id. Leaving a stale id here makes startLoop's
+      // `rafRef.current != null` guard bail forever after a remount (e.g.
+      // React Strict Mode's double-invoke, or client-side route changes),
+      // which silently kills the hover animation on the next page.
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     },
     []
   );
