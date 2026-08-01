@@ -13,7 +13,8 @@ export const FEATURE_NAMES = [
   "gallery",
   "services",
   "about",
-  "customers"
+  "customers",
+  "claims"
 ] as const;
 
 export type FeatureName = (typeof FEATURE_NAMES)[number];
