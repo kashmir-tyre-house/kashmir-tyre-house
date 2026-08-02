@@ -41,7 +41,6 @@ const footerLinks: ReadonlyArray<{
   { label: "Tyres", href: "/#tyres", feature: "products" },
   { label: "Services", href: "/#services", feature: "services" },
   { label: "Saved", href: "/bookmarks", feature: "bookmarks" },
-  { label: "Raise a Claim", href: "/claims", feature: "claims" },
   { label: "Send Enquiry", href: "/contact", feature: "enquiries" }
 ];
 
