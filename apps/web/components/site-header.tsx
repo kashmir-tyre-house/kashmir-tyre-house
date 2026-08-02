@@ -1,7 +1,7 @@
 "use client";
 
 import type { FeatureName } from "@kth/config";
-import { Bookmark, ChevronDown, ChevronRight, LayoutGrid, Menu, Scale, Sparkles, X } from "lucide-react";
+import { Bookmark, ChevronDown, ChevronRight, FilePlus, Info, LayoutGrid, Menu, Scale, Search, Sparkles, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,7 +19,9 @@ const NAV_ITEMS: ReadonlyArray<{ label: string; feature?: FeatureName }> = [
   { label: "Brand", feature: "brands" },
   { label: "Tyres", feature: "products" },
   { label: "Services", feature: "services" },
-  { label: "About", feature: "about" }
+  { label: "About", feature: "about" },
+  // Routes to its own page rather than a home-page section.
+  { label: "Claims", feature: "claims" }
 ];
 
 export function SiteHeader() {
@@ -62,6 +64,15 @@ export function SiteHeader() {
   const tyresTriggerRef = useRef<HTMLLIElement>(null);
   const tyresCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Claims dropdown — same portal treatment as Tyres, for the same reason.
+  const [claimsOpen, setClaimsOpen] = useState(false);
+  const [claimsMenuPos, setClaimsMenuPos] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  const claimsTriggerRef = useRef<HTMLLIElement>(null);
+  const claimsCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Mobile navigation menu.
   const [menuOpen, setMenuOpen] = useState(false);
   const sectionHref = (id: string) => (isHomePage ? `#${id}` : `/#${id}`);
@@ -71,6 +82,9 @@ export function SiteHeader() {
     return () => {
       if (tyresCloseTimer.current) {
         clearTimeout(tyresCloseTimer.current);
+      }
+      if (claimsCloseTimer.current) {
+        clearTimeout(claimsCloseTimer.current);
       }
     };
   }, []);
@@ -96,6 +110,24 @@ export function SiteHeader() {
       clearTimeout(tyresCloseTimer.current);
     }
     tyresCloseTimer.current = setTimeout(() => setTyresOpen(false), 120);
+  }
+
+  function openClaims() {
+    if (claimsCloseTimer.current) {
+      clearTimeout(claimsCloseTimer.current);
+    }
+    const rect = claimsTriggerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setClaimsMenuPos({ left: rect.left + rect.width / 2, top: rect.bottom });
+    }
+    setClaimsOpen(true);
+  }
+
+  function scheduleCloseClaims() {
+    if (claimsCloseTimer.current) {
+      clearTimeout(claimsCloseTimer.current);
+    }
+    claimsCloseTimer.current = setTimeout(() => setClaimsOpen(false), 120);
   }
 
   useEffect(() => {
@@ -228,6 +260,43 @@ export function SiteHeader() {
         <ul className="absolute left-1/2 top-1/2 m-0 hidden -translate-x-1/2 -translate-y-1/2 list-none items-center gap-0 p-0 lg:flex">
           {navItems.map((item) => {
             const isActive = currentActiveTarget === item.toLowerCase();
+
+            // Claims is a standalone route with a hover dropdown (same
+            // mechanics as Tyres). The trigger opens the menu; its items route.
+            if (item === "Claims") {
+              const claimsActive = pathname.startsWith("/claims");
+              return (
+                <li
+                  key={item}
+                  ref={claimsTriggerRef}
+                  className="relative"
+                  onMouseEnter={openClaims}
+                  onMouseLeave={scheduleCloseClaims}
+                >
+                  <button
+                    type="button"
+                    aria-haspopup="true"
+                    aria-expanded={claimsOpen}
+                    className={[
+                      "inline-flex items-center gap-1 rounded-full px-4 py-2 text-[13px] transition-colors duration-300",
+                      claimsActive || claimsOpen
+                        ? "text-[#f8ab59]"
+                        : "text-white/55 hover:text-white",
+                    ].join(" ")}
+                  >
+                    Claims
+                    <ChevronDown
+                      aria-hidden="true"
+                      className={[
+                        "h-3.5 w-3.5 transition-transform duration-300",
+                        claimsOpen ? "rotate-180" : "",
+                      ].join(" ")}
+                      strokeWidth={2}
+                    />
+                  </button>
+                </li>
+              );
+            }
 
             if (item === "Tyres") {
               return (
@@ -404,6 +473,7 @@ export function SiteHeader() {
               { label: "Featured Tyres", href: sectionHref("tyres"), enabled: flags.products },
               { label: "Services", href: sectionHref("services"), enabled: flags.services },
               { label: "About", href: sectionHref("about"), enabled: flags.about },
+              { label: "Claims", href: "/claims", enabled: flags.claims },
             ].filter((link) => link.enabled).map((link) => (
               <Link
                 key={link.label}
@@ -541,6 +611,100 @@ export function SiteHeader() {
                       strokeWidth={2}
                     />
                   </Link>
+                </div>
+              </GlassSurface>
+            </div>,
+            document.body
+          )
+        : null}
+
+      {mounted && flags.claims
+        ? createPortal(
+            <div
+              style={{
+                position: "fixed",
+                left: claimsMenuPos?.left ?? 0,
+                top: claimsMenuPos?.top ?? 0,
+                transform: `translateX(-50%) translateY(${claimsOpen ? "0" : "-6px"})`,
+                transition:
+                  "transform 200ms cubic-bezier(0.22,1,0.36,1), visibility 200ms",
+              }}
+              onMouseEnter={openClaims}
+              onMouseLeave={scheduleCloseClaims}
+              className={[
+                "z-60 pt-2.5",
+                claimsOpen ? "visible" : "pointer-events-none invisible",
+              ].join(" ")}
+            >
+              <GlassSurface
+                width={252}
+                height="auto"
+                borderRadius={18}
+                backgroundOpacity={0.5}
+                saturation={1.4}
+                blur={12}
+                displace={4}
+                className="glass-dropdown shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+              >
+                <div className="flex w-full flex-col p-2">
+                  <p className="px-2.5 pb-1.5 pt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/35">
+                    Tyre Claims
+                  </p>
+
+                  {[
+                    {
+                      href: "/claims",
+                      icon: Info,
+                      title: "How it works",
+                      subtitle: "The claim process",
+                      accent: true,
+                    },
+                    {
+                      href: "/claims/new",
+                      icon: FilePlus,
+                      title: "Raise a Claim",
+                      subtitle: "Register a new warranty claim",
+                      accent: false,
+                    },
+                    {
+                      href: "/claims/track",
+                      icon: Search,
+                      title: "Track a Claim",
+                      subtitle: "Check the status of a claim",
+                      accent: false,
+                    },
+                  ].map((entry) => (
+                    <Link
+                      key={entry.href}
+                      href={entry.href}
+                      onClick={() => setClaimsOpen(false)}
+                      className="group/item flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 no-underline transition-colors duration-200 hover:bg-white/[0.07]"
+                    >
+                      <span
+                        className={[
+                          "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] border transition-colors duration-200",
+                          entry.accent
+                            ? "border-[#f8ab59]/25 bg-[#f8ab59]/10 text-[#f8ab59] group-hover/item:bg-[#f8ab59]/15"
+                            : "border-white/12 bg-white/5 text-white/80 group-hover/item:bg-white/10",
+                        ].join(" ")}
+                      >
+                        <entry.icon aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+                      </span>
+                      <span className="flex min-w-0 flex-col">
+                        <span className="text-[12px] font-semibold leading-tight text-white/85 transition-colors duration-200 group-hover/item:text-white">
+                          {entry.title}
+                        </span>
+                        <span className="mt-0.5 text-[10px] leading-tight text-white/40">
+                          {entry.subtitle}
+                        </span>
+                      </span>
+                      <ChevronRight
+                        aria-hidden="true"
+                        className="ml-auto h-3.5 w-3.5 shrink-0 -translate-x-1 text-white/25 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:text-[#f8ab59] group-hover/item:opacity-100"
+                        strokeWidth={2}
+                      />
+                    </Link>
+                  ))}
                 </div>
               </GlassSurface>
             </div>,

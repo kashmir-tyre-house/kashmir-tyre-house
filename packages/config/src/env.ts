@@ -26,7 +26,8 @@ function readRawEnv(): Record<FeatureName, string | undefined> {
     gallery: process.env.FEATURE_GALLERY,
     services: process.env.FEATURE_SERVICES,
     about: process.env.FEATURE_ABOUT,
-    customers: process.env.FEATURE_CUSTOMERS
+    customers: process.env.FEATURE_CUSTOMERS,
+    claims: process.env.FEATURE_CLAIMS
   };
 }
 
