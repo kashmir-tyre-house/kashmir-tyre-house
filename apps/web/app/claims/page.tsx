@@ -14,6 +14,7 @@ import { notFound } from "next/navigation";
 
 import { BlurText } from "../../components/blur-text";
 import { Reveal } from "../../components/reveal";
+import { CircuitBackground } from "../../components/ui/circuit-background";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteHeader } from "../../components/site-header";
 
@@ -75,7 +76,7 @@ export default function ClaimsLandingPage() {
     <main className="min-h-screen bg-[#f9eee4] text-[#231a12]">
       <SiteHeader />
 
-      <section className="mx-auto max-w-330 px-4 pb-16 pt-24 sm:px-6 sm:pb-24 sm:pt-32 lg:px-8">
+      <section className="mx-auto max-w-330 px-4 pt-24 sm:px-6 sm:pt-32 lg:px-8">
         <div className="mx-auto max-w-[1480px]">
           {/* ── Hero ─────────────────────────────────────────────── */}
           <div className="max-w-3xl">
@@ -194,29 +195,35 @@ export default function ClaimsLandingPage() {
 
           {/* ── Closing CTA ──────────────────────────────────────── */}
           <Reveal>
-            <div className="mt-10 flex flex-col items-start gap-4 rounded-[20px] border border-[#ead9c9] bg-white p-6 shadow-[0_10px_32px_rgba(35,26,18,0.05)] sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2
-                  className={`${raleway.className} text-[19px] font-semibold tracking-[-0.02em] text-[#231a12] sm:text-[21px]`}
+            <CircuitBackground
+              color="#c8922a"
+              opacity={0.5}
+              className="mt-10 rounded-[20px] border border-[#ead9c9] bg-white p-6 shadow-[0_10px_32px_rgba(35,26,18,0.05)]"
+            >
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="backdrop-blur-sm bg-white/20">
+                  <h2
+                    className={`${raleway.className} text-[19px] font-semibold tracking-[-0.02em] text-[#231a12] sm:text-[21px]`}
+                  >
+                    Ready to raise your claim?
+                  </h2>
+                  <p className="mt-1.5 text-[13px] leading-[1.65] text-[#6f6258]">
+                    You&apos;ll get a claim number the moment you submit.
+                  </p>
+                </div>
+                <Link
+                  href="/claims/new"
+                  className="group inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.9),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-6 text-[13px] font-bold text-white no-underline shadow-[0_10px_24px_rgba(246,147,0,0.24)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_14px_30px_rgba(246,147,0,0.32)]"
                 >
-                  Ready to raise your claim?
-                </h2>
-                <p className="mt-1.5 text-[13px] leading-[1.65] text-[#6f6258]">
-                  You&apos;ll get a claim number the moment you submit.
-                </p>
+                  Start a Claim
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                    strokeWidth={2.5}
+                  />
+                </Link>
               </div>
-              <Link
-                href="/claims/new"
-                className="group inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-[12px] bg-[radial-gradient(circle_at_18%_18%,rgba(255,184,111,0.9),transparent_34%),linear-gradient(120deg,#f69300_0%,#d47d00_48%,#6f3f00_100%)] px-6 text-[13px] font-bold text-white no-underline shadow-[0_10px_24px_rgba(246,147,0,0.24)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_14px_30px_rgba(246,147,0,0.32)]"
-              >
-                Start a Claim
-                <ArrowRight
-                  aria-hidden="true"
-                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-                  strokeWidth={2.5}
-                />
-              </Link>
-            </div>
+            </CircuitBackground>
           </Reveal>
         </div>
       </section>

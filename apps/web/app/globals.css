@@ -131,3 +131,20 @@ body {
   from { transform: translateX(-50%); }
   to   { transform: translateX(0%); }
 }
+
+/* Animated circuit-board (CircuitBackground): the dashes flow along the static
+   traces. -30 is two dash periods (dasharray 10 5), so the loop is seamless. */
+@keyframes circuit-flow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -30; }
+}
+
+.animate-circuit path {
+  animation: circuit-flow var(--circuit-duration, 2.5s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-circuit path {
+    animation: none;
+  }
+}
